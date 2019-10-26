@@ -1,0 +1,8 @@
+image: "rustlang/rust:nightly"
+
+build:
+  script:
+    - cargo build
+test:
+  script:
+    - cargo test
