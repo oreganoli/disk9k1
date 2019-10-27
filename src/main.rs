@@ -2,6 +2,9 @@
 #[macro_use]
 extern crate rocket;
 
+use std::io::Read;
+
+use rocket::Data;
 use rocket_contrib::serve;
 
 use instance::Instance;
@@ -9,6 +12,13 @@ use prelude::*;
 
 mod instance;
 mod prelude;
+
+#[post("/upload", data = "<data>")]
+fn upload(data: Data) -> Html<String> {
+    let mut buffer = String::new();
+    data.open().read_to_string(&mut buffer).unwrap();
+    Html(format!("<b>{}</b>", buffer))
+}
 
 #[get("/")]
 fn index(tera: State<Tera>, instance: State<Instance>) -> Html<String> {
@@ -25,7 +35,7 @@ fn main() {
     rocket::ignite()
         .manage(tera)
         .manage(instance)
-        .mount("/", routes![index])
+        .mount("/", routes![index, upload])
         .mount("/static", serve::StaticFiles::new("static/", serve::Options::None))
         .launch();
 }

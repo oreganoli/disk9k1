@@ -10,5 +10,9 @@
 <body>
 <h1>{{name}}</h1>
 <p>{{description}}</p>
+<form action="upload" enctype="multipart/form-data" method="post">
+    <input name="file" type="file">
+    <input type="submit">
+</form>
 </body>
 </html>
