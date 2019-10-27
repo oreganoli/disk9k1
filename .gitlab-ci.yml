@@ -1,5 +1,9 @@
 image: "rustlang/rust:nightly"
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+
+
 build:
   script:
     - cargo build
