@@ -14,8 +14,12 @@ mod prelude;
 mod upload;
 
 #[get("/")]
-fn index(tera: State<Tera>, instance: State<Instance>) -> Html<String> {
-    let ctx = Context::from_serialize(instance.inner()).unwrap();
+fn index(instance: LockState, tera: TeraState) -> Html<String> {
+    let inst = instance.read().unwrap();
+    let mut ctx = Context::new();
+    ctx.insert("name", &String::from(&inst.name));
+    ctx.insert("description", &String::from(&inst.description));
+    ctx.insert("size_limit", &inst.size_limit);
     Html(tera.render("index.html", &ctx).unwrap())
 }
 
@@ -23,11 +27,12 @@ fn main() {
     let instance = Instance {
         name: "Disk9001".to_owned(),
         description: "A pomf.se and Google Drive clone. WIP.".to_owned(),
+        size_limit: 8388608
     };
     let tera = Tera::new("templates/**/*").expect("Expected a template directory.");
     rocket::ignite()
         .manage(tera)
-        .manage(instance)
+        .manage(std::sync::RwLock::new(instance))
         .mount("/", routes![index, upload::upload])
         .mount("/static", serve::StaticFiles::new("static/", serve::Options::None))
         .launch();
