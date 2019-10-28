@@ -29,13 +29,25 @@ fn main() {
         name: "Disk9001".to_owned(),
         description: "A pomf.se and Google Drive clone. WIP.".to_owned(),
         size_limit: 8388608,
-        files: BTreeMap::new()
+        files: BTreeMap::new(),
     };
     let tera = Tera::new("templates/**/*").expect("Expected a template directory.");
     rocket::ignite()
         .manage(tera)
         .manage(std::sync::RwLock::new(instance))
-        .mount("/", routes![index, upload::upload])
-        .mount("/static", serve::StaticFiles::new("static/", serve::Options::None))
+        .mount(
+            "/",
+            routes![
+                index,
+                file::file_info,
+                file::get_file,
+                file::get_file_named,
+                upload::upload
+            ],
+        )
+        .mount(
+            "/static",
+            serve::StaticFiles::new("static/", serve::Options::None),
+        )
         .launch();
 }
