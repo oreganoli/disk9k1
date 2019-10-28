@@ -2,13 +2,14 @@
 #[macro_use]
 extern crate rocket;
 
-use std::io::Read;
+use std::collections::BTreeMap;
 
 use rocket_contrib::serve;
 
 use instance::Instance;
 use prelude::*;
 
+mod file;
 mod instance;
 mod prelude;
 mod upload;
@@ -27,7 +28,8 @@ fn main() {
     let instance = Instance {
         name: "Disk9001".to_owned(),
         description: "A pomf.se and Google Drive clone. WIP.".to_owned(),
-        size_limit: 8388608
+        size_limit: 8388608,
+        files: BTreeMap::new()
     };
     let tera = Tera::new("templates/**/*").expect("Expected a template directory.");
     rocket::ignite()

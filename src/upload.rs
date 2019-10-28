@@ -1,6 +1,6 @@
 use rocket::Data;
 use rocket::http::ContentType;
-use rocket_multipart_form_data::{FileField, mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField};
+use rocket_multipart_form_data::{MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField};
 
 use crate::prelude::*;
 
