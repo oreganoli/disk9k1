@@ -2,8 +2,6 @@
 #[macro_use]
 extern crate rocket;
 
-use std::io::Read;
-
 use rocket_contrib::serve;
 
 use instance::Instance;
