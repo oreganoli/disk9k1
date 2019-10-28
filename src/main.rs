@@ -17,8 +17,8 @@ mod upload;
 fn index(instance: LockState, tera: TeraState) -> Html<String> {
     let inst = instance.read().unwrap();
     let mut ctx = Context::new();
-    ctx.insert("name", &String::from(&inst.name));
-    ctx.insert("description", &String::from(&inst.description));
+    ctx.insert("name", &inst.name);
+    ctx.insert("description", &inst.description);
     ctx.insert("size_limit", &inst.size_limit);
     Html(tera.render("index.html", &ctx).unwrap())
 }
