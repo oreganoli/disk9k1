@@ -40,8 +40,11 @@ pub fn upload(
                 original_name: field.file_name.unwrap_or("file".to_owned()),
                 data: field.raw,
             };
+            let mut ctx = Context::new();
+            ctx.insert("id", &hash);
+            ctx.insert("filename", &file.original_name);
             inst.files.insert(hash, file);
-            Html(format!("Upload succeeded with id {}!", hash))
+            Html(tera.render("successful_upload.html", &ctx).unwrap())
         },
         _ => Html(format!("<p>Upload failed</p>"))
     })
