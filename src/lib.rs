@@ -7,9 +7,9 @@ use self::diesel_migrations::run_pending_migrations;
 use std::sync::{Mutex, MutexGuard};
 
 pub fn establish_connection() -> PgConnection {
-    let url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set")
+    let url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    let conn = PgConnection::establish(&url).expect(&format!!("Error connecting to {}", url));
+    let conn = PgConnection::establish(&url).expect(&format!("Error connecting to {}", url));
     run_pending_migrations(&conn).unwrap();
     conn.begin_test_transaction().unwrap();
     conn
