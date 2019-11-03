@@ -1,10 +1,6 @@
 use crc32fast::Hasher;
 use rocket::http::ContentType;
 use rocket::Data;
-use rocket_multipart_form_data::{
-    MultipartFormData, MultipartFormDataError, MultipartFormDataField, MultipartFormDataOptions,
-    RawField, SingleRawField,
-};
 
 use crate::prelude::*;
 
@@ -19,7 +15,7 @@ pub fn upload(
 ) -> Page {
     let mut inst = instance.write().unwrap();
     let mut ctx = Context::new();
-    let data = data::file_field_from_form(&content_type, data, inst.size_limit as u64);
+    let data = data::file_field_from_form(content_type.clone(), data, inst.size_limit as u64);
     use data::FileFormError as FFE;
     match data {
         Ok(raw) => {
@@ -33,7 +29,7 @@ pub fn upload(
                 );
                 return tera.html("upload_error.html", &ctx);
             }
-            let file = data::file_from_raw(content_type, raw);
+            let file = data::file_from_raw(content_type, &raw);
             ctx.insert("id", &hash);
             ctx.insert("filename", &file.original_name);
             inst.files.insert(hash, file);
@@ -41,15 +37,15 @@ pub fn upload(
         }
         Err(e) => {
             let reason = match e {
-                FFE::NoData => "No file data was provided",
-                FFE::BadForm => "The upload form was invalid.",
-                FFE::TooLarge => &format!(
+                FFE::NoData => "No file data was provided".to_owned(),
+                FFE::BadForm => "The upload form was invalid.".to_owned(),
+                FFE::TooLarge => format!(
                     "The file exceeded the size limit of {}B.",
                     mebibytes(inst.size_limit as u64)
                 ),
-                FFE::Other => "Some unhandled upload error occurred.",
+                FFE::Other => "Some unhandled upload error occurred.".to_owned(),
             };
-            ctx.insert("reason", reason);
+            ctx.insert("reason", &reason);
             tera.html("upload_error.html", &ctx)
         }
     }

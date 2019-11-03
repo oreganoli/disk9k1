@@ -26,24 +26,32 @@ pub fn file_from_raw(content_type: &ContentType, field: &SingleRawField) -> File
     }
 }
 
+fn single_raw_field(form_data: MultipartFormData) -> Result<SingleRawField, FileFormError> {
+    match form_data.raw.get("file") {
+        Some(f) => match f {
+            RawField::Single(single) => Ok(SingleRawField {
+                content_type: single.content_type.clone(),
+                file_name: single.file_name.clone(),
+                raw: single.raw.clone(),
+            }),
+            _ => Err(FileFormError::BadForm),
+        },
+        _ => Err(FileFormError::NoData),
+    }
+}
+
 pub fn file_field_from_form(
-    content_type: &ContentType,
+    content_type: ContentType,
     data: Data,
     size_limit: u64,
-) -> Result<&SingleRawField, FileFormError> {
+) -> Result<SingleRawField, FileFormError> {
     let form_data: MultipartFormData;
-    match MultipartFormData::parse(content_type, data, single_file_options(size_limit)) {
+    match MultipartFormData::parse(&content_type.clone(), data, single_file_options(size_limit)) {
         Ok(data) => form_data = data,
         Err(MFDE::DataTooLargeError(_)) => return Err(FileFormError::TooLarge),
         _ => return Err(FileFormError::Other),
     }
-    match form_data.raw.get("file") {
-        Some(field_type) => match field_type {
-            RawField::Single(f) => Ok(f),
-            _ => Err(FileFormError::BadForm),
-        },
-        None => Err(FileFormError::NoData),
-    }
+    single_raw_field(form_data)
 }
 
 pub enum FileFormError {
