@@ -1,4 +1,7 @@
+use std::str::FromStr;
+
 use crc32fast::Hasher;
+use mime_sniffer::MimeTypeSniffer;
 use rocket::http::ContentType;
 use rocket::Data;
 
@@ -29,7 +32,13 @@ pub fn upload(
                 );
                 return tera.html("upload_error.html", &ctx);
             }
-            let file = data::file_from_raw(content_type, &raw);
+            let mime = &raw.raw.sniff_mime_type();
+            use rocket::http::{ContentType, MediaType};
+            let content = ContentType(
+                MediaType::from_str(mime.unwrap_or("application/octet-stream"))
+                    .unwrap_or(MediaType::Binary),
+            );
+            let file = data::file_from_raw(&content, &raw);
             ctx.insert("id", &hash);
             ctx.insert("filename", &file.original_name);
             inst.files.insert(hash, file);
