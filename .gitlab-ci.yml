@@ -2,6 +2,8 @@ image: "rustlang/rust:nightly"
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - target
 
 
 build:
