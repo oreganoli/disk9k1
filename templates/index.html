@@ -3,21 +3,40 @@
 <head>
     <!--    normalize.css ensures a uniform base look on all platforms -->
     <!--    other stylesheets can be applied after it and expected to look the same everywhere-->
-    <link href="static/normalize.css" rel="stylesheet">
+    <!-- <link href="static/normalize.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="../static/home.css">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{name}}</title>
 </head>
-<header>
+<!-- <header>
     <h1>{{name}}</h1>
     <p>{{description}}</p>
-</header>
+</header> -->
 <body>
-<form action="upload" enctype="multipart/form-data" method="post">
+<!-- <form action="upload" enctype="multipart/form-data" method="post">
     <input name="file" type="file">
     <input type="submit">
+</form> -->
+
+<nav class="menu">
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Mój dysk</a></li>
+        <li><a href="#">Kontakt</a></li>
+    </ul>
+</nav>
+
+<h1 class="title">Klon Google Drive</h1>
+<h3>Twórz, udostępniaj i przechowuj swoje pliki już teraz z klonem Google Drive</h3>
+
+<form action="" method="post">
+    <button class="login">Logowanie</button>
+    <button class="register">Rejestracja</button>
 </form>
+
 </body>
-<footer>
+<!-- <footer>
     <p>The maximum file size is {{ size_limit / 1048576 }} MiB.</p>
-</footer>
+</footer> -->
 </html>
