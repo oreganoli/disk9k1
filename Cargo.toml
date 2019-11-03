@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 crc32fast = "1.2.0"
+mime-sniffer = "0.1.2"
 rocket = "0.4.2"
 rocket_contrib = "0.4.2"
 rocket-multipart-form-data = "0.7.2"
