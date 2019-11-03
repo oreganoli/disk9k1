@@ -13,6 +13,11 @@ body {
     box-sizing: border-box;
 }
 
+.error_reason {
+    color: firebrick;
+    font-weight: bold;
+}
+
 /* MOBILE VIEW */
 
 /* NAVIGATION */

@@ -26,26 +26,33 @@ pub fn upload(
 
     x.map_or_else(|| Html(format!("<p>Upload failed</p>")), |f| match f {
         RawField::Single(field) => {
+            let mut ctx = Context::new();
             let mut hasher = Hasher::new();
             hasher.update(&field.raw);
             let hash = hasher.finalize();
             if inst.files.contains_key(&hash) {
-                return Html(format!("<b>A file with the CRC checksum {} already exists.</b>", hash));
+                ctx.insert("reason", &format!("A file with the CRC checksum {} already exists.", hash));
+                return Html(tera.render("upload_error.html", &ctx).unwrap())
             }
             if field.raw.len() > inst.size_limit {
-                return Html(format!("<p><b>The file is {} bytes long, which exceeds the limit of {} bytes.</b></p>", field.raw.len(), inst.size_limit))
+                let str = format!("<p><b>The file is {} bytes long, which exceeds the limit of {} bytes.</b></p>", field.raw.len(), inst.size_limit);
+                ctx.insert("reason", &str);
+                return Html(tera.render("upload_error.html", &ctx).unwrap())
             }
             let file = File {
                 content_type: content_type.clone(),
                 original_name: field.file_name.unwrap_or("file".to_owned()),
                 data: field.raw,
             };
-            let mut ctx = Context::new();
             ctx.insert("id", &hash);
             ctx.insert("filename", &file.original_name);
             inst.files.insert(hash, file);
             Html(tera.render("successful_upload.html", &ctx).unwrap())
         },
-        _ => Html(format!("<p>Upload failed</p>"))
+        _ => {
+            let mut ctx = Context::new();
+            ctx.insert("reason", "Some other error occurred.");
+            Html(tera.render("upload_error.html", &ctx).unwrap())
+        }
     })
 }
