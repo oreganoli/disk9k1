@@ -40,7 +40,7 @@ pub fn upload(
                 FFE::NoData => "No file data was provided".to_owned(),
                 FFE::BadForm => "The upload form was invalid.".to_owned(),
                 FFE::TooLarge => format!(
-                    "The file exceeded the size limit of {}B.",
+                    "The file exceeded the size limit of {} MiB.",
                     mebibytes(inst.size_limit as u64)
                 ),
                 FFE::Other => "Some unhandled upload error occurred.".to_owned(),
