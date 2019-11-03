@@ -18,9 +18,11 @@ pub fn upload(
     let mut inst = instance.write().unwrap();
 
     let mut options = MultipartFormDataOptions::new();
+    let mut raw = MultipartFormDataField::raw("file");
+    raw.size_limit = inst.size_limit as u64;
     options
         .allowed_fields
-        .push(MultipartFormDataField::raw("file"));
+        .push(raw);
     let mut form_data = MultipartFormData::parse(content_type, data, options).unwrap();
     let x = form_data.raw.remove("file");
 
