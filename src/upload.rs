@@ -11,7 +11,7 @@ pub fn upload(
     tera: TeraState,
     content_type: &ContentType,
     data: Data,
-) -> Html<String> {
+) -> Page {
     let mut inst = instance.write().unwrap();
     let mut ctx = Context::new();
     let mut options = MultipartFormDataOptions::new();
@@ -28,11 +28,11 @@ pub fn upload(
             match e {
                 MultipartFormDataError::DataTooLargeError(_) => {
                     ctx.insert("reason", &format!("The file exceeded the size limit of {}B.", inst.size_limit));
-                    return Html(tera.render("upload_error.html", &ctx).unwrap())
+                    return tera.html("upload_error.html", &ctx)
                 },
                 _ => {
                     ctx.insert("reason", "Some unhandled error occurred.");
-                    return Html(tera.render("upload_error.html", &ctx).unwrap())
+                    return tera.html("upload_error.html", &ctx)
                 }
             }
         }
@@ -42,14 +42,14 @@ pub fn upload(
     match field_option {
         None => {
             ctx.insert("reason", "No file data was provided.");
-            return Html(tera.render("upload_error.html", &ctx).unwrap())
+            return tera.html("upload_error.html", &ctx)
         },
         Some(field_type) => {
             match field_type {
                 RawField::Single(field) => actual_field = field,
                 _ => {
                     ctx.insert("reason", "More than one file field was given.");
-                    return Html(tera.render("upload_error.html", &ctx).unwrap())
+                    return tera.html("upload_error.html", &ctx)
                 }
             }
         }
@@ -58,13 +58,13 @@ pub fn upload(
     let hash = hasher.finalize();
     if inst.files.contains_key(&hash) {
         ctx.insert("reason", &format!("A file with the CRC checksum {} already exists.", hash));
-        return Html(tera.render("upload_error.html", &ctx).unwrap())
+        return tera.html("upload_error.html", &ctx)
     }
     let field_len = actual_field.raw.len();
     if field_len > inst.size_limit {
         let str = format!("The file, sized {}B, exceeded the size limit of {}B.", field_len, inst.size_limit);
         ctx.insert("reason", &str);
-        return Html(tera.render("upload_error.html", &ctx).unwrap())
+        return tera.html("upload_error.html", &ctx)
     }
     let file = File {
         content_type: content_type.clone(),
@@ -74,6 +74,5 @@ pub fn upload(
     ctx.insert("id", &hash);
     ctx.insert("filename", &file.original_name);
     inst.files.insert(hash, file);
-    Html(tera.render("successful_upload.html", &ctx).unwrap())
-
+    tera.html("successful_upload.html", &ctx)
 }

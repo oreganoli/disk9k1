@@ -14,15 +14,17 @@ mod file;
 mod instance;
 mod prelude;
 mod upload;
+mod util;
+
 
 #[get("/")]
-fn index(instance: LockState, tera: TeraState) -> Html<String> {
+fn index(instance: LockState, tera: TeraState) -> Page {
     let inst = instance.read().unwrap();
     let mut ctx = Context::new();
     ctx.insert("name", &inst.name);
     ctx.insert("description", &inst.description);
     ctx.insert("size_limit", &inst.size_limit);
-    Html(tera.render("index.html", &ctx).unwrap())
+    tera.html("index.html", &ctx)
 }
 
 fn main() {
@@ -33,8 +35,9 @@ fn main() {
         files: BTreeMap::new(),
     };
     let tera = Tera::new("templates/**/*").expect("Expected a template directory.");
+    let renderer = Renderer(tera);
     rocket::ignite()
-        .manage(tera)
+        .manage(renderer)
         .manage(std::sync::RwLock::new(instance))
         .mount(
             "/",
