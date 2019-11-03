@@ -24,15 +24,6 @@
     <button class="login">Login</button>
     <button class="register">Register</button>
 </form>
-
-<div class="quick_upload">
-    <h1>Quick upload</h1>
-    <form action="upload" enctype="multipart/form-data" method="post">
-        <input name="file" type="file">
-        <input type="submit">
-    </form>
-    <p>The maximum file size is {{ size_limit / 1048576 }} MiB.</p>
-</div>
-
+{% include "quick_upload.html" %}
 </body>
 </html>
