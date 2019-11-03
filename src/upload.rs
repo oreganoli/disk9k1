@@ -40,7 +40,8 @@ pub fn upload(
             );
             let file = data::file_from_raw(&content, &raw);
             ctx.insert("id", &hash);
-            ctx.insert("filename", &file.original_name);
+            let url = rocket::http::uri::Uri::percent_encode(&file.original_name);
+            ctx.insert("filename", &url);
             inst.files.insert(hash, file);
             tera.html("successful_upload.html", &ctx)
         }
