@@ -1,12 +1,14 @@
 use crc32fast::Hasher;
-use rocket::Data;
 use rocket::http::ContentType;
+use rocket::Data;
 use rocket_multipart_form_data::{
     MultipartFormData, MultipartFormDataError, MultipartFormDataField, MultipartFormDataOptions,
     RawField, SingleRawField,
 };
 
 use crate::prelude::*;
+
+mod data;
 
 #[post("/upload", data = "<data>")]
 pub fn upload(
@@ -17,71 +19,38 @@ pub fn upload(
 ) -> Page {
     let mut inst = instance.write().unwrap();
     let mut ctx = Context::new();
-    let mut options = MultipartFormDataOptions::new();
-    let mut raw = MultipartFormDataField::raw("file");
-    let mut hasher = Hasher::new();
-    raw.size_limit = inst.size_limit as u64;
-    options.allowed_fields.push(raw);
-    let form_data: MultipartFormData;
-    match MultipartFormData::parse(content_type, data, options) {
-        Ok(data) => form_data = data,
-        Err(e) => match e {
-            MultipartFormDataError::DataTooLargeError(_) => {
+    let data = data::file_field_from_form(&content_type, data, inst.size_limit as u64);
+    use data::FileFormError as FFE;
+    match data {
+        Ok(raw) => {
+            let mut hasher = Hasher::new();
+            hasher.update(&raw.raw);
+            let hash = hasher.finalize();
+            if inst.files.contains_key(&hash) {
                 ctx.insert(
                     "reason",
-                    &format!("The file exceeded the size limit of {}B.", inst.size_limit),
+                    &format!("A file with the CRC checksum {} already exists.", hash),
                 );
                 return tera.html("upload_error.html", &ctx);
             }
-            _ => {
-                ctx.insert("reason", "Some unhandled error occurred.");
-                return tera.html("upload_error.html", &ctx);
-            }
-        },
-    }
-    let field_option = form_data.raw.get("file");
-    let actual_field: &SingleRawField;
-    match field_option {
-        None => {
-            ctx.insert("reason", "No file data was provided.");
-            return tera.html("upload_error.html", &ctx);
+            let file = data::file_from_raw(content_type, raw);
+            ctx.insert("id", &hash);
+            ctx.insert("filename", &file.original_name);
+            inst.files.insert(hash, file);
+            tera.html("successful_upload.html", &ctx)
         }
-        Some(field_type) => match field_type {
-            RawField::Single(field) => actual_field = field,
-            _ => {
-                ctx.insert("reason", "More than one file field was given.");
-                return tera.html("upload_error.html", &ctx);
-            }
-        },
+        Err(e) => {
+            let reason = match e {
+                FFE::NoData => "No file data was provided",
+                FFE::BadForm => "The upload form was invalid.",
+                FFE::TooLarge => &format!(
+                    "The file exceeded the size limit of {}B.",
+                    mebibytes(inst.size_limit as u64)
+                ),
+                FFE::Other => "Some unhandled upload error occurred.",
+            };
+            ctx.insert("reason", reason);
+            tera.html("upload_error.html", &ctx)
+        }
     }
-    hasher.update(&actual_field.raw);
-    let hash = hasher.finalize();
-    if inst.files.contains_key(&hash) {
-        ctx.insert(
-            "reason",
-            &format!("A file with the CRC checksum {} already exists.", hash),
-        );
-        return tera.html("upload_error.html", &ctx);
-    }
-    let field_len = actual_field.raw.len();
-    if field_len > inst.size_limit {
-        let str = format!(
-            "The file, sized {}B, exceeded the size limit of {}B.",
-            field_len, inst.size_limit
-        );
-        ctx.insert("reason", &str);
-        return tera.html("upload_error.html", &ctx);
-    }
-    let file = File {
-        content_type: content_type.clone(),
-        original_name: actual_field
-            .file_name
-            .as_ref()
-            .map_or(String::from("file"), |s| s.clone()),
-        data: actual_field.raw.clone(),
-    };
-    ctx.insert("id", &hash);
-    ctx.insert("filename", &file.original_name);
-    inst.files.insert(hash, file);
-    tera.html("successful_upload.html", &ctx)
 }
