@@ -16,7 +16,6 @@ mod prelude;
 mod upload;
 mod util;
 
-
 #[get("/")]
 fn index(instance: LockState, tera: TeraState) -> Page {
     let inst = instance.read().unwrap();
