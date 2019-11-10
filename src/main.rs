@@ -13,6 +13,7 @@ use prelude::*;
 mod file;
 mod instance;
 mod prelude;
+mod schema;
 mod upload;
 mod util;
 
