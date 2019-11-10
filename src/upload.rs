@@ -31,7 +31,7 @@ pub fn upload(
                     "reason",
                     &format!("A file with the CRC checksum {} already exists.", hash),
                 );
-                return tera.html("upload_error.html", &ctx);
+                return tera.html("PAGE_upload_error.html", &ctx);
             }
             let mime = &raw.raw.sniff_mime_type();
             use rocket::http::{ContentType, MediaType};
@@ -44,7 +44,7 @@ pub fn upload(
             let url = rocket::http::uri::Uri::percent_encode(&file.original_name);
             ctx.insert("filename", &url);
             inst.files.insert(hash, file);
-            tera.html("successful_upload.html", &ctx)
+            tera.html("PAGE_successful_upload.html", &ctx)
         }
         Err(e) => {
             let reason = match e {
@@ -57,7 +57,7 @@ pub fn upload(
                 FFE::Other => "Some unhandled upload error occurred.".to_owned(),
             };
             ctx.insert("reason", &reason);
-            tera.html("upload_error.html", &ctx)
+            tera.html("PAGE_upload_error.html", &ctx)
         }
     }
 }

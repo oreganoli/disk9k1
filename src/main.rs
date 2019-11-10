@@ -25,12 +25,12 @@ fn index(instance: LockState, tera: TeraState) -> Page {
     let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
     ctx.insert("instance", &data);
-    tera.html("index.html", &ctx)
+    tera.html("PAGE_index.html", &ctx)
 }
 
 #[get("/login")]
 fn login_or_register(tera: TeraState) -> Page {
-    tera.html("login_or_register.html", &Context::new())
+    tera.html("PAGE_login_or_register.html", &Context::new())
 }
 
 fn main() {

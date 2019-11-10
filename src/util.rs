@@ -11,7 +11,7 @@ impl Renderer {
             let string = format!("Error description: {}, kind: {:?}", f, f.source());
             let mut ctx = Context::new();
             ctx.insert("reason", &string);
-            self.0.render("template_error.html", &ctx).unwrap()
+            self.0.render("PAGE_template_error.html", &ctx).unwrap()
         }))
     }
 }

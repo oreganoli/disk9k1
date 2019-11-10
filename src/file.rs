@@ -18,7 +18,7 @@ pub fn file_info(instance: LockState, tera: TeraState, id: u32) -> Option<Page> 
         let mut ctx = Context::new();
         ctx.insert("id", &id);
         ctx.insert("original_name", &file.original_name);
-        Some(tera.html("file_info.html", &ctx))
+        Some(tera.html("PAGE_file_info.html", &ctx))
     })
 }
 
