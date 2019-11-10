@@ -58,6 +58,21 @@ form {
     margin-top:50px;
 }
 
+.column_center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+}
+
+.login_form, .registration_form {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
+    justify-items: center;
+}
+
 button {
     font-size: 20px;
     color:#000;
@@ -70,7 +85,6 @@ button {
 button.login {
     background-color:#94D369;
     width:250px;
-    margin-left:calc(50vw - 125px);
 }
 
 button.login:hover {
@@ -79,7 +93,6 @@ button.login:hover {
 button.register {
     background-color: #75AAFA;
     width:200px;
-    margin-left:calc(50vw - 100px);
 }
 button.register:hover {
     background-color: #86bbfb;

@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!--    normalize.css ensures a uniform base look on all platforms -->
-    <!--    other stylesheets can be applied after it and expected to look the same everywhere-->
-    <link href="../static/normalize.css" rel="stylesheet">
-    <link rel="stylesheet" href="../static/home.css">
+    {% include "links.html" %}
+    <script src="../static/js/login_register_form.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% if instance %}
@@ -25,9 +23,11 @@
 <h1 class="title">{{instance.name}}</h1>
 <h3>{{instance.description}}</h3>
 
-<div>
+<div class="column_center">
     <button class="login">Login</button>
+    {% include "login_form.html" %}
     <button class="register">Register</button>
+    {% include "registration_form.html" %}
 </div>
 {% include "quick_upload.html" %}
 {% else %}
