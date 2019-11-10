@@ -5,6 +5,8 @@ use schema::instance;
 
 use crate::file::File;
 use crate::prelude::*;
+use crate::user::repo::{UserRepo, UserRepository};
+use crate::user::NewUser;
 
 mod repo;
 
@@ -12,18 +14,26 @@ mod repo;
 pub struct Instance {
     /// The repo for the global `InstanceData`.
     pub ins_repo: Box<dyn InstanceRepository + Sync + Send>,
+    /// The repo for user data.
+    pub user_repo: Box<dyn UserRepository + Sync + Send>,
     pub files: BTreeMap<u32, File>,
 }
 
 impl Instance {
     pub fn new() -> Self {
-        let mut repo = InstanceRepo::new();
-        if repo.get().unwrap().is_none() {
+        let mut ins_repo = InstanceRepo::new();
+        if ins_repo.get().unwrap().is_none() {
             eprintln!("No instance data was found, assuming first run and populating with default values.");
-            repo.set(InstanceData::default()).unwrap();
+            ins_repo.set(InstanceData::default()).unwrap();
+        }
+        let mut user_repo = UserRepo::new();
+        if user_repo.read_all().unwrap().len() == 0 {
+            eprintln!("No accounts were found. Generating admin account from env variables...");
+            user_repo.create(NewUser::generate_admin()).unwrap();
         }
         Self {
-            ins_repo: Box::new(repo),
+            ins_repo: Box::new(ins_repo),
+            user_repo: Box::new(user_repo),
             files: BTreeMap::new(),
         }
     }

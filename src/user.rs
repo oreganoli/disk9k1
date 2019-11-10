@@ -2,7 +2,8 @@ use schema::users;
 
 use crate::prelude::*;
 
-mod repo;
+pub mod auth;
+pub mod repo;
 
 /// The publicly-visible information about users.
 #[derive(Serialize)]
@@ -51,6 +52,19 @@ impl NewUser {
             password,
             quick_token,
             is_admin,
+        }
+    }
+    pub fn generate_admin() -> Self {
+        use std::env::var;
+        Self {
+            name: var("ADMIN_USERNAME")
+                .expect("The environment variable ADMIN_USERNAME must be set."),
+            email: var("ADMIN_EMAIL").expect("The environment variable ADMIN_EMAIL must be set."),
+            password: var("ADMIN_PASSWORD")
+                .expect("The environment variable ADMIN_PASSWORD must be set."),
+            quick_token: var("ADMIN_TOKEN")
+                .expect("The environment variable ADMIN_TOKEN must be set."),
+            is_admin: true,
         }
     }
 }
