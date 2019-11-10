@@ -16,42 +16,35 @@ pub struct InstanceRepo {
     pool: HandledPool,
     /// The value last set. Re-gotten after updates.
     cache: Option<InstanceData>,
-    /// Whether or not the cache should be updated.
-    should_update: bool,
 }
 
 impl InstanceRepo {
     pub fn new() -> Self {
-        Self {
+        let mut repo = Self {
             pool: HandledPool::new(),
             cache: None,
-            should_update: true,
-        }
+        };
+        repo.update_cache();
+        repo
     }
     pub fn cache(&self) -> Option<InstanceData> {
         self.cache.clone()
     }
     pub fn update_cache(&mut self) {
-        self.should_update = true;
-        self.cache = self.get().unwrap();
-        self.should_update = false;
+        let conn = self.pool.get();
+        instance::table.first(&conn).map_or_else(
+            |err| match err {
+                diesel::result::Error::NotFound => Ok(None),
+                _ => Err(()),
+            },
+            |inst: InstanceData| Ok(Some(inst)),
+        )
     }
 }
 
 impl InstanceRepository for InstanceRepo {
     fn get(&self) -> Result<Option<InstanceData>, ()> {
-        if self.should_update {
-            let conn = self.pool.get();
-            instance::table.first(&conn).map_or_else(
-                |err| match err {
-                    diesel::result::Error::NotFound => Ok(None),
-                    _ => Err(()),
-                },
-                |inst: InstanceData| Ok(Some(inst)),
-            )
-        } else {
-            Ok(self.cache())
-        }
+        Ok(self.cache())
     }
     fn set(&mut self, data: InstanceData) -> Result<(), ()> {
         let conn = self.pool.get();
