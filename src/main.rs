@@ -42,12 +42,12 @@ fn main() {
         .mount(
             "/",
             routes![
-                index,
-                file::file_info,
-                file::get_file,
-                file::get_file_named,
-                upload::upload
-            ],
+            //                index,
+            //                file::file_info,
+            //                file::get_file,
+            //                file::get_file_named,
+            //                upload::upload
+                        ],
         )
         .mount(
             "/static",
