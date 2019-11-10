@@ -17,6 +17,7 @@ mod instance;
 mod prelude;
 pub mod schema;
 mod upload;
+mod user;
 mod util;
 
 #[get("/")]
