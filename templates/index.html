@@ -2,17 +2,11 @@
 <html lang="en">
 <head>
     {% include "links.html" %}
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if instance %}
     <title>{{instance.name}}</title>
-    {% else %}
-    <title>Database error</title>
-    {% endif %}
 </head>
 <body class="column_center">
-{% if instance %}
 <nav class="menu sticky_header">
     <ul>
         <li><a href="#">Home</a></li>
@@ -26,9 +20,5 @@
 </div>
 {% include "log_reg_forms.html" %}
 {% include "quick_upload.html" %}
-{% else %}
-<h1>Rendering failed</h1>
-<p class="error_reason">The instance's global data could not be loaded.</p>
-{% endif %}
 </body>
 </html>
