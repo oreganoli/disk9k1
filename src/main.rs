@@ -29,6 +29,11 @@ fn index(instance: LockState, tera: TeraState) -> Page {
     tera.html("index.html", &ctx)
 }
 
+#[get("/login")]
+fn login_or_register(tera: TeraState) -> Page {
+    tera.html("login_or_register.html", &Context::new())
+}
+
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
@@ -42,10 +47,10 @@ fn main() {
             "/",
             routes![
                 index,
-                //                file::file_info,
-                //                file::get_file,
-                //                file::get_file_named,
-                //                upload::upload
+                login_or_register //                file::file_info,
+                                  //                file::get_file,
+                                  //                file::get_file_named,
+                                  //                upload::upload
             ],
         )
         .mount(
