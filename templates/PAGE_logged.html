@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "links.html" %}
+    <meta charset="UTF-8">
+    {% if user %}
+    <title>You are logged in</title>
+    {% else %}
+    <title>You are not logged in</title>
+    {% endif %}
+</head>
+<body class="column_center">
+{% include "top_bar.html" %}
+{% if user %}
+<p>You are logged in as the user {{user.name}} at {{user.email}}.</p>
+{% if user.is_admin %}
+<p>You are the admin of {{instance.name}}.</p>
+{% endif %}
+{% else %}
+<p>You are not logged in.</p>
+{% endif %}
+</body>
+</html>

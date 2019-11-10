@@ -20,10 +20,15 @@ mod user;
 mod util;
 
 #[get("/")]
-fn index(instance: LockState, tera: TeraState) -> Page {
+fn index(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
     let inst = instance.read().unwrap();
     let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
+    let user = inst.user_from_cookies(&mut cookies);
+    match user {
+        Some(u) => ctx.insert("user", &u.to_info()),
+        None => (),
+    };
     ctx.insert("instance", &data);
     tera.html("PAGE_index.html", &ctx)
 }
@@ -46,10 +51,14 @@ fn main() {
             "/",
             routes![
                 index,
-                login_or_register //                file::file_info,
-                                  //                file::get_file,
-                                  //                file::get_file_named,
-                                  //                upload::upload
+                login_or_register,
+                user::auth::logged,
+                user::auth::authenticate,
+                user::auth::logout,
+                //                file::file_info,
+                //                file::get_file,
+                //                file::get_file_named,
+                //                upload::upload
             ],
         )
         .mount(

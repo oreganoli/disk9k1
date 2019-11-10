@@ -3,5 +3,13 @@
         <li><a href="#">Home</a></li>
         <li><a href="#">My files</a></li>
         <li><a href="#">Contact</a></li>
+        {% if user %}
+        <li>
+            <p>Logged in as <b>{{user.name}}</b></p>
+            <form action="logout" class="logout_form" method="post">
+                <button class="logout_button" type="submit">Log out</button>
+            </form>
+        </li>
+        {% endif %}
     </ul>
 </nav>

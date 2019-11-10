@@ -10,6 +10,7 @@ pub mod repo;
 pub struct UserInfo<'a> {
     pub id: i32,
     pub name: &'a str,
+    pub email: &'a str,
     pub joined: NaiveDateTime,
     pub is_admin: bool,
 }
@@ -70,10 +71,11 @@ impl NewUser {
 }
 
 impl User {
-    fn to_info(&self) -> UserInfo {
+    pub fn to_info(&self) -> UserInfo {
         UserInfo {
             id: self.id,
             name: &self.name,
+            email: &self.email,
             joined: self.joined,
             is_admin: self.is_admin,
         }
