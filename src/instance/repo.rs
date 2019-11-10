@@ -24,20 +24,23 @@ impl InstanceRepo {
             pool: HandledPool::new(),
             cache: None,
         };
-        repo.update_cache();
+        repo.update_cache().unwrap();
         repo
     }
     pub fn cache(&self) -> Option<InstanceData> {
         self.cache.clone()
     }
-    pub fn update_cache(&mut self) {
+    pub fn update_cache(&mut self) -> Result<(), ()> {
         let conn = self.pool.get();
         instance::table.first(&conn).map_or_else(
             |err| match err {
-                diesel::result::Error::NotFound => Ok(None),
+                diesel::result::Error::NotFound => Ok(()),
                 _ => Err(()),
             },
-            |inst: InstanceData| Ok(Some(inst)),
+            |inst: InstanceData| {
+                self.cache = Some(inst);
+                Ok(())
+            },
         )
     }
 }
@@ -55,7 +58,7 @@ impl InstanceRepository for InstanceRepo {
                 .map_or_else(
                     |_| Err(()),
                     |_| {
-                        self.update_cache();
+                        self.update_cache().unwrap();
                         Ok(())
                     },
                 )
@@ -70,7 +73,7 @@ impl InstanceRepository for InstanceRepo {
                 .map_or_else(
                     |_| Err(()),
                     |_| {
-                        self.update_cache();
+                        self.update_cache().unwrap();
                         Ok(())
                     },
                 )

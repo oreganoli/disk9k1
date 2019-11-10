@@ -2,6 +2,8 @@ use schema::users;
 
 use crate::prelude::*;
 
+mod repo;
+
 /// The publicly-visible information about users.
 #[derive(Serialize)]
 pub struct UserInfo<'a> {
@@ -11,37 +13,54 @@ pub struct UserInfo<'a> {
     pub is_admin: bool,
 }
 
-#[derive(Queryable, Insertable)]
-struct User {
-    id: Option<i32>,
+#[derive(Queryable, Clone)]
+pub struct User {
+    id: i32,
     name: String,
+    email: String,
     /// Self-explanatory. Hashed.
     password: String,
     /// The quick-upload token, hashed.
     quick_token: String,
-    joined: Option<NaiveDateTime>,
+    joined: NaiveDateTime,
     is_admin: bool,
 }
 
-impl User {
-    /// A constructor lacking the `id` and `joined` fields, which the DB should supply by itself.
-    pub fn new(name: String, password: String, quick_token: String, is_admin: bool) -> Self {
-        User {
-            id: None,
+#[derive(Insertable)]
+#[table_name = "users"]
+/// An `Insertable` struct that lacks the `id` and `joined` fields of an actual `User`, which are assigned by the DB.
+pub struct NewUser {
+    name: String,
+    email: String,
+    password: String,
+    quick_token: String,
+    is_admin: bool,
+}
+
+impl NewUser {
+    pub fn new(
+        name: String,
+        email: String,
+        password: String,
+        quick_token: String,
+        is_admin: bool,
+    ) -> Self {
+        Self {
             name,
+            email,
             password,
             quick_token,
-            joined: None,
             is_admin,
         }
     }
+}
+
+impl User {
     fn to_info(&self) -> UserInfo {
         UserInfo {
-            id: self.id.expect("Could not get an ID out of the User struct"),
+            id: self.id,
             name: &self.name,
-            joined: self
-                .joined
-                .expect("Could not get a joining date out of the User struct"),
+            joined: self.joined,
             is_admin: self.is_admin,
         }
     }

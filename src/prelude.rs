@@ -13,6 +13,7 @@ pub type TeraState<'a> = State<'a, Renderer>;
 
 pub type Page = Html<String>;
 
+pub const BCRYPT_COST: u32 = 4;
 pub const BYTES_TO_MEBIBYTE: f64 = 1048576.;
 
 /// Shorthand alias for a pooled `r2d2` connection.
