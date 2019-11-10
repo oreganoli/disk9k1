@@ -13,7 +13,7 @@ pub trait InstanceRepository {
 /// Diesel-based repo for `InstanceData`
 pub struct InstanceRepo {
     /// The SQL connection pool.
-    pool: Pool,
+    pool: HandledPool,
     /// The value last set. Re-gotten after updates.
     cache: Option<InstanceData>,
     /// Whether or not the cache should be updated.
@@ -23,7 +23,7 @@ pub struct InstanceRepo {
 impl InstanceRepo {
     pub fn new() -> Self {
         Self {
-            pool: create_pool(),
+            pool: HandledPool::new(),
             cache: None,
             should_update: true,
         }
@@ -31,12 +31,17 @@ impl InstanceRepo {
     pub fn cache(&self) -> Option<InstanceData> {
         self.cache.clone()
     }
+    pub fn update_cache(&mut self) {
+        self.should_update = true;
+        self.cache = self.get().unwrap();
+        self.should_update = false;
+    }
 }
 
 impl InstanceRepository for InstanceRepo {
     fn get(&self) -> Result<Option<InstanceData>, ()> {
         if self.should_update {
-            let conn = self.pool.get().unwrap();
+            let conn = self.pool.get();
             instance::table.first(&conn).map_or_else(
                 |err| match err {
                     diesel::result::Error::NotFound => Ok(None),
@@ -49,7 +54,7 @@ impl InstanceRepository for InstanceRepo {
         }
     }
     fn set(&mut self, data: InstanceData) -> Result<(), ()> {
-        let conn = self.pool.get().unwrap();
+        let conn = self.pool.get();
         if let None = self.get().unwrap() {
             diesel::insert_into(instance::table)
                 .values(data)
@@ -57,9 +62,7 @@ impl InstanceRepository for InstanceRepo {
                 .map_or_else(
                     |_| Err(()),
                     |_| {
-                        self.should_update = true;
-                        self.cache = self.get().unwrap();
-                        self.should_update = false;
+                        self.update_cache();
                         Ok(())
                     },
                 )
@@ -74,9 +77,7 @@ impl InstanceRepository for InstanceRepo {
                 .map_or_else(
                     |_| Err(()),
                     |_| {
-                        self.should_update = true;
-                        self.cache = self.get().unwrap();
-                        self.should_update = false;
+                        self.update_cache();
                         Ok(())
                     },
                 )

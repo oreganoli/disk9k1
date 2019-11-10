@@ -22,8 +22,7 @@ mod util;
 #[get("/")]
 fn index(instance: LockState, tera: TeraState) -> Page {
     let inst = instance.read().unwrap();
-    let data = inst.ins_repo.get().unwrap().unwrap();
-    dbg!(&data);
+    let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
     ctx.insert("instance", &data);
     tera.html("index.html", &ctx)

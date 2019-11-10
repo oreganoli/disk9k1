@@ -5,7 +5,7 @@ pub use tera::{Context, Tera};
 
 pub use crate::file::File;
 pub use crate::schema;
-pub use crate::util::{create_pool, mebibytes, Renderer};
+pub use crate::util::{mebibytes, HandledPool, Renderer};
 
 pub type LockState<'a> = State<'a, std::sync::RwLock<crate::instance::Instance>>;
 pub type TeraState<'a> = State<'a, Renderer>;
