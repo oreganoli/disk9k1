@@ -33,6 +33,14 @@ table! {
 }
 
 table! {
+    instance (name) {
+        name -> Text,
+        description -> Text,
+        size_limit -> Int8,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         name -> Text,
@@ -52,5 +60,6 @@ allow_tables_to_appear_in_same_query!(
     content,
     directories,
     files,
+    instance,
     users,
 );

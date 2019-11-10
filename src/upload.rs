@@ -17,8 +17,9 @@ pub fn upload(
     data: Data,
 ) -> Page {
     let mut inst = instance.write().unwrap();
+    let mut inst_data = inst.ins_repo.get().unwrap().unwrap();
     let mut ctx = Context::new();
-    let data = data::file_field_from_form(content_type.clone(), data, inst.size_limit as u64);
+    let data = data::file_field_from_form(content_type.clone(), data, inst_data.size_limit as u64);
     use data::FileFormError as FFE;
     match data {
         Ok(raw) => {
@@ -51,7 +52,7 @@ pub fn upload(
                 FFE::BadForm => "The upload form was invalid.".to_owned(),
                 FFE::TooLarge => format!(
                     "The file exceeded the size limit of {} MiB.",
-                    mebibytes(inst.size_limit as u64)
+                    mebibytes(inst_data.size_limit as u64)
                 ),
                 FFE::Other => "Some unhandled upload error occurred.".to_owned(),
             };

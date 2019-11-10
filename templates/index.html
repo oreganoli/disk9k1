@@ -7,9 +7,14 @@
     <link rel="stylesheet" href="../static/home.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{name}}</title>
+    {% if instance %}
+    <title>{{instance.name}}</title>
+    {% else %}
+    <title>Database error</title>
+    {% endif %}
 </head>
 <body>
+{% if instance %}
 <nav class="menu">
     <ul>
         <li><a href="#">Home</a></li>
@@ -17,13 +22,17 @@
         <li><a href="#">Contact</a></li>
     </ul>
 </nav>
-<h1 class="title">{{name}}</h1>
-<h3>{{description}}</h3>
+<h1 class="title">{{instance.name}}</h1>
+<h3>{{instance.description}}</h3>
 
 <form action="" method="post">
     <button class="login">Login</button>
     <button class="register">Register</button>
 </form>
 {% include "quick_upload.html" %}
+{% else %}
+<h1>Rendering failed</h1>
+<p class="error_reason">The instance's global data could not be loaded.</p>
+{% endif %}
 </body>
 </html>
