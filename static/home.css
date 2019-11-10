@@ -67,6 +67,16 @@ form {
     flex-direction: column;
 }
 
+label {
+    font-weight: bold;
+}
+
+.input_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
 .column_center_up {
     display: flex;
     flex-direction: column;
@@ -80,7 +90,6 @@ form {
     align-items: center;
     justify-content: center;
 }
-
 .log_reg_forms {
     display: flex;
     flex-direction: row;

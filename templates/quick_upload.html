@@ -1,8 +1,16 @@
 <div class="quick_upload column_center">
     <h1>Quick upload</h1>
     <form action="upload" enctype="multipart/form-data" method="post">
-        <input name="file" type="file">
-        <input type="submit">
+        <label for="file_input">File: </label>
+        <input id="file_input" name="file" type="file">
+        <label for="token_input"
+               title="The unique code that allows you to upload files without going through the hassle of logging in.">Token:</label>
+        <input autocomplete="off" id="token_input" name="token" type="password">
+        <div class="input_row">
+            <label for="public_input">Public</label>
+            <input checked="checked" id="public_input" name="public" type="checkbox">
+        </div>
+        <button id="file_submit" type="submit">Send file</button>
     </form>
     <p>The maximum file size is {{ instance.size_limit / 1048576 }} MiB.</p>
 </div>
