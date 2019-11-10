@@ -47,6 +47,16 @@ h1.title {
     text-align: center;
     margin-top:25%;
 }
+
+h2 {
+    text-align: center;
+}
+
+.or {
+    vertical-align: center;
+    margin-left: 1em;
+    margin-right: 1em;
+}
 h3 {
     margin-top:-2%;
     text-align: center;
@@ -55,24 +65,39 @@ h3 {
 form {
     display: flex;
     flex-direction: column;
-    margin-top:50px;
 }
 
+.column_center_up {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
 .column_center {
+    justify-self: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-items: center;
 }
 
+.log_reg_forms {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
 .login_form, .registration_form {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    align-items: center;
-    justify-items: center;
+    margin-left: 1em;
+    margin-right: 1em;
+    justify-content: space-between;
 }
 
+.sticky_header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
 button {
     font-size: 20px;
     color:#000;
@@ -81,6 +106,12 @@ button {
     padding:10px 40px;
     cursor: pointer;
     transition: .3s;
+}
+
+.login, .register {
+    height: 2em;
+    align-self: center;
+    margin-bottom: 0;
 }
 button.login {
     background-color:#94D369;
