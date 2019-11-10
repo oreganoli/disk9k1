@@ -1,6 +1,10 @@
 pub use chrono::NaiveDateTime;
 pub use diesel::prelude::*;
-pub use rocket::{response::content::Html, State};
+pub use rocket::{
+    http::{Cookie, Cookies},
+    response::content::Html,
+    State,
+};
 pub use serde::{Deserialize, Serialize};
 pub use tera::{Context, Tera};
 
