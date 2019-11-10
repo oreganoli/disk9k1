@@ -3,7 +3,7 @@ table! {
         hash -> Int4,
         mimetype -> Text,
         first_uploaded -> Timestamp,
-        times_upload -> Int4,
+        times_uploaded -> Int4,
         times_downloaded -> Int4,
         data -> Bytea,
     }
