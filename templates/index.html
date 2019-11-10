@@ -7,17 +7,8 @@
     <title>{{instance.name}}</title>
 </head>
 <body class="column_center">
-<nav class="menu sticky_header">
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">My files</a></li>
-        <li><a href="#">Contact</a></li>
-    </ul>
-</nav>
-<div>
-<h1 class="title">{{instance.name}}</h1>
-<h3>{{instance.description}}</h3>
-</div>
+{% include "top_bar.html" %}
+{% include "welcome.html" %}
 {% include "log_reg_forms.html" %}
 {% include "quick_upload.html" %}
 </body>
