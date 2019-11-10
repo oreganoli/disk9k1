@@ -13,7 +13,7 @@ pub struct UserInfo {
 
 #[derive(Queryable, Insertable)]
 struct User {
-    id: i32,
+    id: Option<i32>,
     name: String,
     /// Self-explanatory. Hashed.
     password: String,
