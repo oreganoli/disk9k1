@@ -9,6 +9,7 @@ pub use serde::{Deserialize, Serialize};
 pub use tera::{Context, Tera};
 
 pub use crate::file::File;
+pub use crate::instance::Instance;
 pub use crate::schema;
 pub use crate::util::{mebibytes, HandledPool, Renderer};
 
