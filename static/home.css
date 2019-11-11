@@ -70,6 +70,20 @@ label {
     font-weight: bold;
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: start;
+}
+
+.vertical_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .input_row {
     display: flex;
     flex-direction: row;

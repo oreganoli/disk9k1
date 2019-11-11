@@ -9,9 +9,11 @@
 {% include "top_bar.html" %}
 <div class="main_container">
     <h1>Settings</h1>
-    {% include "form_change_password.html" %}
-    {% include "form_change_email.html" %}
-    {% include "form_change_username.html" %}
+    <div class="row">
+        {% include "form_change_password.html" %}
+        {% include "form_change_email.html" %}
+        {% include "form_change_username.html" %}
+    </div>
     {% include "form_delete_self.html" %}
 </div>
 </body>

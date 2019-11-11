@@ -13,6 +13,9 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        {% if user.is_admin %}
+        <th>Email</th>
+        {% endif %}
         <th>Joined</th>
         <th>Role</th>
     </tr>
@@ -20,6 +23,9 @@
     <tr>
         <td><a href="../../user/{{each.id}}">{{each.id}}</a></td>
         <td><a href="../../user/{{each.id}}">{{each.name}}</a></td>
+        {% if user.is_admin %}
+        <td><a href="mailto:{{each.email}}">{{each.email}}</a></td>
+        {% endif %}
         <td>{{each.joined}}</td>
         <td>
             {% if each.is_admin %}
