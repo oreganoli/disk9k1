@@ -26,12 +26,16 @@
         <th>Username</th>
         <td>{{requested_user.name}}</td>
     </tr>
-    {% if requested_user.is_admin %}
+    {% if requested_user.is_admin or user and user.is_admin or requested_user.id == user.id %}
     <tr>
         <th>E-mail address</th>
         <td>{{requested_user.email}}</td>
     </tr>
     {% endif %}
+    <tr>
+        <th>Joined</th>
+        <td>{{requested_user.joined}}</td>
+    </tr>
 </table>
 </body>
 </html>

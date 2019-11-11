@@ -12,12 +12,14 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Joined</th>
         <th>Role</th>
     </tr>
     {% for each in users %}
     <tr>
         <td><a href="../../user/{{each.id}}">{{each.id}}</a></td>
         <td><a href="../../user/{{each.id}}">{{each.name}}</a></td>
+        <td>{{each.joined}}</td>
         <td>
             {% if each.is_admin %}
             Administrator
