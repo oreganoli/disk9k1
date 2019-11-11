@@ -70,7 +70,7 @@ pub fn authenticate(
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                Ok(Redirect::to(uri!(logged)))
+                Ok(Redirect::to(uri!(crate::index)))
             } else {
                 Err(Redirect::to(uri!(crate::login_or_register)))
             }
@@ -84,5 +84,5 @@ pub fn authenticate(
 pub fn logout(mut cookies: Cookies) -> Redirect {
     cookies.remove_private(Cookie::named("username"));
     cookies.remove_private(Cookie::named("password"));
-    Redirect::to(uri!(logged))
+    Redirect::to(uri!(crate::index))
 }
