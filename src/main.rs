@@ -55,6 +55,7 @@ fn main() {
                 instance::users::users,
                 user::auth::authenticate,
                 user::auth::logout,
+                user::delete::delete_account,
                 user::info::get_user,
                 user::info::get_me,
                 user::register::register,
