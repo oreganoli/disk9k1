@@ -14,6 +14,7 @@ pub trait UserRepository {
     fn update_name(&mut self, id: i32, new_name: String) -> Result<(), ()>;
     fn update_password(&mut self, id: i32, new_password: String) -> Result<(), ()>;
     fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), ()>;
+    fn delete(&mut self, id: i32) -> Result<(), ()>;
 }
 
 /// The concrete Diesel repo.
@@ -115,6 +116,18 @@ impl UserRepository for UserRepo {
         let conn = self.pool.get();
         diesel::update(users::table.find(id))
             .set(users::password.eq(bcrypt::hash(new_token, BCRYPT_COST).unwrap()))
+            .execute(&conn)
+            .map_or_else(
+                |_| Err(()),
+                |_| {
+                    self.update_cache().unwrap();
+                    Ok(())
+                },
+            )
+    }
+    fn delete(&mut self, id: i32) -> Result<(), ()> {
+        let conn = self.pool.get();
+        diesel::delete(users::table.find(id))
             .execute(&conn)
             .map_or_else(
                 |_| Err(()),
