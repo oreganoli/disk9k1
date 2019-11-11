@@ -39,20 +39,6 @@ pub struct AuthRequest {
     pub password: String,
 }
 
-#[get("/logged")]
-pub fn logged(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
-    let inst = instance.read().unwrap();
-    let data = inst.ins_repo.get().unwrap();
-    let mut ctx = Context::new();
-    ctx.insert("instance", &data);
-    let user = inst.user_from_cookies(&mut cookies);
-    match user {
-        Some(u) => ctx.insert("user", &u.to_info()),
-        None => (),
-    };
-    tera.html("PAGE_logged.html", &ctx)
-}
-
 #[post("/authenticate", data = "<auth_req>")]
 pub fn authenticate(
     instance: LockState,
