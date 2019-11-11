@@ -3,6 +3,7 @@ use schema::users;
 use crate::prelude::*;
 
 pub mod auth;
+pub mod info;
 pub mod register;
 pub mod repo;
 

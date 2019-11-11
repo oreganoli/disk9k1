@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "links.html" %}
+    <meta charset="UTF-8">
+    <title>
+        {% if user and user.id == requested_user.id %}
+        Your profile
+        {% else %}
+        User {{requested_user.name}}
+        {% endif %}
+    </title>
+</head>
+<body>
+{% include "top_bar.html" %}
+<h1>{{requested_user.name}}</h1>
+{% if requested_user.is_admin %}
+<h2>{{instance.name}} administrator</h2>
+{% endif %}
+<table>
+    <tr>
+        <th>ID</th>
+        <td>{{requested_user.id}}</td>
+    </tr>
+    <tr>
+        <th>Username</th>
+        <td>{{requested_user.name}}</td>
+    </tr>
+    <tr>
+        <th>E-mail address</th>
+        <td>{{requested_user.email}}</td>
+    </tr>
+</table>
+</body>
+</html>

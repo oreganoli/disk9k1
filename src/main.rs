@@ -54,6 +54,8 @@ fn main() {
                 login_or_register,
                 user::auth::authenticate,
                 user::auth::logout,
+                user::info::get_user,
+                user::info::get_me,
                 user::register::register,
                 //                file::file_info,
                 //                file::get_file,
