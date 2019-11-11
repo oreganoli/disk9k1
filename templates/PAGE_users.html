@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "links.html" %}
+    <meta charset="UTF-8">
+    <title>{{instance.name}} users</title>
+</head>
+<body>
+{% include "top_bar.html" %}
+<h1>Users</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Role</th>
+    </tr>
+    {% for each in users %}
+    <tr>
+        <td><a href="../../user/{{each.id}}">{{each.id}}</a></td>
+        <td><a href="../../user/{{each.id}}">{{each.name}}</a></td>
+        <td>
+            {% if each.is_admin %}
+            Administrator
+            {% else %}
+            User
+            {% if user.is_admin %}
+            <form action="../../delete_account" class="button_form" id="del_user_button_form_{{each.id}}" method="post">
+                <input id="delete_user_input_{{each.id}}" name="id" type="hidden" value="{{each.id}}">
+                <button class="delete_user_button" id="del_user_button_{{each.id}}" type="submit">Delete</button>
+            </form>
+            {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

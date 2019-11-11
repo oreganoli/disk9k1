@@ -9,6 +9,7 @@ use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
 
 mod repo;
+pub mod users;
 
 /// The "god struct" that holds Disk9001's state.
 pub struct Instance {

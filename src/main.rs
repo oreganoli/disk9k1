@@ -52,6 +52,7 @@ fn main() {
             routes![
                 index,
                 login_or_register,
+                instance::users::users,
                 user::auth::authenticate,
                 user::auth::logout,
                 user::info::get_user,
