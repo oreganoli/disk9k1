@@ -9,6 +9,7 @@ use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
 
 mod repo;
+pub mod settings;
 pub mod users;
 
 /// The "god struct" that holds Disk9001's state.
@@ -41,7 +42,7 @@ impl Instance {
 }
 
 /// The data global to the Disk9001 instance.
-#[derive(Clone, Debug, Serialize, Queryable, Insertable)]
+#[derive(Clone, Debug, FromForm, Serialize, Queryable, Insertable)]
 #[table_name = "instance"]
 pub struct InstanceData {
     /// The instance's name.

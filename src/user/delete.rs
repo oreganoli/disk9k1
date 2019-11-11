@@ -40,10 +40,10 @@ pub fn delete_account(
     let mut inst = instance.write().unwrap();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(crate::login_or_register))),
+        None => return Err(Redirect::to(uri!(super::auth::login))),
     };
     match inst.delete_user(da_req.id, user.id) {
-        Err(_) => Err(Redirect::to(uri!(crate::login_or_register))),
+        Err(_) => Err(Redirect::to(uri!(super::auth::login))),
         Ok(_) => {
             if user.is_admin {
                 Ok(Redirect::to(uri!(crate::instance::users::users)))

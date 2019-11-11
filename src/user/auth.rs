@@ -51,17 +51,22 @@ pub fn authenticate(
         .read_by_name(auth_req.username.clone())
         .unwrap();
     user.map_or_else(
-        || Err(Redirect::to(uri!(crate::login_or_register))),
+        || Err(Redirect::to(uri!(login))),
         |u| {
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
                 Ok(Redirect::to(uri!(crate::index)))
             } else {
-                Err(Redirect::to(uri!(crate::login_or_register)))
+                Err(Redirect::to(uri!(login)))
             }
         },
     )
+}
+
+#[get("/login")]
+pub fn login(tera: TeraState) -> Page {
+    tera.html("PAGE_login.html", &Context::new())
 }
 
 /// Self-explanatory.

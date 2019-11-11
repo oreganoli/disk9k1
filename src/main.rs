@@ -33,11 +33,6 @@ fn index(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
     tera.html("PAGE_index.html", &ctx)
 }
 
-#[get("/login")]
-fn login_or_register(tera: TeraState) -> Page {
-    tera.html("PAGE_login_or_register.html", &Context::new())
-}
-
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
@@ -51,9 +46,11 @@ fn main() {
             "/",
             routes![
                 index,
-                login_or_register,
+                instance::settings::modify_instance,
+                instance::settings::panel,
                 instance::users::users,
                 user::auth::authenticate,
+                user::auth::login,
                 user::auth::logout,
                 user::delete::delete_account,
                 user::info::get_user,
