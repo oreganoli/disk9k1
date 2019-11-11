@@ -27,7 +27,7 @@ table! {
         hash -> Int4,
         created -> Timestamp,
         updated -> Timestamp,
-        directory -> Int4,
+        directory -> Nullable<Int4>,
         public -> Bool,
     }
 }
