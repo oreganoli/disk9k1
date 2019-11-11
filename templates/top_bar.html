@@ -5,9 +5,25 @@
         <li><a href="#">Contact</a></li>
         {% if user %}
         <li>
+            <a href="../../settings">Settings</a>
+        </li>
+        {% if user.is_admin %}
+        <li>
+            <a href="../../panel">Global settings</a>
+        </li>
+        {% endif %}
+        <li>
             <p>Logged in as <b>{{user.name}}</b></p>
+        </li>
+        <li>
             <form action="../../logout" class="logout_form" method="post">
                 <button class="logout_button" type="submit">Log out</button>
+            </form>
+        </li>
+        {% else %}
+        <li>
+            <form action="../../login" class="button_form" method="get">
+                <button class="login" type="submit">Log in</button>
             </form>
         </li>
         {% endif %}
