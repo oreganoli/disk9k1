@@ -53,3 +53,20 @@ pub fn delete_account(
         }
     }
 }
+
+#[get("/delete_account_confirm")]
+pub fn del_acc_confirm(
+    instance: LockState,
+    tera: TeraState,
+    mut cookies: Cookies,
+) -> Result<Page, Redirect> {
+    let inst = instance.read().unwrap();
+    let user = match inst.user_from_cookies(&mut cookies) {
+        Some(u) => u,
+        None => return Err(Redirect::to(uri!(super::auth::login))),
+    };
+    let mut ctx = Context::new();
+    ctx.insert("instance", &inst.ins_repo.get().unwrap());
+    ctx.insert("user", &user.to_info());
+    Ok(tera.html("PAGE_delete_account_confirm.html", &ctx))
+}

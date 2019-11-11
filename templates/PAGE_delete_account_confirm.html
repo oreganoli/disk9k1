@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "links.html" %}
+    <meta charset="UTF-8">
+
+    <title>Delete {{user}}?</title>
+</head>
+<body>
+{% include "top_bar.html" %}
+<h1>Are you sure you want to delete the account {{user.name}}?</h1>
+<div>
+    <form action="../../delete_account" method="post">
+        <input name="id" type="hidden" value="{{user.id}}">
+        <button type="submit">Yes, delete my account</button>
+    </form>
+</div>
+</body>
+</html>
