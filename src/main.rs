@@ -55,6 +55,7 @@ fn main() {
                 user::auth::logged,
                 user::auth::authenticate,
                 user::auth::logout,
+                user::register::register,
                 //                file::file_info,
                 //                file::get_file,
                 //                file::get_file_named,

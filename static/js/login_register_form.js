@@ -1,7 +1,7 @@
 $(document).ready(function () {
     let login_form = $(".login_form");
-    let reg_form = $(".registration_form");
     let login_button = $(".login");
+    let reg_form = $(".registration_form");
     let reg_button = $(".register");
     let or = $(".or");
     login_form.hide();
