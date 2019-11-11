@@ -2,7 +2,10 @@
     <ul>
         <li><a href="../../">Home</a></li>
         <li><a href="#">My files</a></li>
-        <li><a href="../../users/1">Contact</a></li>
+        <li><a href="../../user/1">Contact</a></li>
+        <li>
+            <a href="../../users">Users</a>
+        </li>
         {% if user %}
         <li>
             <a href="../../settings">Settings</a>
@@ -13,7 +16,7 @@
         </li>
         {% endif %}
         <li>
-            <p>Logged in as <b>{{user.name}}</b></p>
+            <p>Logged in as <a href="../../me"><b>{{user.name}}</b></a></p>
         </li>
         <li>
             <form action="../../logout" class="logout_form" method="post">
