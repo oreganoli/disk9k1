@@ -19,20 +19,6 @@ mod upload;
 mod user;
 mod util;
 
-#[get("/")]
-fn index(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
-    let inst = instance.read().unwrap();
-    let data = inst.ins_repo.get().unwrap();
-    let mut ctx = Context::new();
-    let user = inst.user_from_cookies(&mut cookies);
-    match user {
-        Some(u) => ctx.insert("user", &u.to_info()),
-        None => (),
-    };
-    ctx.insert("instance", &data);
-    tera.html("PAGE_index.html", &ctx)
-}
-
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
@@ -45,7 +31,7 @@ fn main() {
         .mount(
             "/",
             routes![
-                index,
+                instance::index,
                 instance::settings::modify_instance,
                 instance::settings::panel,
                 instance::users::users,

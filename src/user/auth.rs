@@ -56,7 +56,7 @@ pub fn authenticate(
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                Ok(Redirect::to(uri!(crate::index)))
+                Ok(Redirect::to(uri!(crate::instance::index)))
             } else {
                 Err(Redirect::to(uri!(login)))
             }
@@ -75,5 +75,5 @@ pub fn login(tera: TeraState) -> Page {
 pub fn logout(mut cookies: Cookies) -> Redirect {
     cookies.remove_private(Cookie::named("username"));
     cookies.remove_private(Cookie::named("password"));
-    Redirect::to(uri!(crate::index))
+    Redirect::to(uri!(crate::instance::index))
 }
