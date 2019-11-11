@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <title>Login or register</title>
 </head>
-<div>
-    <h1 class="title">Log in to proceed</h1>
-</div>
-<body class="column_center">
+<body class="column_center_up">
 {% include "top_bar.html" %}
-{% include "log_reg_forms.html" %}
+<div class="main_container">
+    <div>
+        <h1 class="title">Log in to proceed</h1>
+    </div>
+    {% include "log_reg_forms.html" %}
+</div>
 </body>
 </html>

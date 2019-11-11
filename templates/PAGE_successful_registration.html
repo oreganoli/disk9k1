@@ -7,6 +7,7 @@
 </head>
 <body>
 {% include "top_bar.html" %}
+<div class="main_container">
 <div>
     <h1>Successfully registered</h1>
     <p>Now you can log in to {{instance.name}}. Your quick-access token, which you can use to upload files without
@@ -14,5 +15,6 @@
     <p>Write it down or memorize it and <b>do not show it to anyone else.</b></p>
 </div>
 {% include "login_form.html" %}
+</div>
 </body>
 </html>

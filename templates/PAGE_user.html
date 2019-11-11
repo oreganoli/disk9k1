@@ -13,6 +13,7 @@
 </head>
 <body>
 {% include "top_bar.html" %}
+<div class="main_container">
 <h1>{{requested_user.name}}</h1>
 {% if requested_user.is_admin %}
 <h2>{{instance.name}} administrator</h2>
@@ -37,5 +38,6 @@
         <td>{{requested_user.joined}}</td>
     </tr>
 </table>
+</div>
 </body>
 </html>

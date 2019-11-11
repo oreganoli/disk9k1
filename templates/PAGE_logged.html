@@ -11,6 +11,7 @@
 </head>
 <body class="column_center">
 {% include "top_bar.html" %}
+<div class="main_container">
 {% if user %}
 <p>You are logged in as the user {{user.name}} at {{user.email}}.</p>
 {% if user.is_admin %}
@@ -19,5 +20,6 @@
 {% else %}
 <p>You are not logged in.</p>
 {% endif %}
+</div>
 </body>
 </html>
