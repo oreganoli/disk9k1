@@ -14,7 +14,7 @@
 <body>
 {% include "top_bar.html" %}
 <div class="main_container">
-<h1>{{requested_user.name}}</h1>
+    <h1 class="title">{{requested_user.name}}</h1>
 {% if requested_user.is_admin %}
 <h2>{{instance.name}} administrator</h2>
 {% endif %}
