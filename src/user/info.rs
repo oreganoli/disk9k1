@@ -1,13 +1,8 @@
 use crate::prelude::*;
 
 #[get("/user/<id>")]
-pub fn get_user(
-    instance: LockState,
-    tera: TeraState,
-    mut cookies: Cookies,
-    id: i32,
-) -> Option<Page> {
-    let inst = instance.read().unwrap();
+pub fn get_user(tera: TeraState, mut cookies: Cookies, id: i32) -> Option<Page> {
+    let inst = instance_read();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     let user = inst.user_from_cookies(&mut cookies);
@@ -26,8 +21,8 @@ pub fn get_user(
 }
 
 #[get("/me")]
-pub fn get_me(instance: LockState, mut cookies: Cookies) -> Option<Redirect> {
-    let inst = instance.read().unwrap();
+pub fn get_me(mut cookies: Cookies) -> Option<Redirect> {
+    let inst = instance_read();
     match inst.user_from_cookies(&mut cookies) {
         Some(u) => Some(Redirect::to(format!("/user/{}", u.id))),
         None => None,

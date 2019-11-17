@@ -1,22 +1,16 @@
-use std::str::FromStr;
-
 use crc32fast::Hasher;
 use mime_sniffer::MimeTypeSniffer;
 use rocket::http::ContentType;
 use rocket::Data;
+use std::str::FromStr;
 
 use crate::prelude::*;
 
 mod data;
 
 #[post("/upload", data = "<data>")]
-pub fn upload(
-    instance: LockState,
-    tera: TeraState,
-    content_type: &ContentType,
-    data: Data,
-) -> Page {
-    let mut inst = instance.write().unwrap();
+pub fn upload(tera: TeraState, content_type: &ContentType, data: Data) -> Page {
+    let mut inst = instance_write();
     let inst_data = inst.ins_repo.get().unwrap().unwrap();
     let mut ctx = Context::new();
     let data = data::file_field_from_form(content_type.clone(), data, inst_data.size_limit as u64);

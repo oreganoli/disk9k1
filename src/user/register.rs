@@ -56,12 +56,8 @@ impl Instance {
 }
 
 #[post("/register", data = "<reg_req>")]
-pub fn register(
-    instance: LockState,
-    tera: TeraState,
-    reg_req: Form<RegistrationRequest>,
-) -> Result<Page, Error> {
-    let mut inst = instance.write().unwrap();
+pub fn register(tera: TeraState, reg_req: Form<RegistrationRequest>) -> Result<Page, Error> {
+    let mut inst = instance_write();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     inst.register_user(reg_req.into_inner()).map(|token| {

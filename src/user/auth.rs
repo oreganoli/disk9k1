@@ -45,12 +45,8 @@ pub struct AuthRequest {
 }
 
 #[post("/authenticate", data = "<auth_req>")]
-pub fn authenticate(
-    instance: LockState,
-    mut cookies: Cookies,
-    auth_req: Form<AuthRequest>,
-) -> Result<Redirect, Error> {
-    let inst = instance.read().unwrap();
+pub fn authenticate(mut cookies: Cookies, auth_req: Form<AuthRequest>) -> Result<Redirect, Error> {
+    let inst = instance_read();
     let user = inst.user_repo.read_by_name(auth_req.username.clone())?;
     user.map_or_else(
         || Error::user_auth(AuthError::BadCredentials),

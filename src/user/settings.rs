@@ -52,12 +52,8 @@ impl Instance {
 }
 
 #[get("/settings")]
-pub fn settings(
-    instance: LockState,
-    tera: TeraState,
-    mut cookies: Cookies,
-) -> Result<Page, Redirect> {
-    let inst = instance.read().unwrap();
+pub fn settings(tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect> {
+    let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),
@@ -70,11 +66,10 @@ pub fn settings(
 
 #[post("/change_password", data = "<cp_req>")]
 pub fn change_password(
-    instance: LockState,
     mut cookies: Cookies,
     cp_req: Form<PasswordChangeRequest>,
 ) -> Result<Redirect, Redirect> {
-    let mut inst = instance.write().unwrap();
+    let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),
@@ -99,11 +94,10 @@ pub struct EmailChangeRequest {
 
 #[post("/change_email", data = "<ec_req>")]
 pub fn change_email(
-    instance: LockState,
     mut cookies: Cookies,
     ec_req: Form<EmailChangeRequest>,
 ) -> Result<Redirect, Redirect> {
-    let mut inst = instance.write().unwrap();
+    let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),

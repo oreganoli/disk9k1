@@ -35,11 +35,10 @@ pub struct DeleteAccountRequest {
 
 #[post("/delete_account", data = "<da_req>")]
 pub fn delete_account(
-    instance: LockState,
     mut cookies: Cookies,
     da_req: Form<DeleteAccountRequest>,
 ) -> Result<Redirect, Redirect> {
-    let mut inst = instance.write().unwrap();
+    let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),
@@ -57,12 +56,8 @@ pub fn delete_account(
 }
 
 #[get("/delete_account_confirm")]
-pub fn del_acc_confirm(
-    instance: LockState,
-    tera: TeraState,
-    mut cookies: Cookies,
-) -> Result<Page, Redirect> {
-    let inst = instance.read().unwrap();
+pub fn del_acc_confirm(tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect> {
+    let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),

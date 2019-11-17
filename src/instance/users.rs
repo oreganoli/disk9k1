@@ -1,8 +1,8 @@
 use crate::prelude::*;
 
 #[get("/users")]
-pub fn users(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
-    let inst = instance.read().unwrap();
+pub fn users(tera: TeraState, mut cookies: Cookies) -> Page {
+    let inst = instance_read();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     let user = inst.user_from_cookies(&mut cookies);

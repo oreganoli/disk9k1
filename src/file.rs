@@ -12,8 +12,8 @@ pub struct File {
 }
 
 #[get("/metadata/<id>")]
-pub fn file_info(instance: LockState, tera: TeraState, id: u32) -> Option<Page> {
-    let inst = instance.read().unwrap();
+pub fn file_info(tera: TeraState, id: u32) -> Option<Page> {
+    let inst = instance_read();
     inst.files.get(&id).and_then(|file| {
         let mut ctx = Context::new();
         ctx.insert("id", &id);
@@ -24,8 +24,8 @@ pub fn file_info(instance: LockState, tera: TeraState, id: u32) -> Option<Page> 
 
 type FileGet = Option<Content<Stream<Cursor<Vec<u8>>>>>;
 
-fn file(instance: LockState, id: u32) -> FileGet {
-    let inst = instance.read().unwrap();
+fn file(id: u32) -> FileGet {
+    let inst = instance_read();
     inst.files.get(&id).and_then(|file| {
         Some(Content(
             file.content_type.clone(),
@@ -35,11 +35,11 @@ fn file(instance: LockState, id: u32) -> FileGet {
 }
 
 #[get("/file/<id>")]
-pub fn get_file(instance: LockState, id: u32) -> FileGet {
-    file(instance, id)
+pub fn get_file(id: u32) -> FileGet {
+    file(id)
 }
 
 #[get("/file/<id>/<_name>")]
-pub fn get_file_named(instance: LockState, id: u32, _name: Option<String>) -> FileGet {
-    file(instance, id)
+pub fn get_file_named(id: u32, _name: Option<String>) -> FileGet {
+    file(id)
 }

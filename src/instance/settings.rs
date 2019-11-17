@@ -23,11 +23,10 @@ impl Instance {
 
 #[post("/modify_instance", data = "<ins_req>")]
 pub fn modify_instance(
-    instance: LockState,
     mut cookies: Cookies,
     ins_req: Form<InstanceData>,
 ) -> Result<Redirect, Error> {
-    let mut inst = instance.write().unwrap();
+    let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Error::user_auth(AuthError::Unauthenticated("panel")),
@@ -38,7 +37,7 @@ pub fn modify_instance(
 
 #[get("/panel")]
 pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Result<Page, Error> {
-    let inst = instance.read().unwrap();
+    let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Error::user_auth(AuthError::Unauthenticated("panel")),
