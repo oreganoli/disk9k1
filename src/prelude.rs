@@ -10,7 +10,7 @@ pub use rocket::{
 pub use serde::{Deserialize, Serialize};
 pub use tera::{Context, Tera};
 
-pub use crate::error::Error;
+pub use crate::error::*;
 pub use crate::file::File;
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
