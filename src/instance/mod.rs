@@ -7,7 +7,6 @@ use crate::file::File;
 use crate::prelude::*;
 use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
-use crate::util::instance_read;
 
 mod repo;
 pub mod settings;

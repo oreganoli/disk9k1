@@ -10,8 +10,9 @@ extern crate serde;
 
 use rocket_contrib::serve;
 
-use instance::Instance;
 use prelude::*;
+use util::lock::Lock;
+use util::renderer::Renderer;
 
 mod error;
 mod file;
@@ -20,10 +21,12 @@ mod prelude;
 pub mod schema;
 //mod upload;
 mod user;
-mod util;
+pub mod util;
 
 lazy_static! {
+    /// A globally accessible `Instance` behind a `Lock`
     pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::new()));
+    /// The global template renderer.
     pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::new()));
 }
 

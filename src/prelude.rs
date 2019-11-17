@@ -1,4 +1,4 @@
-pub use std::sync::RwLock;
+pub use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 pub use chrono::NaiveDateTime;
 pub use diesel::prelude::*;
@@ -17,11 +17,10 @@ pub use crate::file::File;
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
 pub use crate::user::{NewUser, User, UserInfo};
-pub use crate::util::{
-    instance_read, instance_write, mebibytes, render, HandledPool, Lock, Renderer,
-};
-pub use crate::INSTANCE;
-pub use crate::TERA;
+pub use crate::util;
+pub use crate::util::instance::*;
+pub use crate::util::pool::HandledPool;
+pub use crate::util::renderer::render;
 
 pub type Page = Html<String>;
 
