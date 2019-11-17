@@ -50,7 +50,7 @@ pub fn delete_account(
             if user.is_admin {
                 Ok(Redirect::to(uri!(crate::instance::users::users)))
             } else {
-                Ok(Redirect::to(uri!(super::auth::logout)))
+                Ok(Redirect::temporary(uri!(super::auth::logout)))
             }
         }
     }

@@ -38,6 +38,9 @@
         <td>{{requested_user.joined}}</td>
     </tr>
 </table>
+    {% if user and requested_user.id == user.id and not user.is_admin %}
+    <a href="/delete_account_confirm">Delete my account</a>
+    {% endif %}
 </div>
 </body>
 </html>
