@@ -28,6 +28,7 @@ impl Error {
             Self::Db => "The database layer could not be accessed or was accessed improperly.",
             Self::User(a) => match a {
                 UserError::Auth(auth) => match auth {
+                    AuthError::BadCredentials => "Invalid username and/or password.",
                     AuthError::Unauthenticated(_) => "You are not logged in.",
                     AuthError::Unauthorized(_) => "You have insufficient privileges to do this.",
                 },
@@ -55,6 +56,9 @@ impl rocket::response::Responder<'_> for Error {
             Self::User(UserError::Auth(a)) => match a {
                 AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
                     ctx.insert("login_redirect", &redir);
+                    Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
+                }
+                AuthError::BadCredentials => {
                     Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
                 }
                 _ => reason.respond_to(request),

@@ -8,6 +8,7 @@ pub enum UserError {
 
 #[derive(Debug)]
 pub enum AuthError {
+    BadCredentials,
     Unauthenticated(&'static str),
     Unauthorized(&'static str),
 }

@@ -49,14 +49,11 @@ pub fn authenticate(
     instance: LockState,
     mut cookies: Cookies,
     auth_req: Form<AuthRequest>,
-) -> Result<Redirect, Redirect> {
+) -> Result<Redirect, Error> {
     let inst = instance.read().unwrap();
-    let user = inst
-        .user_repo
-        .read_by_name(auth_req.username.clone())
-        .unwrap();
+    let user = inst.user_repo.read_by_name(auth_req.username.clone())?;
     user.map_or_else(
-        || Err(Redirect::to(uri!(login))),
+        || Error::user_auth(AuthError::BadCredentials),
         |u| {
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
@@ -66,7 +63,7 @@ pub fn authenticate(
                         .unwrap_or(Uri::try_from("/").unwrap()),
                 ))
             } else {
-                Err(Redirect::to(uri!(login)))
+                Error::user_auth(AuthError::BadCredentials)
             }
         },
     )
