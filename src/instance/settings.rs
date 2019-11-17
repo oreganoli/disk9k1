@@ -46,11 +46,11 @@ pub fn modify_instance(
 }
 
 #[get("/panel")]
-pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect> {
+pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Result<Page, Error> {
     let inst = instance.read().unwrap();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(crate::user::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("panel")),
     };
     if user.to_info().is_admin {
         let mut ctx = Context::new();
@@ -58,6 +58,6 @@ pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Resu
         ctx.insert("user", &user.to_info());
         Ok(tera.html("PAGE_panel.html", &ctx))
     } else {
-        Err(Redirect::to(uri!(crate::user::auth::login)))
+        Error::user_auth(AuthError::Unauthorized("panel"))
     }
 }

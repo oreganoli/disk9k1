@@ -1,3 +1,7 @@
+use std::convert::TryFrom;
+
+use rocket::http::uri::Uri;
+
 use crate::prelude::*;
 
 impl User {
@@ -57,7 +61,10 @@ pub fn authenticate(
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                Ok(Redirect::to(auth_req.login_redirect.clone()))
+                Ok(Redirect::to(
+                    Uri::try_from(auth_req.login_redirect.clone())
+                        .unwrap_or(Uri::try_from("/").unwrap()),
+                ))
             } else {
                 Err(Redirect::to(uri!(login)))
             }

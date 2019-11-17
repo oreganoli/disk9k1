@@ -20,6 +20,9 @@ impl Error {
     pub fn user<T>(ue: UserError) -> Result<T, Self> {
         Err(Self::User(ue))
     }
+    pub fn user_auth<T>(ae: AuthError) -> Result<T, Self> {
+        Err(Self::User(UserError::Auth(ae)))
+    }
     pub fn reason(&self) -> &str {
         match &self {
             Self::Db => "The database layer could not be accessed or was accessed improperly.",
@@ -51,7 +54,6 @@ impl rocket::response::Responder<'_> for Error {
         match self {
             Self::User(UserError::Auth(a)) => match a {
                 AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
-                    let redir = redir.unwrap_or("/");
                     ctx.insert("login_redirect", &redir);
                     Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
                 }

@@ -8,8 +8,8 @@ pub enum UserError {
 
 #[derive(Debug)]
 pub enum AuthError {
-    Unauthenticated(Option<&'static str>),
-    Unauthorized(Option<&'static str>),
+    Unauthenticated(&'static str),
+    Unauthorized(&'static str),
 }
 
 #[derive(Debug)]
