@@ -59,7 +59,6 @@ pub fn settings(mut cookies: Cookies) -> Result<Page, Redirect> {
         None => return Err(Redirect::to(uri!(super::auth::login))),
     };
     let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get().unwrap());
     ctx.insert("user", &user.to_info());
     Ok(render("PAGE_settings.html", &ctx))
 }

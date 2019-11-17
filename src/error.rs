@@ -64,7 +64,6 @@ impl rocket::response::Responder<'_> for Error {
         let reason = self.reason().to_owned();
         let mut ctx = Context::new();
         let instance: RwLockReadGuard<'static, Instance> = instance_read();
-        ctx.insert("instance", &instance.ins_repo.get().unwrap());
         ctx.insert("reason", &reason);
         ctx.insert(
             "user",

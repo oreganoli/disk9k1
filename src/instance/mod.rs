@@ -66,13 +66,11 @@ impl std::default::Default for InstanceData {
 #[get("/")]
 pub fn index(mut cookies: Cookies) -> Page {
     let inst = instance_read();
-    let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
     let user = inst.user_from_cookies(&mut cookies);
     match user {
         Some(u) => ctx.insert("user", &u.to_info()),
         None => (),
     };
-    ctx.insert("instance", &data);
     render("PAGE_index.html", &ctx)
 }

@@ -4,7 +4,6 @@ use crate::prelude::*;
 pub fn get_user(mut cookies: Cookies, id: i32) -> Option<Page> {
     let inst = instance_read();
     let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get().unwrap());
     let user = inst.user_from_cookies(&mut cookies);
     match user {
         Some(u) => ctx.insert("user", &u.to_info()),

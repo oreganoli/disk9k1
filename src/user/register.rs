@@ -59,7 +59,6 @@ impl Instance {
 pub fn register(reg_req: Form<RegistrationRequest>) -> Result<Page, Error> {
     let mut inst = instance_write();
     let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get().unwrap());
     inst.register_user(reg_req.into_inner()).map(|token| {
         ctx.insert("token", &token);
         render("PAGE_successful_registration.html", &ctx)

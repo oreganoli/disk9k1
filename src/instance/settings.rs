@@ -44,7 +44,6 @@ pub fn panel(mut cookies: Cookies) -> Result<Page, Error> {
     };
     if user.to_info().is_admin {
         let mut ctx = Context::new();
-        ctx.insert("instance", &inst.ins_repo.get().unwrap());
         ctx.insert("user", &user.to_info());
         Ok(render("PAGE_panel.html", &ctx))
     } else {
