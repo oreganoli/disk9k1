@@ -11,6 +11,7 @@ use rocket_contrib::serve;
 use instance::Instance;
 use prelude::*;
 
+mod error;
 mod file;
 mod instance;
 mod prelude;
