@@ -56,10 +56,4 @@ joinable!(directories -> users (owner));
 joinable!(files -> content (hash));
 joinable!(files -> directories (directory));
 
-allow_tables_to_appear_in_same_query!(
-    content,
-    directories,
-    files,
-    instance,
-    users,
-);
+allow_tables_to_appear_in_same_query!(content, directories, files, instance, users,);

@@ -5,6 +5,7 @@ pub enum UserError {
     Registration(RegistrationError),
     PasswordChange(PasswordChangeError),
     EmailChange(EmailChangeError),
+    UsernameChange(UsernameChangeError),
 }
 
 #[derive(Debug)]
@@ -39,5 +40,12 @@ pub enum PasswordChangeError {
 #[derive(Debug)]
 pub enum EmailChangeError {
     Empty,
+    UserNonexistent,
+}
+
+#[derive(Debug)]
+pub enum UsernameChangeError {
+    Empty,
+    Taken,
     UserNonexistent,
 }

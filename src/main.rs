@@ -52,6 +52,7 @@ fn main() {
                 user::settings::settings,
                 user::settings::change_password,
                 user::settings::change_email,
+                user::settings::change_username,
                 //                file::file_info,
                 //                file::get_file,
                 //                file::get_file_named,

@@ -38,6 +38,9 @@ impl Error {
     pub fn user_change_email<T>(mc: EmailChangeError) -> Result<T, Self> {
         Err(Self::User(UserError::EmailChange(mc)))
     }
+    pub fn user_change_name<T>(uc: UsernameChangeError) -> Result<T, Self> {
+        Err(Self::User(UserError::UsernameChange(uc)))
+    }
     pub fn instance<T>(ie: InstanceError) -> Result<T, Self> {
         Err(Self::Instance(ie))
     }
@@ -70,6 +73,11 @@ impl Error {
                 UserError::EmailChange(emc) => match emc {
                     EmailChangeError::Empty => "No email address was provided.",
                     EmailChangeError::UserNonexistent => "This user does not exist.",
+                },
+                UserError::UsernameChange(uc) => match uc {
+                    UsernameChangeError::Empty => "No new username was provided.",
+                    UsernameChangeError::Taken => "That username is already taken.",
+                    UsernameChangeError::UserNonexistent => "This user does not exist.",
                 },
             },
             Self::Instance(a) => match a {
@@ -104,7 +112,9 @@ impl rocket::response::Responder<'_> for Error {
             Self::User(UserError::Registration(_)) => {
                 render("PAGE_registration_error.html", &ctx).respond_to(request)
             }
-            Self::User(UserError::PasswordChange(_)) | Self::User(UserError::EmailChange(_)) => {
+            Self::User(UserError::PasswordChange(_))
+            | Self::User(UserError::EmailChange(_))
+            | Self::User(UserError::UsernameChange(_)) => {
                 render("PAGE_settings.html", &ctx).respond_to(request)
             }
             Self::Instance(_) => render("PAGE_panel.html", &ctx).respond_to(request),
