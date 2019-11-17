@@ -25,10 +25,9 @@ impl Instance {
         }
     }
     pub fn user_change_email(&mut self, id: i32, new_mail: String) -> Result<(), Error> {
-        let user = match self.user_repo.read_by_id(id)? {
-            Some(u) => u,
-            None => return Error::user_change_email(EmailChangeError::UserNonexistent),
-        };
+        if self.user_repo.read_by_id(id)?.is_none() {
+            return Error::user_change_email(EmailChangeError::UserNonexistent);
+        }
         if new_mail.is_empty() {
             Error::user_change_email(EmailChangeError::Empty)
         } else {
@@ -43,10 +42,9 @@ impl Instance {
         if req.name.is_empty() {
             return Error::user_change_name(UsernameChangeError::Empty);
         }
-        let user = match self.user_repo.read_by_id(id)? {
-            Some(u) => u,
-            None => return Error::user_change_name(UsernameChangeError::UserNonexistent),
-        };
+        if self.user_repo.read_by_id(id)?.is_none() {
+            return Error::user_change_name(UsernameChangeError::UserNonexistent);
+        }
         if self.user_repo.read_by_name(req.name.clone())?.is_some() {
             return Error::user_change_name(UsernameChangeError::Taken);
         }
