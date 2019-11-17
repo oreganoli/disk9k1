@@ -37,6 +37,7 @@ impl Instance {
 pub struct AuthRequest {
     pub username: String,
     pub password: String,
+    pub login_redirect: String,
 }
 
 #[post("/authenticate", data = "<auth_req>")]
@@ -56,7 +57,7 @@ pub fn authenticate(
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                Ok(Redirect::to(uri!(crate::instance::index)))
+                Ok(Redirect::to(auth_req.login_redirect.clone()))
             } else {
                 Err(Redirect::to(uri!(login)))
             }

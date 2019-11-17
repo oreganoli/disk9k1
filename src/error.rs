@@ -2,7 +2,7 @@ use rocket::{Request, Response};
 
 pub use user::*;
 
-use crate::prelude::Status;
+use crate::prelude::*;
 
 pub mod user;
 
@@ -20,13 +20,14 @@ impl Error {
     pub fn user<T>(ue: UserError) -> Result<T, Self> {
         Err(Self::User(ue))
     }
-}
-
-impl rocket::response::Responder<'_> for Error {
-    fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
-        let reason = match self {
+    pub fn reason(&self) -> &str {
+        match &self {
             Self::Db => "The database layer could not be accessed or was accessed improperly.",
             Self::User(a) => match a {
+                UserError::Auth(auth) => match auth {
+                    AuthError::Unauthenticated(_) => "You are not logged in.",
+                    AuthError::Unauthorized(_) => "You have insufficient privileges to do this.",
+                },
                 UserError::Registration(reg) => match reg {
                     RegistrationError::UsernameTaken => "This username is taken.",
                     RegistrationError::UsernameNotGiven => "No username was provided",
@@ -37,7 +38,26 @@ impl rocket::response::Responder<'_> for Error {
                 },
             },
             Self::Other => "An unspecified error occurred.",
-        };
-        reason.respond_to(request)
+        }
+    }
+}
+
+impl rocket::response::Responder<'_> for Error {
+    fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
+        let reason = self.reason().to_owned();
+        match self {
+            Self::User(UserError::Auth(a)) => match a {
+                AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
+                    let redir = redir.unwrap_or("/");
+                    let tera = Tera::new("templates/**/*").unwrap();
+                    let mut ctx = Context::new();
+                    ctx.insert("reason", &reason);
+                    ctx.insert("login_redirect", &redir);
+                    Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
+                }
+                _ => reason.respond_to(request),
+            },
+            _ => reason.respond_to(request),
+        }
     }
 }
