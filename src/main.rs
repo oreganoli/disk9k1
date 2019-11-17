@@ -14,6 +14,7 @@ use prelude::*;
 use util::lock::Lock;
 use util::renderer::Renderer;
 
+mod directory;
 mod error;
 mod file;
 mod instance;
