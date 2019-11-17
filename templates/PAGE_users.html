@@ -21,8 +21,8 @@
     </tr>
     {% for each in users %}
     <tr>
-        <td><a href="../../user/{{each.id}}">{{each.id}}</a></td>
-        <td><a href="../../user/{{each.id}}">{{each.name}}</a></td>
+        <td><a href="/user/{{each.id}}">{{each.id}}</a></td>
+        <td><a href="/user/{{each.id}}">{{each.name}}</a></td>
         {% if user.is_admin %}
         <td><a href="mailto:{{each.email}}">{{each.email}}</a></td>
         {% endif %}
@@ -33,7 +33,7 @@
             {% else %}
             User
             {% if user.is_admin %}
-            <form action="../../delete_account" class="button_form" id="del_user_button_form_{{each.id}}" method="post">
+            <form action="/delete_account" class="button_form" id="del_user_button_form_{{each.id}}" method="post">
                 <input id="delete_user_input_{{each.id}}" name="id" type="hidden" value="{{each.id}}">
                 <button class="delete_user_button" id="del_user_button_{{each.id}}" type="submit">Delete</button>
             </form>
