@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::sync::{RwLockReadGuard, RwLockWriteGuard};
 
 use crate::prelude::*;
 
@@ -42,4 +43,24 @@ impl HandledPool {
             .get()
             .expect("Could not obtain a connection, panicking.")
     }
+}
+
+/// A newtype wrapper around `RwLocks` for easy `.read()`ing and `.write`ing.
+pub struct Lock<T>(pub RwLock<T>);
+
+impl<T> Lock<T> {
+    pub fn read(&self) -> RwLockReadGuard<'_, T> {
+        self.0.read().unwrap()
+    }
+    pub fn write(&self) -> RwLockWriteGuard<'_, T> {
+        self.0.write().unwrap()
+    }
+}
+
+pub fn instance_read() -> RwLockReadGuard<'static, Instance> {
+    crate::INSTANCE.read()
+}
+
+pub fn instance_write() -> RwLockWriteGuard<'static, Instance> {
+    crate::INSTANCE.write()
 }

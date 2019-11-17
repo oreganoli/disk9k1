@@ -3,6 +3,8 @@
 #[macro_use]
 extern crate diesel;
 #[macro_use]
+extern crate lazy_static;
+#[macro_use]
 extern crate rocket;
 extern crate serde;
 
@@ -19,6 +21,10 @@ pub mod schema;
 //mod upload;
 mod user;
 mod util;
+
+lazy_static! {
+    pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::new()));
+}
 
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds

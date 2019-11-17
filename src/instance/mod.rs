@@ -7,6 +7,7 @@ use crate::file::File;
 use crate::prelude::*;
 use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
+use crate::util::instance_read;
 
 mod repo;
 pub mod settings;
@@ -64,8 +65,8 @@ impl std::default::Default for InstanceData {
 }
 
 #[get("/")]
-pub fn index(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Page {
-    let inst = instance.read().unwrap();
+pub fn index(tera: TeraState, mut cookies: Cookies) -> Page {
+    let inst = instance_read();
     let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
     let user = inst.user_from_cookies(&mut cookies);

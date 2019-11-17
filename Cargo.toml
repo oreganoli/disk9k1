@@ -10,6 +10,7 @@ edition = "2018"
 bcrypt = "0.6.1"
 chrono = {version = "0.4.9", features = ["serde"]}
 crc32fast = "1.2.0"
+lazy_static = "1.4.0"
 mime-sniffer = "0.1.2"
 rocket = "0.4.2"
 rocket_contrib = "0.4.2"

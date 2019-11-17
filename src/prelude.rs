@@ -1,3 +1,5 @@
+pub use std::sync::RwLock;
+
 pub use chrono::NaiveDateTime;
 pub use diesel::prelude::*;
 pub use rocket::{
@@ -15,7 +17,8 @@ pub use crate::file::File;
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
 pub use crate::user::{NewUser, User, UserInfo};
-pub use crate::util::{mebibytes, HandledPool, Renderer};
+pub use crate::util::{instance_read, instance_write, mebibytes, HandledPool, Lock, Renderer};
+pub use crate::INSTANCE;
 
 pub type LockState<'a> = State<'a, std::sync::RwLock<crate::instance::Instance>>;
 pub type TeraState<'a> = State<'a, Renderer>;
