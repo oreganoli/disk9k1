@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use rocket::{Request, Response};
 
 pub use instance::*;
@@ -60,22 +62,28 @@ impl Error {
 impl rocket::response::Responder<'_> for Error {
     fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
         let reason = self.reason().to_owned();
-        let tera = Tera::new("templates/**/*").unwrap();
         let mut ctx = Context::new();
+        let instance: RwLockReadGuard<'static, Instance> = instance_read();
+        ctx.insert("instance", &instance.ins_repo.get().unwrap());
         ctx.insert("reason", &reason);
+        ctx.insert(
+            "user",
+            &instance
+                .user_from_cookies(request.cookies().borrow_mut())
+                .unwrap()
+                .to_info(),
+        );
         match self {
             Self::User(UserError::Auth(a)) => match a {
                 AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
                     ctx.insert("login_redirect", &redir);
-                    Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
+                    render("PAGE_login.html", &ctx).respond_to(request)
                 }
-                AuthError::BadCredentials => {
-                    Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
-                }
+                AuthError::BadCredentials => render("PAGE_login.html", &ctx).respond_to(request),
                 _ => reason.respond_to(request),
             },
             Self::User(UserError::Registration(_)) => {
-                Html(tera.render("PAGE_registration_error.html", &ctx).unwrap()).respond_to(request)
+                render("PAGE_registration_error.html", &ctx).respond_to(request)
             }
             _ => reason.respond_to(request),
         }
