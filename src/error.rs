@@ -1,4 +1,3 @@
-use rocket::response::ResponseBuilder;
 use rocket::{Request, Response};
 
 use crate::prelude::Status;
