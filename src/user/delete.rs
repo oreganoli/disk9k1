@@ -1,27 +1,22 @@
+use crate::error::AuthError::Unauthorized;
 use crate::prelude::*;
 
-pub enum UserDeletionError {
-    DoesNotExist,
-    IsAdmin,
-    NotAllowed,
-}
-
 impl Instance {
-    pub fn delete_user(&mut self, id: i32, requester: &User) -> Result<(), UserDeletionError> {
+    pub fn delete_user(&mut self, id: i32, requester: &User) -> Result<(), Error> {
         let user = self.user_repo.read_by_id(id).unwrap();
         let admin = self.user_repo.read_by_id(1).unwrap().unwrap();
         match user {
-            None => Err(UserDeletionError::DoesNotExist),
+            None => Error::user_del(DeletionError::DoesNotExist),
             Some(u) => {
                 if u.id == requester.id || admin.id == requester.id {
                     if u.id == admin.id {
-                        Err(UserDeletionError::IsAdmin)
+                        Error::user_del(DeletionError::IsAdmin)
                     } else {
                         self.user_repo.delete(u.id).unwrap();
                         Ok(())
                     }
                 } else {
-                    Err(UserDeletionError::NotAllowed)
+                    Error::user_auth(Unauthorized(format!("user/{}", u.id)))
                 }
             }
         }
@@ -37,30 +32,25 @@ pub struct DeleteAccountRequest {
 pub fn delete_account(
     mut cookies: Cookies,
     da_req: Form<DeleteAccountRequest>,
-) -> Result<Redirect, Redirect> {
+) -> Result<(), Error> {
     let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(super::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("me".to_owned())),
     };
-    match inst.delete_user(da_req.id, &user) {
-        Err(_) => Err(Redirect::to(uri!(super::auth::login))),
-        Ok(_) => {
-            if user.is_admin {
-                Ok(Redirect::to(uri!(crate::instance::users::users)))
-            } else {
-                Ok(Redirect::temporary(uri!(super::auth::logout)))
-            }
-        }
-    }
+    inst.delete_user(da_req.id, &user)
 }
 
 #[get("/delete_account_confirm")]
-pub fn del_acc_confirm(mut cookies: Cookies) -> Result<Page, Redirect> {
+pub fn del_acc_confirm(mut cookies: Cookies) -> Result<Page, Error> {
     let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(super::auth::login))),
+        None => {
+            return Error::user_auth(AuthError::Unauthenticated(
+                "delete_account_confirm".to_owned(),
+            ))
+        }
     };
     let mut ctx = Context::new();
     ctx.insert("user", &user.to_info());

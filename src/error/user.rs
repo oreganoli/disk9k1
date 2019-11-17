@@ -1,16 +1,22 @@
 #[derive(Debug)]
 pub enum UserError {
     Auth(AuthError),
+    Deletion(DeletionError),
     Registration(RegistrationError),
 }
 
 #[derive(Debug)]
 pub enum AuthError {
     BadCredentials,
-    Unauthenticated(&'static str),
-    Unauthorized(&'static str),
+    Unauthenticated(String),
+    Unauthorized(String),
 }
 
+#[derive(Debug)]
+pub enum DeletionError {
+    DoesNotExist,
+    IsAdmin,
+}
 #[derive(Debug)]
 pub enum RegistrationError {
     UsernameTaken,

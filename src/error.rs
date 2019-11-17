@@ -29,6 +29,9 @@ impl Error {
     pub fn user_auth<T>(ae: AuthError) -> Result<T, Self> {
         Err(Self::User(UserError::Auth(ae)))
     }
+    pub fn user_del<T>(de: DeletionError) -> Result<T, Self> {
+        Err(Self::User(UserError::Deletion(de)))
+    }
     pub fn instance<T>(ie: InstanceError) -> Result<T, Self> {
         Err(Self::Instance(ie))
     }
@@ -40,6 +43,10 @@ impl Error {
                     AuthError::BadCredentials => "Invalid username and/or password.",
                     AuthError::Unauthenticated(_) => "You are not logged in.",
                     AuthError::Unauthorized(_) => "You have insufficient privileges to do this.",
+                },
+                UserError::Deletion(del) => match del {
+                    DeletionError::DoesNotExist => "You are trying to delete a nonexistent user.",
+                    DeletionError::IsAdmin => "The admin account cannot be removed.",
                 },
                 UserError::Registration(reg) => match reg {
                     RegistrationError::UsernameTaken => "This username is taken.",
@@ -65,13 +72,12 @@ impl rocket::response::Responder<'_> for Error {
         let mut ctx = Context::new();
         let instance: RwLockReadGuard<'static, Instance> = instance_read();
         ctx.insert("reason", &reason);
-        ctx.insert(
-            "user",
-            &instance
-                .user_from_cookies(request.cookies().borrow_mut())
-                .unwrap()
-                .to_info(),
-        );
+        let user = instance.user_from_cookies(request.cookies().borrow_mut());
+        let info = match user.as_ref() {
+            Some(u) => Some(u.to_info()),
+            None => None,
+        };
+        ctx.insert("user", &info);
         match self {
             Self::User(UserError::Auth(a)) => match a {
                 AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
