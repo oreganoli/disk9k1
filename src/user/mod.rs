@@ -32,6 +32,33 @@ pub struct User {
     is_admin: bool,
 }
 
+impl User {
+    pub fn id(&self) -> i32 {
+        self.id
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn email(&self) -> &str {
+        &self.email
+    }
+    pub fn joined(&self) -> NaiveDateTime {
+        self.joined
+    }
+    pub fn is_admin(&self) -> bool {
+        self.is_admin
+    }
+    pub fn to_info(&self) -> UserInfo {
+        UserInfo {
+            id: self.id,
+            name: &self.name,
+            email: &self.email,
+            joined: self.joined,
+            is_admin: self.is_admin,
+        }
+    }
+}
+
 #[derive(Insertable)]
 #[table_name = "users"]
 /// An `Insertable` struct that lacks the `id` and `joined` fields of an actual `User`, which are assigned by the DB.
@@ -70,18 +97,6 @@ impl NewUser {
             quick_token: var("ADMIN_TOKEN")
                 .expect("The environment variable ADMIN_TOKEN must be set."),
             is_admin: true,
-        }
-    }
-}
-
-impl User {
-    pub fn to_info(&self) -> UserInfo {
-        UserInfo {
-            id: self.id,
-            name: &self.name,
-            email: &self.email,
-            joined: self.joined,
-            is_admin: self.is_admin,
         }
     }
 }
