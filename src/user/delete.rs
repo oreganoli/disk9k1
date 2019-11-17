@@ -40,6 +40,7 @@ pub fn delete_account(
     };
     inst.delete_user(da_req.id, &user)?;
     let mut ctx = Context::new();
+    ctx.insert("instance", &inst.ins_repo.get()?);
     ctx.insert("deleted_user_id", &da_req.id);
     Ok(render("PAGE_delete_account_successful.html", &ctx))
 }

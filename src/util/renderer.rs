@@ -13,7 +13,6 @@ impl Renderer {
     #[cfg(debug_assertions)]
     pub fn html(&mut self, name: &str, ctx: &Context) -> Page {
         let mut ctx = ctx.clone();
-        ctx.insert("instance", &instance_read().ins_repo.get().unwrap());
         self.0
             .full_reload()
             .expect("Could not reload the template directory.");
@@ -26,7 +25,6 @@ impl Renderer {
     #[cfg(not(debug_assertions))]
     pub fn html(&self, name: &str, ctx: &Context) -> Page {
         let mut ctx = ctx.clone();
-        ctx.insert("instance", instance_read().ins_repo.get().unwrap());
         Html(self.0.render(name, &ctx).unwrap_or_else(|f| {
             let string = format!("Error description: {}, kind: {:?}", f, f.source());
             ctx.insert("reason", &string);

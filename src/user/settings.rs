@@ -60,6 +60,7 @@ pub fn settings(mut cookies: Cookies) -> Result<Page, Error> {
         None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
     };
     let mut ctx = Context::new();
+    ctx.insert("instance", &inst.ins_repo.get()?);
     ctx.insert("user", &user.to_info());
     Ok(render("PAGE_settings.html", &ctx))
 }
