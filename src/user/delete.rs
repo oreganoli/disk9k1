@@ -7,19 +7,21 @@ pub enum UserDeletionError {
 }
 
 impl Instance {
-    pub fn delete_user(&mut self, id: i32, requesting_id: i32) -> Result<(), UserDeletionError> {
+    pub fn delete_user(&mut self, id: i32, requester: &User) -> Result<(), UserDeletionError> {
         let user = self.user_repo.read_by_id(id).unwrap();
         let admin = self.user_repo.read_by_id(1).unwrap().unwrap();
         match user {
             None => Err(UserDeletionError::DoesNotExist),
             Some(u) => {
-                if u.id != requesting_id && requesting_id != admin.id {
-                    Err(UserDeletionError::NotAllowed)
-                } else if u.id == requesting_id && u.id == admin.id {
-                    Err(UserDeletionError::IsAdmin)
+                if u.id == requester.id || admin.id == requester.id {
+                    if u.id == admin.id {
+                        Err(UserDeletionError::IsAdmin)
+                    } else {
+                        self.user_repo.delete(u.id).unwrap();
+                        Ok(())
+                    }
                 } else {
-                    self.user_repo.delete(u.id).unwrap();
-                    Ok(())
+                    Err(UserDeletionError::NotAllowed)
                 }
             }
         }
@@ -42,7 +44,7 @@ pub fn delete_account(
         Some(u) => u,
         None => return Err(Redirect::to(uri!(super::auth::login))),
     };
-    match inst.delete_user(da_req.id, user.id) {
+    match inst.delete_user(da_req.id, &user) {
         Err(_) => Err(Redirect::to(uri!(super::auth::login))),
         Ok(_) => {
             if user.is_admin {

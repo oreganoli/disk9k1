@@ -10,7 +10,7 @@ impl Instance {
     pub fn set_instance_data(
         &mut self,
         new_data: InstanceData,
-        requesting_id: i32,
+        requester: &User,
     ) -> Result<(), InstanceSettingsError> {
         if new_data.name.is_empty() {
             return Err(InstanceSettingsError::NameEmpty);
@@ -18,11 +18,7 @@ impl Instance {
         if new_data.size_limit < 0 {
             return Err(InstanceSettingsError::NegativeSizeLimit);
         }
-        let user = match self.user_repo.read_by_id(requesting_id).unwrap() {
-            Some(u) => u,
-            None => return Err(InstanceSettingsError::NotAllowed),
-        };
-        if user.to_info().is_admin {
+        if requester.is_admin() {
             self.ins_repo.set(new_data).unwrap();
             Ok(())
         } else {
@@ -42,7 +38,7 @@ pub fn modify_instance(
         Some(u) => u,
         None => return Err(Redirect::to(uri!(crate::user::auth::login))),
     };
-    match inst.set_instance_data(ins_req.into_inner(), user.to_info().id) {
+    match inst.set_instance_data(ins_req.into_inner(), &user) {
         Ok(()) => Ok(Redirect::to(uri!(panel))),
         Err(InstanceSettingsError::NotAllowed) => Err(Redirect::to(uri!(crate::user::auth::login))),
         Err(_) => Err(Redirect::to(uri!(panel))),

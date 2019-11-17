@@ -23,25 +23,14 @@ impl Instance {
     pub fn user_change_password(
         &mut self,
         req: PasswordChangeRequest,
-        requesting_id: i32,
+        requester: &User,
     ) -> Result<(), PasswordChangeError> {
-        let user = match self.user_repo.read_by_id(req.id).unwrap() {
-            Some(u) => u,
-            None => return Err(PasswordChangeError::UserNonexistent),
-        };
-        let requester = match self.user_repo.read_by_id(requesting_id).unwrap() {
-            Some(u) => {
-                if u.id != requesting_id {
-                    return Err(PasswordChangeError::NotAllowed);
-                } else {
-                    u
-                }
-            }
-            None => return Err(PasswordChangeError::NotAllowed),
-        };
+        if requester.id != req.id {
+            return Err(PasswordChangeError::NotAllowed);
+        }
         if req.con != req.new {
             Err(PasswordChangeError::NotMatching)
-        } else if req.con.is_empty() {
+        } else if req.new.is_empty() || req.con.is_empty() {
             Err(PasswordChangeError::FormIncomplete)
         } else {
             self.user_repo.update_password(req.id, req.con).unwrap();
@@ -91,7 +80,7 @@ pub fn change_password(
     };
     let req = cp_req.into_inner();
     let passwd = req.new.clone();
-    match inst.user_change_password(req, user.id) {
+    match inst.user_change_password(req, &user) {
         Ok(_) => {
             cookies.add_private(Cookie::new("password", passwd));
             Ok(Redirect::to(uri!(settings)))
