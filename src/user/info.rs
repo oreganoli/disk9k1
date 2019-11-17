@@ -6,9 +6,8 @@ pub fn get_user(mut cookies: Cookies, id: i32) -> Result<Option<Page>, Error> {
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get()?);
     let user = inst.user_from_cookies(&mut cookies);
-    match user {
-        Some(u) => ctx.insert("user", &u.to_info()),
-        None => (),
+    if let Some(u) = user {
+        ctx.insert("user", &u.to_info())
     }
     let requested_user = inst.user_repo.read_by_id(id)?;
     match requested_user {

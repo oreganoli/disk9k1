@@ -29,7 +29,7 @@ impl Instance {
             .unwrap();
         user.and_then(|u| {
             if u.verify_password(password.value()) {
-                Some(u.clone())
+                Some(u)
             } else {
                 None
             }
@@ -56,7 +56,7 @@ pub fn authenticate(mut cookies: Cookies, auth_req: Form<AuthRequest>) -> Result
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
                 Ok(Redirect::to(
                     Uri::try_from(auth_req.login_redirect.clone())
-                        .unwrap_or(Uri::try_from("/").unwrap()),
+                        .unwrap_or_else(|_| Uri::try_from("/").unwrap()),
                 ))
             } else {
                 Error::user_auth(AuthError::BadCredentials)

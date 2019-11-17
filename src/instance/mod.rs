@@ -21,15 +21,15 @@ pub struct Instance {
     pub files: BTreeMap<u32, File>,
 }
 
-impl Instance {
-    pub fn new() -> Self {
+impl Default for Instance {
+    fn default() -> Self {
         let mut ins_repo = InstanceRepo::new();
         if ins_repo.get().unwrap().is_none() {
             eprintln!("No instance data was found, assuming first run and populating with default values.");
             ins_repo.set(InstanceData::default()).unwrap();
         }
         let mut user_repo = UserRepo::new();
-        if user_repo.read_all().unwrap().len() == 0 {
+        if user_repo.read_all().unwrap().is_empty() {
             eprintln!("No accounts were found. Generating admin account from env variables...");
             user_repo.create(NewUser::generate_admin()).unwrap();
         }
@@ -58,7 +58,7 @@ impl std::default::Default for InstanceData {
         Self {
             name: "Disk9001".to_owned(),
             description: "A pomf.se and Google Drive clone. WIP.".to_owned(),
-            size_limit: 8388608,
+            size_limit: 8_388_608,
         }
     }
 }
@@ -69,9 +69,8 @@ pub fn index(mut cookies: Cookies) -> Result<Page, Error> {
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get()?);
     let user = inst.user_from_cookies(&mut cookies);
-    match user {
-        Some(u) => ctx.insert("user", &u.to_info()),
-        None => (),
+    if let Some(u) = user {
+        ctx.insert("user", &u.to_info())
     };
     Ok(render("PAGE_index.html", &ctx))
 }

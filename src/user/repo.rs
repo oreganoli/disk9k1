@@ -28,7 +28,7 @@ pub struct UserRepo {
 impl UserRepo {
     pub fn new() -> Self {
         let mut repo = Self {
-            pool: HandledPool::new(),
+            pool: HandledPool::default(),
             cache: None,
         };
         repo.update_cache().unwrap();

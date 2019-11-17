@@ -21,7 +21,7 @@ pub struct InstanceRepo {
 impl InstanceRepo {
     pub fn new() -> Self {
         let mut repo = Self {
-            pool: HandledPool::new(),
+            pool: HandledPool::default(),
             cache: None,
         };
         repo.update_cache().unwrap();
@@ -51,7 +51,7 @@ impl InstanceRepository for InstanceRepo {
     }
     fn set(&mut self, data: InstanceData) -> Result<(), Error> {
         let conn = self.pool.get();
-        if let None = self.get().unwrap() {
+        if self.get().unwrap().is_none() {
             diesel::insert_into(instance::table)
                 .values(data)
                 .execute(&conn)

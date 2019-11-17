@@ -6,10 +6,12 @@ use crate::TERA;
 /// A newtype that wraps `Tera` so we can avoid writing the `Html` wrapper and `.unwrap()`ping the value over and over.
 pub struct Renderer(pub Tera);
 
-impl Renderer {
-    pub fn new() -> Self {
+impl Default for Renderer {
+    fn default() -> Self {
         Self(Tera::new("templates/**/*").expect("Expected a template directory."))
     }
+}
+impl Renderer {
     #[cfg(debug_assertions)]
     pub fn html(&mut self, name: &str, ctx: &Context) -> Page {
         let mut ctx = ctx.clone();

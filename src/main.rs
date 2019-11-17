@@ -26,9 +26,9 @@ pub mod util;
 
 lazy_static! {
     /// A globally accessible `Instance` behind a `Lock`
-    pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::new()));
+    pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::default()));
     /// The global template renderer.
-    pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::new()));
+    pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::default()));
 }
 
 fn main() {

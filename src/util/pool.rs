@@ -13,10 +13,12 @@ pub fn create_pool() -> Pool {
 /// A newtype wrapper around `Pool`s for easy `.get()`ting.
 pub struct HandledPool(pub Pool);
 
-impl HandledPool {
-    pub fn new() -> Self {
+impl Default for HandledPool {
+    fn default() -> Self {
         Self(create_pool())
     }
+}
+impl HandledPool {
     pub fn get(&self) -> Connection {
         self.0
             .get()

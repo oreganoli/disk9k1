@@ -1,3 +1,4 @@
+pub use std::default::Default;
 pub use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 pub use chrono::NaiveDateTime;
@@ -25,7 +26,7 @@ pub use crate::util::renderer::render;
 pub type Page = Html<String>;
 
 pub const BCRYPT_COST: u32 = 4;
-pub const BYTES_TO_MEBIBYTE: f64 = 1048576.;
+pub const BYTES_TO_MEBIBYTE: f64 = 1_048_576f64;
 
 /// Shorthand alias for a pooled `r2d2` connection.
 pub type Connection = diesel::r2d2::PooledConnection<Manager>;
