@@ -7,43 +7,31 @@ pub struct PasswordChangeRequest {
     pub con: String,
 }
 
-pub enum PasswordChangeError {
-    FormIncomplete,
-    NotAllowed,
-    NotMatching,
-    UserNonexistent,
-}
-
-pub enum EmailChangeError {
-    Empty,
-    UserNonexistent,
-}
-
 impl Instance {
     pub fn user_change_password(
         &mut self,
         req: PasswordChangeRequest,
         requester: &User,
-    ) -> Result<(), PasswordChangeError> {
+    ) -> Result<(), Error> {
         if requester.id != req.id {
-            return Err(PasswordChangeError::NotAllowed);
+            return Error::user_auth(AuthError::Unauthorized("settings".to_owned()));
         }
         if req.con != req.new {
-            Err(PasswordChangeError::NotMatching)
+            Error::user_change_pass(PasswordChangeError::NotMatching)
         } else if req.new.is_empty() || req.con.is_empty() {
-            Err(PasswordChangeError::FormIncomplete)
+            Error::user_change_pass(PasswordChangeError::FormIncomplete)
         } else {
             self.user_repo.update_password(req.id, req.con).unwrap();
             Ok(())
         }
     }
-    pub fn user_change_email(&mut self, id: i32, new_mail: String) -> Result<(), EmailChangeError> {
+    pub fn user_change_email(&mut self, id: i32, new_mail: String) -> Result<(), Error> {
         let user = match self.user_repo.read_by_id(id).unwrap() {
             Some(u) => u,
-            None => return Err(EmailChangeError::UserNonexistent),
+            None => return Error::user_change_email(EmailChangeError::UserNonexistent),
         };
         if new_mail.is_empty() {
-            Err(EmailChangeError::Empty)
+            Error::user_change_email(EmailChangeError::Empty)
         } else {
             self.user_repo.update_email(id, new_mail).unwrap();
             Ok(())
@@ -67,23 +55,15 @@ pub fn settings(mut cookies: Cookies) -> Result<Page, Error> {
 pub fn change_password(
     mut cookies: Cookies,
     cp_req: Form<PasswordChangeRequest>,
-) -> Result<Redirect, Redirect> {
+) -> Result<Redirect, Error> {
     let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(super::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
     };
     let req = cp_req.into_inner();
-    let passwd = req.new.clone();
-    match inst.user_change_password(req, &user) {
-        Ok(_) => {
-            cookies.add_private(Cookie::new("password", passwd));
-            Ok(Redirect::to(uri!(settings)))
-        }
-        Err(PasswordChangeError::UserNonexistent) => Err(Redirect::to(uri!(super::auth::login))),
-        Err(PasswordChangeError::NotAllowed) => Err(Redirect::to(uri!(super::auth::login))),
-        _ => Err(Redirect::to(uri!(settings))),
-    }
+    inst.user_change_password(req, &user)
+        .map(|_| Redirect::to(uri!(settings)))
 }
 
 #[derive(FromForm)]
@@ -95,14 +75,12 @@ pub struct EmailChangeRequest {
 pub fn change_email(
     mut cookies: Cookies,
     ec_req: Form<EmailChangeRequest>,
-) -> Result<Redirect, Redirect> {
+) -> Result<Redirect, Error> {
     let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(super::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
     };
-    match inst.user_change_email(user.id(), ec_req.email.clone()) {
-        Ok(()) => Ok(Redirect::to(uri!(super::info::get_me))),
-        _ => Err(Redirect::to(uri!(super::auth::login))),
-    }
+    inst.user_change_email(user.id(), ec_req.email.clone())
+        .map(|_| Redirect::to(uri!(super::info::get_me)))
 }

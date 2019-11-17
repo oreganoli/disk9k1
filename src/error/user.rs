@@ -3,6 +3,8 @@ pub enum UserError {
     Auth(AuthError),
     Deletion(DeletionError),
     Registration(RegistrationError),
+    PasswordChange(PasswordChangeError),
+    EmailChange(EmailChangeError),
 }
 
 #[derive(Debug)]
@@ -25,4 +27,17 @@ pub enum RegistrationError {
     InvalidEmail,
     PasswordNotConfirmed,
     PasswordNotGiven,
+}
+
+#[derive(Debug)]
+pub enum PasswordChangeError {
+    FormIncomplete,
+    NotMatching,
+    UserNonexistent,
+}
+
+#[derive(Debug)]
+pub enum EmailChangeError {
+    Empty,
+    UserNonexistent,
 }

@@ -32,6 +32,12 @@ impl Error {
     pub fn user_del<T>(de: DeletionError) -> Result<T, Self> {
         Err(Self::User(UserError::Deletion(de)))
     }
+    pub fn user_change_pass<T>(pe: PasswordChangeError) -> Result<T, Self> {
+        Err(Self::User(UserError::PasswordChange(pe)))
+    }
+    pub fn user_change_email<T>(mc: EmailChangeError) -> Result<T, Self> {
+        Err(Self::User(UserError::EmailChange(mc)))
+    }
     pub fn instance<T>(ie: InstanceError) -> Result<T, Self> {
         Err(Self::Instance(ie))
     }
@@ -55,6 +61,15 @@ impl Error {
                     RegistrationError::PasswordNotGiven => "No password was provided.",
                     RegistrationError::InvalidEmail => "The email address provided is not valid.",
                     RegistrationError::EmailNotGiven => "No email address was provided.",
+                },
+                UserError::PasswordChange(pas) => match pas {
+                    PasswordChangeError::FormIncomplete => "No password was provided.",
+                    PasswordChangeError::NotMatching => "The passwords provided do not match.",
+                    PasswordChangeError::UserNonexistent => "This user does not exist.",
+                },
+                UserError::EmailChange(emc) => match emc {
+                    EmailChangeError::Empty => "No email address was provided.",
+                    EmailChangeError::UserNonexistent => "This user does not exist.",
                 },
             },
             Self::Instance(a) => match a {
@@ -88,6 +103,9 @@ impl rocket::response::Responder<'_> for Error {
             },
             Self::User(UserError::Registration(_)) => {
                 render("PAGE_registration_error.html", &ctx).respond_to(request)
+            }
+            Self::User(UserError::PasswordChange(_)) | Self::User(UserError::EmailChange(_)) => {
+                render("PAGE_settings.html", &ctx).respond_to(request)
             }
             Self::Instance(_) => render("PAGE_panel.html", &ctx).respond_to(request),
             _ => reason.respond_to(request),
