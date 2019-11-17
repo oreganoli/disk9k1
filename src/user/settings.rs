@@ -52,11 +52,11 @@ impl Instance {
 }
 
 #[get("/settings")]
-pub fn settings(mut cookies: Cookies) -> Result<Page, Redirect> {
+pub fn settings(mut cookies: Cookies) -> Result<Page, Error> {
     let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(super::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
     };
     let mut ctx = Context::new();
     ctx.insert("user", &user.to_info());
