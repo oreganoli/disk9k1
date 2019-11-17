@@ -1,28 +1,22 @@
 use crate::prelude::*;
 
-pub enum InstanceSettingsError {
-    NameEmpty,
-    NegativeSizeLimit,
-    NotAllowed,
-}
-
 impl Instance {
     pub fn set_instance_data(
         &mut self,
         new_data: InstanceData,
         requester: &User,
-    ) -> Result<(), InstanceSettingsError> {
+    ) -> Result<(), Error> {
         if new_data.name.is_empty() {
-            return Err(InstanceSettingsError::NameEmpty);
+            return Error::instance(InstanceError::NameEmpty);
         }
         if new_data.size_limit < 0 {
-            return Err(InstanceSettingsError::NegativeSizeLimit);
+            return Error::instance(InstanceError::NegativeSizeLimit);
         }
         if requester.is_admin() {
             self.ins_repo.set(new_data).unwrap();
             Ok(())
         } else {
-            Err(InstanceSettingsError::NotAllowed)
+            Error::user_auth(AuthError::Unauthorized("/panel"))
         }
     }
 }
@@ -32,17 +26,14 @@ pub fn modify_instance(
     instance: LockState,
     mut cookies: Cookies,
     ins_req: Form<InstanceData>,
-) -> Result<Redirect, Redirect> {
+) -> Result<Redirect, Error> {
     let mut inst = instance.write().unwrap();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Err(Redirect::to(uri!(crate::user::auth::login))),
+        None => return Error::user_auth(AuthError::Unauthenticated("panel")),
     };
-    match inst.set_instance_data(ins_req.into_inner(), &user) {
-        Ok(()) => Ok(Redirect::to(uri!(panel))),
-        Err(InstanceSettingsError::NotAllowed) => Err(Redirect::to(uri!(crate::user::auth::login))),
-        Err(_) => Err(Redirect::to(uri!(panel))),
-    }
+    inst.set_instance_data(ins_req.into_inner(), &user)
+        .map(|_| Redirect::to("/panel"))
 }
 
 #[get("/panel")]

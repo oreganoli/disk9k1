@@ -1,19 +1,23 @@
 use rocket::{Request, Response};
 
+pub use instance::*;
 pub use user::*;
 
 use crate::prelude::*;
 
+pub mod instance;
 pub mod user;
 
 #[derive(Debug)]
 pub enum Error {
     /// The database layer could not be accessed.
     Db,
-    /// An unspecified error.
-    Other,
+    ///
+    Instance(InstanceError),
     /// Errors related to users.
     User(UserError),
+    /// An unspecified error.
+    Other,
 }
 
 impl Error {
@@ -22,6 +26,9 @@ impl Error {
     }
     pub fn user_auth<T>(ae: AuthError) -> Result<T, Self> {
         Err(Self::User(UserError::Auth(ae)))
+    }
+    pub fn instance<T>(ie: InstanceError) -> Result<T, Self> {
+        Err(Self::Instance(ie))
     }
     pub fn reason(&self) -> &str {
         match &self {
@@ -40,6 +47,10 @@ impl Error {
                     RegistrationError::InvalidEmail => "The email address provided is not valid.",
                     RegistrationError::EmailNotGiven => "No email address was provided.",
                 },
+            },
+            Self::Instance(a) => match a {
+                InstanceError::NameEmpty => "A Disk9k1 instance must have a name.",
+                InstanceError::NegativeSizeLimit => "The size limit on files cannot be negative.",
             },
             Self::Other => "An unspecified error occurred.",
         }
