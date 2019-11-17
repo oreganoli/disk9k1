@@ -3,6 +3,7 @@ use rocket::{Request, Response};
 
 use crate::prelude::Status;
 
+#[derive(Debug)]
 pub enum Error {
     /// The database layer could not be accessed.
     Db,
