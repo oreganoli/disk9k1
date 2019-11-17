@@ -33,7 +33,6 @@ lazy_static! {
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
-    let instance = Instance::new();
     rocket::ignite()
         .mount(
             "/",
