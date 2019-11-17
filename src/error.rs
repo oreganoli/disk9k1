@@ -79,11 +79,11 @@ impl rocket::response::Responder<'_> for Error {
                     render("PAGE_login.html", &ctx).respond_to(request)
                 }
                 AuthError::BadCredentials => render("PAGE_login.html", &ctx).respond_to(request),
-                _ => reason.respond_to(request),
             },
             Self::User(UserError::Registration(_)) => {
                 render("PAGE_registration_error.html", &ctx).respond_to(request)
             }
+            Self::Instance(_) => render("PAGE_panel.html", &ctx).respond_to(request),
             _ => reason.respond_to(request),
         }
     }

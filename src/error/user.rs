@@ -1,5 +1,3 @@
-use super::Error;
-
 #[derive(Debug)]
 pub enum UserError {
     Auth(AuthError),

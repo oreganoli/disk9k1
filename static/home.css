@@ -13,6 +13,7 @@ body {
 }
 
 .error_reason {
+    text-align: center;
     color: firebrick;
     font-weight: bold;
 }
