@@ -56,12 +56,12 @@ impl Instance {
 }
 
 #[post("/register", data = "<reg_req>")]
-pub fn register(tera: TeraState, reg_req: Form<RegistrationRequest>) -> Result<Page, Error> {
+pub fn register(reg_req: Form<RegistrationRequest>) -> Result<Page, Error> {
     let mut inst = instance_write();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     inst.register_user(reg_req.into_inner()).map(|token| {
         ctx.insert("token", &token);
-        tera.html("PAGE_successful_registration.html", &ctx)
+        render("PAGE_successful_registration.html", &ctx)
     })
 }

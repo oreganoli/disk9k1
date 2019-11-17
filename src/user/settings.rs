@@ -52,7 +52,7 @@ impl Instance {
 }
 
 #[get("/settings")]
-pub fn settings(tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect> {
+pub fn settings(mut cookies: Cookies) -> Result<Page, Redirect> {
     let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
@@ -61,7 +61,7 @@ pub fn settings(tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect>
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     ctx.insert("user", &user.to_info());
-    Ok(tera.html("PAGE_settings.html", &ctx))
+    Ok(render("PAGE_settings.html", &ctx))
 }
 
 #[post("/change_password", data = "<cp_req>")]

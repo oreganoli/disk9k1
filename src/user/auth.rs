@@ -66,8 +66,8 @@ pub fn authenticate(mut cookies: Cookies, auth_req: Form<AuthRequest>) -> Result
 }
 
 #[get("/login")]
-pub fn login(tera: TeraState) -> Page {
-    tera.html("PAGE_login.html", &Context::new())
+pub fn login() -> Page {
+    render("PAGE_login.html", &Context::new())
 }
 
 /// Self-explanatory.

@@ -12,13 +12,13 @@ pub struct File {
 }
 
 #[get("/metadata/<id>")]
-pub fn file_info(tera: TeraState, id: u32) -> Option<Page> {
+pub fn file_info(id: u32) -> Option<Page> {
     let inst = instance_read();
     inst.files.get(&id).and_then(|file| {
         let mut ctx = Context::new();
         ctx.insert("id", &id);
         ctx.insert("original_name", &file.original_name);
-        Some(tera.html("PAGE_file_info.html", &ctx))
+        Some(render("PAGE_file_info.html", &ctx))
     })
 }
 

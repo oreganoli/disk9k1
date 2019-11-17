@@ -56,7 +56,7 @@ pub fn delete_account(
 }
 
 #[get("/delete_account_confirm")]
-pub fn del_acc_confirm(tera: TeraState, mut cookies: Cookies) -> Result<Page, Redirect> {
+pub fn del_acc_confirm(mut cookies: Cookies) -> Result<Page, Redirect> {
     let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
@@ -65,5 +65,5 @@ pub fn del_acc_confirm(tera: TeraState, mut cookies: Cookies) -> Result<Page, Re
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
     ctx.insert("user", &user.to_info());
-    Ok(tera.html("PAGE_delete_account_confirm.html", &ctx))
+    Ok(render("PAGE_delete_account_confirm.html", &ctx))
 }

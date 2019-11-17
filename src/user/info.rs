@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 #[get("/user/<id>")]
-pub fn get_user(tera: TeraState, mut cookies: Cookies, id: i32) -> Option<Page> {
+pub fn get_user(mut cookies: Cookies, id: i32) -> Option<Page> {
     let inst = instance_read();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
@@ -14,7 +14,7 @@ pub fn get_user(tera: TeraState, mut cookies: Cookies, id: i32) -> Option<Page> 
     match requested_user {
         Some(u) => {
             ctx.insert("requested_user", &u.to_info());
-            Some(tera.html("PAGE_user.html", &ctx))
+            Some(render("PAGE_user.html", &ctx))
         }
         None => None,
     }

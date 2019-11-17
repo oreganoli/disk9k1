@@ -36,7 +36,7 @@ pub fn modify_instance(
 }
 
 #[get("/panel")]
-pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Result<Page, Error> {
+pub fn panel(mut cookies: Cookies) -> Result<Page, Error> {
     let inst = instance_read();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
@@ -46,7 +46,7 @@ pub fn panel(instance: LockState, tera: TeraState, mut cookies: Cookies) -> Resu
         let mut ctx = Context::new();
         ctx.insert("instance", &inst.ins_repo.get().unwrap());
         ctx.insert("user", &user.to_info());
-        Ok(tera.html("PAGE_panel.html", &ctx))
+        Ok(render("PAGE_panel.html", &ctx))
     } else {
         Error::user_auth(AuthError::Unauthorized("panel"))
     }

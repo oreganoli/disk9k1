@@ -24,17 +24,14 @@ mod util;
 
 lazy_static! {
     pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::new()));
+    pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::new()));
 }
 
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
     let instance = Instance::new();
-    let tera = Tera::new("templates/**/*").expect("Expected a template directory.");
-    let renderer = Renderer(tera);
     rocket::ignite()
-        .manage(renderer)
-        .manage(std::sync::RwLock::new(instance))
         .mount(
             "/",
             routes![

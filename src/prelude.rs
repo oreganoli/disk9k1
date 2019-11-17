@@ -17,10 +17,11 @@ pub use crate::file::File;
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
 pub use crate::user::{NewUser, User, UserInfo};
-pub use crate::util::{instance_read, instance_write, mebibytes, HandledPool, Lock, Renderer};
+pub use crate::util::{
+    instance_read, instance_write, mebibytes, render, HandledPool, Lock, Renderer,
+};
 pub use crate::INSTANCE;
-
-pub type TeraState<'a> = State<'a, Renderer>;
+pub use crate::TERA;
 
 pub type Page = Html<String>;
 

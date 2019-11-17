@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 #[get("/users")]
-pub fn users(tera: TeraState, mut cookies: Cookies) -> Page {
+pub fn users(mut cookies: Cookies) -> Page {
     let inst = instance_read();
     let mut ctx = Context::new();
     ctx.insert("instance", &inst.ins_repo.get().unwrap());
@@ -13,5 +13,5 @@ pub fn users(tera: TeraState, mut cookies: Cookies) -> Page {
     let users = inst.user_repo.read_all().unwrap();
     let user_infos = users.iter().map(|u| u.to_info()).collect::<Vec<_>>();
     ctx.insert("users", &user_infos);
-    tera.html("PAGE_users.html", &ctx)
+    render("PAGE_users.html", &ctx)
 }

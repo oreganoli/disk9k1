@@ -9,7 +9,7 @@ use crate::prelude::*;
 mod data;
 
 #[post("/upload", data = "<data>")]
-pub fn upload(tera: TeraState, content_type: &ContentType, data: Data) -> Page {
+pub fn upload(content_type: &ContentType, data: Data) -> Page {
     let mut inst = instance_write();
     let inst_data = inst.ins_repo.get().unwrap().unwrap();
     let mut ctx = Context::new();
@@ -25,7 +25,7 @@ pub fn upload(tera: TeraState, content_type: &ContentType, data: Data) -> Page {
                     "reason",
                     &format!("A file with the CRC checksum {} already exists.", hash),
                 );
-                return tera.html("PAGE_upload_error.html", &ctx);
+                return render("PAGE_upload_error.html", &ctx);
             }
             let mime = &raw.raw.sniff_mime_type();
             use rocket::http::{ContentType, MediaType};
@@ -38,7 +38,7 @@ pub fn upload(tera: TeraState, content_type: &ContentType, data: Data) -> Page {
             let url = rocket::http::uri::Uri::percent_encode(&file.original_name);
             ctx.insert("filename", &url);
             inst.files.insert(hash, file);
-            tera.html("PAGE_successful_upload.html", &ctx)
+            render("PAGE_successful_upload.html", &ctx)
         }
         Err(e) => {
             let reason = match e {
@@ -51,7 +51,7 @@ pub fn upload(tera: TeraState, content_type: &ContentType, data: Data) -> Page {
                 FFE::Other => "Some unhandled upload error occurred.".to_owned(),
             };
             ctx.insert("reason", &reason);
-            tera.html("PAGE_upload_error.html", &ctx)
+            render("PAGE_upload_error.html", &ctx)
         }
     }
 }

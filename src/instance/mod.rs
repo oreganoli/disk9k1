@@ -65,7 +65,7 @@ impl std::default::Default for InstanceData {
 }
 
 #[get("/")]
-pub fn index(tera: TeraState, mut cookies: Cookies) -> Page {
+pub fn index(mut cookies: Cookies) -> Page {
     let inst = instance_read();
     let data = inst.ins_repo.get().unwrap();
     let mut ctx = Context::new();
@@ -75,5 +75,5 @@ pub fn index(tera: TeraState, mut cookies: Cookies) -> Page {
         None => (),
     };
     ctx.insert("instance", &data);
-    tera.html("PAGE_index.html", &ctx)
+    render("PAGE_index.html", &ctx)
 }
