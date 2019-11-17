@@ -29,6 +29,7 @@ table! {
         updated -> Timestamp,
         directory -> Nullable<Int4>,
         public -> Bool,
+        owner -> Int4,
     }
 }
 
@@ -55,5 +56,12 @@ table! {
 joinable!(directories -> users (owner));
 joinable!(files -> content (hash));
 joinable!(files -> directories (directory));
+joinable!(files -> users (owner));
 
-allow_tables_to_appear_in_same_query!(content, directories, files, instance, users,);
+allow_tables_to_appear_in_same_query!(
+    content,
+    directories,
+    files,
+    instance,
+    users,
+);
