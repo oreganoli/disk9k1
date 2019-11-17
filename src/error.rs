@@ -45,18 +45,21 @@ impl Error {
 impl rocket::response::Responder<'_> for Error {
     fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
         let reason = self.reason().to_owned();
+        let tera = Tera::new("templates/**/*").unwrap();
+        let mut ctx = Context::new();
+        ctx.insert("reason", &reason);
         match self {
             Self::User(UserError::Auth(a)) => match a {
                 AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
                     let redir = redir.unwrap_or("/");
-                    let tera = Tera::new("templates/**/*").unwrap();
-                    let mut ctx = Context::new();
-                    ctx.insert("reason", &reason);
                     ctx.insert("login_redirect", &redir);
                     Html(tera.render("PAGE_login.html", &ctx).unwrap()).respond_to(request)
                 }
                 _ => reason.respond_to(request),
             },
+            Self::User(UserError::Registration(_)) => {
+                Html(tera.render("PAGE_registration_error.html", &ctx).unwrap()).respond_to(request)
+            }
             _ => reason.respond_to(request),
         }
     }
