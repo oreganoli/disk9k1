@@ -45,6 +45,7 @@ fn main() {
                 user::register::register,
                 user::settings::settings,
                 user::settings::change_password,
+                user::settings::change_email,
                 //                file::file_info,
                 //                file::get_file,
                 //                file::get_file_named,

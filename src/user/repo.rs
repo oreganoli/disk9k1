@@ -12,6 +12,7 @@ pub trait UserRepository {
     fn read_by_id(&self, id: i32) -> Result<Option<User>, ()>;
     fn read_by_name(&self, name: String) -> Result<Option<User>, ()>;
     fn update_name(&mut self, id: i32, new_name: String) -> Result<(), ()>;
+    fn update_email(&mut self, id: i32, new_email: String) -> Result<(), ()>;
     fn update_password(&mut self, id: i32, new_password: String) -> Result<(), ()>;
     fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), ()>;
     fn delete(&mut self, id: i32) -> Result<(), ()>;
@@ -88,6 +89,19 @@ impl UserRepository for UserRepo {
         let conn = self.pool.get();
         diesel::update(users::table.find(id))
             .set(users::name.eq(new_name))
+            .execute(&conn)
+            .map_or_else(
+                |_| Err(()),
+                |_| {
+                    self.update_cache().unwrap();
+                    Ok(())
+                },
+            )
+    }
+    fn update_email(&mut self, id: i32, new_email: String) -> Result<(), ()> {
+        let conn = self.pool.get();
+        diesel::update(users::table.find(id))
+            .set(users::email.eq(new_email))
             .execute(&conn)
             .map_or_else(
                 |_| Err(()),

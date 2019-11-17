@@ -37,17 +37,18 @@ impl Instance {
             Ok(())
         }
     }
-    //    pub fn user_change_email(&mut self, id: i32, new_mail: String) -> Result<(), EmailChangeError> {
-    //        let user = match self.user_repo.read_by_id(id).unwrap() {
-    //            Some(u) => u,
-    //            None => return Err(EmailChangeError::UserNonexistent)
-    //        };
-    //        if new_mail.is_empty() {
-    //            Err(EmailChangeError::Empty)
-    //        } else {
-    //            self.user_repo.upda
-    //        }
-    //    }
+    pub fn user_change_email(&mut self, id: i32, new_mail: String) -> Result<(), EmailChangeError> {
+        let user = match self.user_repo.read_by_id(id).unwrap() {
+            Some(u) => u,
+            None => return Err(EmailChangeError::UserNonexistent),
+        };
+        if new_mail.is_empty() {
+            Err(EmailChangeError::Empty)
+        } else {
+            self.user_repo.update_email(id, new_mail).unwrap();
+            Ok(())
+        }
+    }
 }
 
 #[get("/settings")]
@@ -91,16 +92,24 @@ pub fn change_password(
     }
 }
 
-//#[derive(FromForm)]
-//pub struct EmailChangeRequest {
-//    pub email: String,
-//}
-//
-//#[post("/change_email", data = "<ec_req>")]
-//pub fn change_email(
-//    instance: LockState,
-//    mut cookies: Cookies,
-//    ec_req: Form<EmailChangeRequest>,
-//) -> Result<Redirect, Redirect> {
-//    let inst = instance.write().unwrap();
-//}
+#[derive(FromForm)]
+pub struct EmailChangeRequest {
+    pub email: String,
+}
+
+#[post("/change_email", data = "<ec_req>")]
+pub fn change_email(
+    instance: LockState,
+    mut cookies: Cookies,
+    ec_req: Form<EmailChangeRequest>,
+) -> Result<Redirect, Redirect> {
+    let mut inst = instance.write().unwrap();
+    let user = match inst.user_from_cookies(&mut cookies) {
+        Some(u) => u,
+        None => return Err(Redirect::to(uri!(super::auth::login))),
+    };
+    match inst.user_change_email(user.id(), ec_req.email.clone()) {
+        Ok(()) => Ok(Redirect::to(uri!(super::info::get_me))),
+        _ => Err(Redirect::to(uri!(super::auth::login))),
+    }
+}
