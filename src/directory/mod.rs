@@ -14,7 +14,7 @@ pub struct Directory {
     name: String,
     parent: Option<i32>,
     created: NaiveDateTime,
-    updated: NaiveDateTime,
+    public: bool,
 }
 
 #[derive(Insertable)]
