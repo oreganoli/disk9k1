@@ -26,6 +26,7 @@ var CurrentUser = {
         }).then(function (result) {
             if (result) {
                 CurrentUser.me();
+                m.route.set("/index");
             } else {
                 alert("Login failed");
             }
