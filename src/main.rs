@@ -45,7 +45,6 @@ fn main() {
                 user::info::get_me,
                 //                instance::settings::modify_instance,
                 //                instance::settings::panel,
-                //                instance::users::users,
                 //                user::auth::authenticate,
                 //                user::delete::del_acc_confirm,
                 //                user::delete::delete_account,
