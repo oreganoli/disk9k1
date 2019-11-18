@@ -51,7 +51,7 @@ impl Default for Instance {
 }
 
 /// The data global to the Disk9001 instance.
-#[derive(Clone, Debug, FromForm, Serialize, Queryable, Insertable)]
+#[derive(Clone, Debug, Deserialize, Serialize, Queryable, Insertable)]
 #[table_name = "instance"]
 pub struct InstanceData {
     /// The instance's name.

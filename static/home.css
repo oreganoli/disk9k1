@@ -64,3 +64,11 @@ button {
     text-align: right;
     justify-content: end;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: start;
+    max-width: 50%;
+}

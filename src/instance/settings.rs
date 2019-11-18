@@ -21,17 +21,17 @@ impl Instance {
     }
 }
 
-#[post("/modify_instance", data = "<ins_req>")]
+#[put("/modify_instance", data = "<ins_req>")]
 pub fn modify_instance(
     app: AppState,
     mut cookies: Cookies,
-    ins_req: Form<InstanceData>,
-) -> Result<Redirect, Error> {
+    ins_req: Json<InstanceData>,
+) -> Result<Json<()>, Error> {
     let mut inst = app.write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Error::user_auth(AuthError::Unauthenticated("panel".to_owned())),
     };
     inst.set_instance_data(ins_req.into_inner(), &user)
-        .map(|_| Redirect::to("/panel"))
+        .map(|_| Json(()))
 }
