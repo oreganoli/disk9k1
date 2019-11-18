@@ -417,6 +417,17 @@ eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.
 
 /***/ }),
 
+/***/ "./src/models/current_user.js":
+/*!************************************!*\
+  !*** ./src/models/current_user.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.js\");\nvar CurrentUser = {\n    user: null,\n    authenticate: function (username, password) {\n        m.request({\n            method: \"POST\",\n            url: \"/authenticate\",\n            withCredentials: true,\n            body: {username, password}\n        }).then(function (result) {\n            CurrentUser.user = result;\n        });\n    }\n};\nmodule.exports = CurrentUser;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvbW9kZWxzL2N1cnJlbnRfdXNlci5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy9tb2RlbHMvY3VycmVudF91c2VyLmpzP2FkNDUiXSwic291cmNlc0NvbnRlbnQiOlsidmFyIG0gPSByZXF1aXJlKFwibWl0aHJpbFwiKTtcbnZhciBDdXJyZW50VXNlciA9IHtcbiAgICB1c2VyOiBudWxsLFxuICAgIGF1dGhlbnRpY2F0ZTogZnVuY3Rpb24gKHVzZXJuYW1lLCBwYXNzd29yZCkge1xuICAgICAgICBtLnJlcXVlc3Qoe1xuICAgICAgICAgICAgbWV0aG9kOiBcIlBPU1RcIixcbiAgICAgICAgICAgIHVybDogXCIvYXV0aGVudGljYXRlXCIsXG4gICAgICAgICAgICB3aXRoQ3JlZGVudGlhbHM6IHRydWUsXG4gICAgICAgICAgICBib2R5OiB7dXNlcm5hbWUsIHBhc3N3b3JkfVxuICAgICAgICB9KS50aGVuKGZ1bmN0aW9uIChyZXN1bHQpIHtcbiAgICAgICAgICAgIEN1cnJlbnRVc2VyLnVzZXIgPSByZXN1bHQ7XG4gICAgICAgIH0pO1xuICAgIH1cbn07XG5tb2R1bGUuZXhwb3J0cyA9IEN1cnJlbnRVc2VyOyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBIiwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./src/models/current_user.js\n");
+
+/***/ }),
+
 /***/ "./src/models/instance.js":
 /*!********************************!*\
   !*** ./src/models/instance.js ***!
@@ -439,6 +450,28 @@ eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.
 
 /***/ }),
 
+/***/ "./src/views/login_button.js":
+/*!***********************************!*\
+  !*** ./src/views/login_button.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.js\");\n\nvar LoginButton = {\n\n    view: function () {\n        return m(\"button.login_button\", {\n            onclick: function () {\n                alert(\"Attempted to log in\");\n            }\n        }, \"Sign in\");\n    }\n};\nmodule.exports = LoginButton;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvdmlld3MvbG9naW5fYnV0dG9uLmpzLmpzIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vLy4vc3JjL3ZpZXdzL2xvZ2luX2J1dHRvbi5qcz9mZWUzIl0sInNvdXJjZXNDb250ZW50IjpbInZhciBtID0gcmVxdWlyZShcIm1pdGhyaWxcIik7XG5cbnZhciBMb2dpbkJ1dHRvbiA9IHtcblxuICAgIHZpZXc6IGZ1bmN0aW9uICgpIHtcbiAgICAgICAgcmV0dXJuIG0oXCJidXR0b24ubG9naW5fYnV0dG9uXCIsIHtcbiAgICAgICAgICAgIG9uY2xpY2s6IGZ1bmN0aW9uICgpIHtcbiAgICAgICAgICAgICAgICBhbGVydChcIkF0dGVtcHRlZCB0byBsb2cgaW5cIik7XG4gICAgICAgICAgICB9XG4gICAgICAgIH0sIFwiU2lnbiBpblwiKTtcbiAgICB9XG59O1xubW9kdWxlLmV4cG9ydHMgPSBMb2dpbkJ1dHRvbjsiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBIiwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./src/views/login_button.js\n");
+
+/***/ }),
+
+/***/ "./src/views/login_indicator.js":
+/*!**************************************!*\
+  !*** ./src/views/login_indicator.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.js\");\nvar CurrentUser = __webpack_require__(/*! ../models/current_user */ \"./src/models/current_user.js\");\nvar LoginButton = __webpack_require__(/*! ./login_button */ \"./src/views/login_button.js\");\nvar LoginIndicator = {\n    view: function () {\n        if (CurrentUser.user != null) {\n            return m(\"b\", [\"Logged in as \", m(\"a\", {href: \"/me\"}, CurrentUser.user.name)]);\n        } else {\n            return m(LoginButton);\n        }\n    }\n};\nmodule.exports = LoginIndicator;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvdmlld3MvbG9naW5faW5kaWNhdG9yLmpzLmpzIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vLy4vc3JjL3ZpZXdzL2xvZ2luX2luZGljYXRvci5qcz9hMTExIl0sInNvdXJjZXNDb250ZW50IjpbInZhciBtID0gcmVxdWlyZShcIm1pdGhyaWxcIik7XG52YXIgQ3VycmVudFVzZXIgPSByZXF1aXJlKFwiLi4vbW9kZWxzL2N1cnJlbnRfdXNlclwiKTtcbnZhciBMb2dpbkJ1dHRvbiA9IHJlcXVpcmUoXCIuL2xvZ2luX2J1dHRvblwiKTtcbnZhciBMb2dpbkluZGljYXRvciA9IHtcbiAgICB2aWV3OiBmdW5jdGlvbiAoKSB7XG4gICAgICAgIGlmIChDdXJyZW50VXNlci51c2VyICE9IG51bGwpIHtcbiAgICAgICAgICAgIHJldHVybiBtKFwiYlwiLCBbXCJMb2dnZWQgaW4gYXMgXCIsIG0oXCJhXCIsIHtocmVmOiBcIi9tZVwifSwgQ3VycmVudFVzZXIudXNlci5uYW1lKV0pO1xuICAgICAgICB9IGVsc2Uge1xuICAgICAgICAgICAgcmV0dXJuIG0oTG9naW5CdXR0b24pO1xuICAgICAgICB9XG4gICAgfVxufTtcbm1vZHVsZS5leHBvcnRzID0gTG9naW5JbmRpY2F0b3I7Il0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/views/login_indicator.js\n");
+
+/***/ }),
+
 /***/ "./src/views/top_bar.js":
 /*!******************************!*\
   !*** ./src/views/top_bar.js ***!
@@ -446,7 +479,7 @@ eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.js\");\nvar Instance = __webpack_require__(/*! ../models/instance */ \"./src/models/instance.js\");\n\nvar name = {\n    oninit: function () {\n        Instance.load();\n    },\n    view: function () {\n        return m(\"b\", Instance.name);\n    }\n};\nvar left_half = {\n    view: function () {\n        return m(\".left_half\", m(name));\n    }\n};\nvar right_half = {\n    view: function () {\n        return m(\".right_half\", []);\n    }\n};\nvar TopBar = {\n    view: function () {\n        return m(\".top_bar\", [m(left_half), m(right_half)]);\n    }\n};\nmodule.exports = TopBar;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvdmlld3MvdG9wX2Jhci5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy92aWV3cy90b3BfYmFyLmpzPzcyYTYiXSwic291cmNlc0NvbnRlbnQiOlsidmFyIG0gPSByZXF1aXJlKFwibWl0aHJpbFwiKTtcbnZhciBJbnN0YW5jZSA9IHJlcXVpcmUoXCIuLi9tb2RlbHMvaW5zdGFuY2VcIik7XG5cbnZhciBuYW1lID0ge1xuICAgIG9uaW5pdDogZnVuY3Rpb24gKCkge1xuICAgICAgICBJbnN0YW5jZS5sb2FkKCk7XG4gICAgfSxcbiAgICB2aWV3OiBmdW5jdGlvbiAoKSB7XG4gICAgICAgIHJldHVybiBtKFwiYlwiLCBJbnN0YW5jZS5uYW1lKTtcbiAgICB9XG59O1xudmFyIGxlZnRfaGFsZiA9IHtcbiAgICB2aWV3OiBmdW5jdGlvbiAoKSB7XG4gICAgICAgIHJldHVybiBtKFwiLmxlZnRfaGFsZlwiLCBtKG5hbWUpKTtcbiAgICB9XG59O1xudmFyIHJpZ2h0X2hhbGYgPSB7XG4gICAgdmlldzogZnVuY3Rpb24gKCkge1xuICAgICAgICByZXR1cm4gbShcIi5yaWdodF9oYWxmXCIsIFtdKTtcbiAgICB9XG59O1xudmFyIFRvcEJhciA9IHtcbiAgICB2aWV3OiBmdW5jdGlvbiAoKSB7XG4gICAgICAgIHJldHVybiBtKFwiLnRvcF9iYXJcIiwgW20obGVmdF9oYWxmKSwgbShyaWdodF9oYWxmKV0pO1xuICAgIH1cbn07XG5tb2R1bGUuZXhwb3J0cyA9IFRvcEJhcjsiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/views/top_bar.js\n");
+eval("var m = __webpack_require__(/*! mithril */ \"./node_modules/mithril/index.js\");\nvar Instance = __webpack_require__(/*! ../models/instance */ \"./src/models/instance.js\");\nvar LoginIndicator = __webpack_require__(/*! ./login_indicator */ \"./src/views/login_indicator.js\");\nvar name = {\n    oninit: function () {\n        Instance.load();\n    },\n    view: function () {\n        return m(\"b\", Instance.name);\n    }\n};\nvar left_half = {\n    view: function () {\n        return m(\".left_half\", m(name));\n    }\n};\nvar right_half = {\n    view: function () {\n        return m(\".right_half\", m(LoginIndicator));\n    }\n};\nvar TopBar = {\n    view: function () {\n        return m(\".top_bar\", [m(left_half), m(right_half)]);\n    }\n};\nmodule.exports = TopBar;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvdmlld3MvdG9wX2Jhci5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy92aWV3cy90b3BfYmFyLmpzPzcyYTYiXSwic291cmNlc0NvbnRlbnQiOlsidmFyIG0gPSByZXF1aXJlKFwibWl0aHJpbFwiKTtcbnZhciBJbnN0YW5jZSA9IHJlcXVpcmUoXCIuLi9tb2RlbHMvaW5zdGFuY2VcIik7XG52YXIgTG9naW5JbmRpY2F0b3IgPSByZXF1aXJlKFwiLi9sb2dpbl9pbmRpY2F0b3JcIik7XG52YXIgbmFtZSA9IHtcbiAgICBvbmluaXQ6IGZ1bmN0aW9uICgpIHtcbiAgICAgICAgSW5zdGFuY2UubG9hZCgpO1xuICAgIH0sXG4gICAgdmlldzogZnVuY3Rpb24gKCkge1xuICAgICAgICByZXR1cm4gbShcImJcIiwgSW5zdGFuY2UubmFtZSk7XG4gICAgfVxufTtcbnZhciBsZWZ0X2hhbGYgPSB7XG4gICAgdmlldzogZnVuY3Rpb24gKCkge1xuICAgICAgICByZXR1cm4gbShcIi5sZWZ0X2hhbGZcIiwgbShuYW1lKSk7XG4gICAgfVxufTtcbnZhciByaWdodF9oYWxmID0ge1xuICAgIHZpZXc6IGZ1bmN0aW9uICgpIHtcbiAgICAgICAgcmV0dXJuIG0oXCIucmlnaHRfaGFsZlwiLCBtKExvZ2luSW5kaWNhdG9yKSk7XG4gICAgfVxufTtcbnZhciBUb3BCYXIgPSB7XG4gICAgdmlldzogZnVuY3Rpb24gKCkge1xuICAgICAgICByZXR1cm4gbShcIi50b3BfYmFyXCIsIFttKGxlZnRfaGFsZiksIG0ocmlnaHRfaGFsZildKTtcbiAgICB9XG59O1xubW9kdWxlLmV4cG9ydHMgPSBUb3BCYXI7Il0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/views/top_bar.js\n");
 
 /***/ })
 

@@ -1,6 +1,6 @@
 var m = require("mithril");
 var Instance = require("../models/instance");
-
+var LoginIndicator = require("./login_indicator");
 var name = {
     oninit: function () {
         Instance.load();
@@ -16,7 +16,7 @@ var left_half = {
 };
 var right_half = {
     view: function () {
-        return m(".right_half", []);
+        return m(".right_half", m(LoginIndicator));
     }
 };
 var TopBar = {

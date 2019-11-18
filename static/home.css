@@ -1,4 +1,5 @@
 * {
+    --bg-color: white;
     --border-color: black;
 }
 body {
@@ -9,6 +10,13 @@ body {
     flex-direction: column;
     justify-content: start;
     align-content: center;
+}
+
+button {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.3em;
+    padding: 0.1em;
 }
 .error_reason {
     text-align: center;
@@ -30,7 +38,7 @@ body {
 .top_bar {
     display: flex;
     flex-direction: row;
-    align-content: flex-start;
+    align-content: center;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
     border-bottom: 1px solid var(--border-color);
@@ -38,13 +46,18 @@ body {
 
 .left_half, .right_half {
     width: 50%;
-    vertical-align: top;
+    display: flex;
+    flex-direction: row;
+    vertical-align: center;
+    align-content: center;
 }
 
 .left_half {
     text-align: left;
+    justify-content: start;
 }
 
 .right_half {
     text-align: right;
+    justify-content: end;
 }
