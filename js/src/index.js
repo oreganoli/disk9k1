@@ -1,4 +1,6 @@
 var m = require("mithril");
 var InstanceView = require("./views/instance");
 
-m.mount(document.body, InstanceView);
+m.route(document.body, "/index", {
+    "/index": InstanceView
+});

@@ -2,6 +2,9 @@ var m = require("mithril");
 var Instance = require("../models/instance");
 
 var name = {
+    oninit: function () {
+        Instance.load();
+    },
     view: function () {
         return m("b", Instance.name);
     }
