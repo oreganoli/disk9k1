@@ -4,7 +4,10 @@ use crate::prelude::*;
 
 mod repo;
 
-#[derive(Queryable)]
+#[derive(Associations, Queryable, Identifiable)]
+#[belongs_to(Directory, foreign_key = "id")]
+#[belongs_to(User, foreign_key = "owner")]
+#[table_name = "directories"]
 pub struct Directory {
     id: i32,
     owner: i32,
