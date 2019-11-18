@@ -1,3 +1,4 @@
-import m from "mithril";
+var m = require("mithril");
+var InstanceView = require("./views/instance");
 
-m.render(document.body, "hello world from the Mithril frontend");
+m.mount(document.body, InstanceView);

@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 use std::ops::Deref;
 
+use rocket_contrib::json::Json;
+
 use repo::{InstanceRepo, InstanceRepository};
 use schema::instance;
 
@@ -64,4 +66,10 @@ impl std::default::Default for InstanceData {
 #[get("/")]
 pub fn index() -> Html<&'static str> {
     Html(crate::INDEX.deref())
+}
+
+#[get("/instance")]
+pub fn instance() -> Json<InstanceData> {
+    let inst = instance_read();
+    Json(inst.ins_repo.get().unwrap().unwrap())
 }

@@ -39,6 +39,7 @@ fn main() {
             "/",
             routes![
                 instance::index,
+                instance::instance,
                 //                instance::settings::modify_instance,
                 //                instance::settings::panel,
                 //                instance::users::users,

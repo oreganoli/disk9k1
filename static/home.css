@@ -1,220 +1,50 @@
+* {
+    --border-color: black;
+}
 body {
     background: linear-gradient(to bottom, #a0d8ef 0%, #ddf1f9 73%, #feffff 100%);
     min-height: 100vh;
     min-width: 100vw;
     font-family: 'Arial',sans-serif;
-    display: flex;
     flex-direction: column;
     justify-content: start;
     align-content: center;
 }
-* {
-    box-sizing: border-box;
-}
-
 .error_reason {
     text-align: center;
     color: firebrick;
     font-weight: bold;
 }
 
-/* MOBILE VIEW */
-
-/* NAVIGATION */
-
-nav ul {
-    display: flex;
-}
-nav ul li {
-    float: left;
-    list-style: none;
-    text-align: center;
-    border-left: 1px solid black;
-    width: 32%
-}
-
-nav ul li:first-of-type {
-    border-left: none;
-}
-nav ul li a {
-    font-size: 18px;
-    color:#111;
-    text-decoration: none;
-}
-
-h1.title {
-    font-size: 45px;
-    text-align: center;
-    margin-top: 0;
-}
-
-h2 {
-    text-align: center;
-}
-
-.or {
-    vertical-align: center;
-    margin-left: 1em;
-    margin-right: 1em;
-}
-h3 {
-    margin-top:-2%;
-    text-align: center;
-}
-
-form {
+.main_container {
     display: flex;
     flex-direction: column;
-}
-
-label {
-    font-weight: bold;
-}
-
-.row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: start;
-}
-
-.vertical_form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.input_row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: space-between;
+    align-content: center;
 }
-.column_center {
-    justify-self: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+
+.title, .description, .size_limit {
+    text-align: center;
 }
-.log_reg_forms {
+
+.top_bar {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-.login_form, .registration_form {
-    margin-left: 1em;
-    margin-right: 1em;
-    justify-content: space-between;
+    align-content: flex-start;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.sticky_header {
-    top: 0;
-    width: 100%;
+.left_half, .right_half {
+    width: 50%;
+    vertical-align: top;
 }
 
-.button_form {
-    display: inline;
-}
-button {
-    color: black;
-    border: 1px solid black;
-    margin-bottom: 15px;
-    padding: 0.2em;
-    cursor: pointer;
-    transition: .3s;
-    border-radius: 0.5em;
+.left_half {
+    text-align: left;
 }
 
-.login, .register {
-    height: 2em;
-    align-self: center;
-    margin-bottom: 0;
-}
-button.login {
-    background-color:#94D369;
-    width:250px;
-}
-
-button.login:hover {
-    background-color: #a5e47a;
-}
-button.register {
-    background-color: #75AAFA;
-    width:200px;
-}
-button.register:hover {
-    background-color: #86bbfb;
-}
-
-/* RESOLUTION >480px */
-
-@media (min-width:480px) and (max-width:599px) {
-    h1 {
-        margin-top:10%;
-    }
-    form {
-        margin-top:30px
-    }
-}
-
-/* RESOLUTION >600 */
-
-@media (min-width:600px) and (orientation:portrait) and (max-width:767px) {
-    h1 {
-        font-size: 55px;
-    }
-}
-
-@media (min-width:768px) and (max-width:1023px){
-    nav ul {
-        margin-left:24%;
-    }
-    nav ul li {
-        width:25%;
-    }
-    nav ul li a {
-        font-size: 25px;
-    }
-    h1 {
-        font-size: 60px;
-    }
-    h3 {
-        width:80%;
-        margin-left:10%;
-        font-size: 30px;
-        letter-spacing: 1px;
-    }
-    form {
-        margin-top: 80px;
-    }
-    button {
-        font-size: 30px;
-    }
-    button.login {
-        width:300px;
-        margin-left:calc(50vw - 150px);
-    }
-    button.register {
-        width:250px;
-        margin-left:calc(50vw - 125px);
-    }
-}
-
-@media (min-width:1024px) {
-    h1.title {
-        margin-top: 0;
-        font-size: 60px;
-    }
-    h3 {
-        margin-top:5px;
-    }
-    nav ul li {
-        width:15%;
-    }
-    nav ul li:first-of-type {
-        margin-left:50%;
-    }
+.right_half {
+    text-align: right;
 }
