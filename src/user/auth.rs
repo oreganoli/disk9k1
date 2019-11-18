@@ -64,17 +64,10 @@ pub fn authenticate(mut cookies: Cookies, auth_req: Form<AuthRequest>) -> Result
         },
     )
 }
-
-#[get("/login")]
-pub fn login() -> Page {
-    render("PAGE_login.html", &Context::new())
-}
-
 /// Self-explanatory.
 /// This is a POST so web accelerators and other automated clients don't log the user out in an attempt to pre-fetch data.
 #[post("/logout")]
-pub fn logout(mut cookies: Cookies) -> Redirect {
+pub fn logout(mut cookies: Cookies) {
     cookies.remove_private(Cookie::named("username"));
     cookies.remove_private(Cookie::named("password"));
-    Redirect::to(uri!(crate::instance::index))
 }

@@ -1,7 +1,6 @@
-use std::io::Cursor;
-
 use rocket::http::ContentType;
 use rocket::response::{Content, Stream};
+use std::io::Cursor;
 
 use crate::prelude::*;
 
@@ -12,14 +11,8 @@ pub struct File {
 }
 
 #[get("/metadata/<id>")]
-pub fn file_info(id: u32) -> Option<Page> {
-    let inst = instance_read();
-    inst.files.get(&id).and_then(|file| {
-        let mut ctx = Context::new();
-        ctx.insert("id", &id);
-        ctx.insert("original_name", &file.original_name);
-        Some(render("PAGE_file_info.html", &ctx))
-    })
+pub fn file_info(id: u32) -> Option<()> {
+    unimplemented!()
 }
 
 type FileGet = Option<Content<Stream<Cursor<Vec<u8>>>>>;

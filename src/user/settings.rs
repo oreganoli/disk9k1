@@ -52,35 +52,12 @@ impl Instance {
     }
 }
 
-#[get("/settings")]
-pub fn settings(mut cookies: Cookies) -> Result<Page, Error> {
-    let inst = instance_read();
-    let user = match inst.user_from_cookies(&mut cookies) {
-        Some(u) => u,
-        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
-    };
-    let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get()?);
-    ctx.insert("user", &user.to_info());
-    Ok(render("PAGE_settings.html", &ctx))
-}
-
 #[post("/change_password", data = "<cp_req>")]
 pub fn change_password(
     mut cookies: Cookies,
     cp_req: Form<PasswordChangeRequest>,
 ) -> Result<Redirect, Error> {
-    let mut inst = instance_write();
-    let user = match inst.user_from_cookies(&mut cookies) {
-        Some(u) => u,
-        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
-    };
-    let password = cp_req.new.clone();
-    let req = cp_req.into_inner();
-    inst.user_change_password(req, &user).map(|_| {
-        cookies.add_private(Cookie::new("password", password));
-        Redirect::to(uri!(settings))
-    })
+    unimplemented!()
 }
 
 #[derive(FromForm)]
@@ -112,15 +89,5 @@ pub fn change_username(
     mut cookies: Cookies,
     uc_req: Form<UsernameChangeRequest>,
 ) -> Result<Redirect, Error> {
-    let mut inst = instance_write();
-    let user = match inst.user_from_cookies(&mut cookies) {
-        Some(u) => u,
-        None => return Error::user_auth(AuthError::Unauthenticated("settings".to_owned())),
-    };
-    let name = uc_req.name.clone();
-    inst.user_change_username(user.id(), uc_req.into_inner())
-        .map(|_| {
-            cookies.add_private(Cookie::new("username", name));
-            Redirect::to(uri!(settings))
-        })
+    unimplemented!()
 }

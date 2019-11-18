@@ -12,7 +12,6 @@ use rocket_contrib::serve;
 
 use prelude::*;
 use util::lock::Lock;
-use util::renderer::Renderer;
 
 mod directory;
 mod error;
@@ -25,10 +24,11 @@ mod user;
 pub mod util;
 
 lazy_static! {
+    pub static ref INDEX: String =
+        std::fs::read_to_string("html/index.html")
+            .expect("There should be an index.html file in /html");
     /// A globally accessible `Instance` behind a `Lock`
     pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::default()));
-    /// The global template renderer.
-    pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::default()));
 }
 
 fn main() {
@@ -39,21 +39,21 @@ fn main() {
             "/",
             routes![
                 instance::index,
-                instance::settings::modify_instance,
-                instance::settings::panel,
-                instance::users::users,
-                user::auth::authenticate,
-                user::auth::login,
-                user::auth::logout,
-                user::delete::del_acc_confirm,
-                user::delete::delete_account,
-                user::info::get_user,
-                user::info::get_me,
-                user::register::register,
-                user::settings::settings,
-                user::settings::change_password,
-                user::settings::change_email,
-                user::settings::change_username,
+                //                instance::settings::modify_instance,
+                //                instance::settings::panel,
+                //                instance::users::users,
+                //                user::auth::authenticate,
+                //                user::auth::login,
+                //                user::auth::logout,
+                //                user::delete::del_acc_confirm,
+                //                user::delete::delete_account,
+                //                user::info::get_user,
+                //                user::info::get_me,
+                //                user::register::register,
+                //                user::settings::settings,
+                //                user::settings::change_password,
+                //                user::settings::change_email,
+                //                user::settings::change_username,
                 //                file::file_info,
                 //                file::get_file,
                 //                file::get_file_named,

@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::ops::Deref;
 
 use repo::{InstanceRepo, InstanceRepository};
 use schema::instance;
@@ -61,13 +62,6 @@ impl std::default::Default for InstanceData {
 }
 
 #[get("/")]
-pub fn index(mut cookies: Cookies) -> Result<Page, Error> {
-    let inst = instance_read();
-    let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get()?);
-    let user = inst.user_from_cookies(&mut cookies);
-    if let Some(u) = user {
-        ctx.insert("user", &u.to_info())
-    };
-    Ok(render("PAGE_index.html", &ctx))
+pub fn index() -> Html<&'static str> {
+    Html(crate::INDEX.deref())
 }

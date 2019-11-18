@@ -1,22 +1,9 @@
 use crate::prelude::*;
 
 #[get("/user/<id>")]
-pub fn get_user(mut cookies: Cookies, id: i32) -> Result<Option<Page>, Error> {
+pub fn get_user(mut cookies: Cookies, id: i32) -> Result<Option<()>, Error> {
     let inst = instance_read();
-    let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get()?);
-    let user = inst.user_from_cookies(&mut cookies);
-    if let Some(u) = user {
-        ctx.insert("user", &u.to_info())
-    }
-    let requested_user = inst.user_repo.read_by_id(id)?;
-    match requested_user {
-        Some(u) => {
-            ctx.insert("requested_user", &u.to_info());
-            Ok(Some(render("PAGE_user.html", &ctx)))
-        }
-        None => Ok(None),
-    }
+    unimplemented!()
 }
 
 #[get("/me")]

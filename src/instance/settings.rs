@@ -34,20 +34,3 @@ pub fn modify_instance(
     inst.set_instance_data(ins_req.into_inner(), &user)
         .map(|_| Redirect::to("/panel"))
 }
-
-#[get("/panel")]
-pub fn panel(mut cookies: Cookies) -> Result<Page, Error> {
-    let inst = instance_read();
-    let user = match inst.user_from_cookies(&mut cookies) {
-        Some(u) => u,
-        None => return Error::user_auth(AuthError::Unauthenticated("panel".to_owned())),
-    };
-    if user.to_info().is_admin {
-        let mut ctx = Context::new();
-        ctx.insert("instance", &inst.ins_repo.get()?);
-        ctx.insert("user", &user.to_info());
-        Ok(render("PAGE_panel.html", &ctx))
-    } else {
-        Error::user_auth(AuthError::Unauthorized("panel".to_owned()))
-    }
-}

@@ -32,31 +32,12 @@ pub struct DeleteAccountRequest {
 pub fn delete_account(
     mut cookies: Cookies,
     da_req: Form<DeleteAccountRequest>,
-) -> Result<Page, Error> {
+) -> Result<(), Error> {
     let mut inst = instance_write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Error::user_auth(AuthError::Unauthenticated("me".to_owned())),
     };
     inst.delete_user(da_req.id, &user)?;
-    let mut ctx = Context::new();
-    ctx.insert("instance", &inst.ins_repo.get()?);
-    ctx.insert("deleted_user_id", &da_req.id);
-    Ok(render("PAGE_delete_account_successful.html", &ctx))
-}
-
-#[get("/delete_account_confirm")]
-pub fn del_acc_confirm(mut cookies: Cookies) -> Result<Page, Error> {
-    let inst = instance_read();
-    let user = match inst.user_from_cookies(&mut cookies) {
-        Some(u) => u,
-        None => {
-            return Error::user_auth(AuthError::Unauthenticated(
-                "delete_account_confirm".to_owned(),
-            ))
-        }
-    };
-    let mut ctx = Context::new();
-    ctx.insert("user", &user.to_info());
-    Ok(render("PAGE_delete_account_confirm.html", &ctx))
+    unimplemented!()
 }

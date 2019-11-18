@@ -99,34 +99,6 @@ impl Error {
 
 impl rocket::response::Responder<'_> for Error {
     fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
-        let reason = self.reason().to_owned();
-        let mut ctx = Context::new();
-        let instance: RwLockReadGuard<'static, Instance> = instance_read();
-        ctx.insert("reason", &reason);
-        let user = instance.user_from_cookies(request.cookies().borrow_mut());
-        let info = match user.as_ref() {
-            Some(u) => Some(u.to_info()),
-            None => None,
-        };
-        ctx.insert("user", &info);
-        match self {
-            Self::User(UserError::Auth(a)) => match a {
-                AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
-                    ctx.insert("login_redirect", &redir);
-                    render("PAGE_login.html", &ctx).respond_to(request)
-                }
-                AuthError::BadCredentials => render("PAGE_login.html", &ctx).respond_to(request),
-            },
-            Self::User(UserError::Registration(_)) => {
-                render("PAGE_registration_error.html", &ctx).respond_to(request)
-            }
-            Self::User(UserError::PasswordChange(_))
-            | Self::User(UserError::EmailChange(_))
-            | Self::User(UserError::UsernameChange(_)) => {
-                render("PAGE_settings.html", &ctx).respond_to(request)
-            }
-            Self::Instance(_) => render("PAGE_panel.html", &ctx).respond_to(request),
-            _ => reason.respond_to(request),
-        }
+        unimplemented!()
     }
 }
