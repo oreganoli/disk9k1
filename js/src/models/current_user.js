@@ -1,6 +1,22 @@
 var m = require("mithril");
 var CurrentUser = {
-    user: null,
+    logout: function () {
+        m.request(
+            {method: "POST", url: "/logout"}
+        ).then(function () {
+            CurrentUser.user = null;
+        });
+    },
+    me: function () {
+        return m.request({
+                method: "GET",
+                url: "/me",
+                withCredentials: true,
+            }
+        ).then(function (me) {
+            CurrentUser.user = me;
+        });
+    },
     authenticate: function (username, password) {
         m.request({
             method: "POST",
@@ -8,7 +24,11 @@ var CurrentUser = {
             withCredentials: true,
             body: {username, password}
         }).then(function (result) {
-            CurrentUser.user = result;
+            if (result) {
+                CurrentUser.me();
+            } else {
+                alert("Login failed");
+            }
         });
     }
 };

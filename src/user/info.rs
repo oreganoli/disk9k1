@@ -1,16 +1,21 @@
 use crate::prelude::*;
 
+//
 #[get("/user/<id>")]
-pub fn get_user(mut cookies: Cookies, id: i32) -> Result<Option<()>, Error> {
-    let inst = instance_read();
-    unimplemented!()
+pub fn get_user(
+    app: AppState,
+    mut cookies: Cookies,
+    id: i32,
+) -> Result<Json<Option<UserInfo>>, Error> {
+    let inst = app.read();
+    Ok(Json(inst.user_repo.read_by_id(id)?.map(|u| u.to_info())))
 }
 
 #[get("/me")]
-pub fn get_me(mut cookies: Cookies) -> Option<Redirect> {
-    let inst = instance_read();
+pub fn get_me(app: AppState, mut cookies: Cookies) -> Result<Json<Option<UserInfo>>, Error> {
+    let inst = app.read();
     match inst.user_from_cookies(&mut cookies) {
-        Some(u) => Some(Redirect::to(format!("/user/{}", u.id))),
-        None => None,
+        Some(u) => Ok(Json(inst.user_repo.read_by_id(u.id)?.map(|u| u.to_info()))),
+        None => Ok(Json(None)),
     }
 }

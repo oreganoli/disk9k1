@@ -1,12 +1,14 @@
 var m = require("mithril");
 var Instance = require("../models/instance");
 var LoginIndicator = require("./login_indicator");
+var CurrentUser = require("../models/current_user");
 var name = {
     oninit: function () {
         Instance.load();
+        CurrentUser.user = CurrentUser.me()
     },
     view: function () {
-        return m("b", Instance.name);
+        return m("b", m("a", {href: "/#!/index"}, Instance.name));
     }
 };
 var left_half = {

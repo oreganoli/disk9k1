@@ -12,7 +12,7 @@ pub mod error;
 pub mod instance;
 pub mod user;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum Error {
     /// The database layer could not be accessed.
     Db,
@@ -99,6 +99,6 @@ impl Error {
 
 impl rocket::response::Responder<'_> for Error {
     fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
-        unimplemented!()
+        Json(self).respond_to(request)
     }
 }

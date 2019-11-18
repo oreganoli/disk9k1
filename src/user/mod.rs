@@ -3,18 +3,18 @@ use schema::users;
 use crate::prelude::*;
 
 pub mod auth;
-pub mod delete;
+//pub mod delete;
 pub mod info;
-pub mod register;
+//pub mod register;
 pub mod repo;
-pub mod settings;
+//pub mod settings;
 
 /// The publicly-visible information about users.
 #[derive(Serialize)]
-pub struct UserInfo<'a> {
+pub struct UserInfo {
     pub id: i32,
-    pub name: &'a str,
-    pub email: &'a str,
+    pub name: String,
+    pub email: String,
     pub joined: NaiveDateTime,
     pub is_admin: bool,
 }
@@ -51,8 +51,8 @@ impl User {
     pub fn to_info(&self) -> UserInfo {
         UserInfo {
             id: self.id,
-            name: &self.name,
-            email: &self.email,
+            name: self.name.clone(),
+            email: self.email.clone(),
             joined: self.joined,
             is_admin: self.is_admin,
         }

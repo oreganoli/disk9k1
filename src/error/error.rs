@@ -1,6 +1,6 @@
-use super::Error;
+use crate::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum DirectoryError {
     CyclicReference,
     Nonexistent,

@@ -10,15 +10,17 @@ pub use rocket::{
     response::Redirect,
     State,
 };
+pub use rocket_contrib::json::Json;
 pub use serde::{Deserialize, Serialize};
 
 pub use crate::error::*;
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
 pub use crate::user::{NewUser, User, UserInfo};
-pub use crate::util;
-pub use crate::util::instance::*;
+pub use crate::util::lock::Lock;
 pub use crate::util::pool::HandledPool;
+
+pub type AppState<'a> = State<'a, Lock<Instance>>;
 
 pub const BCRYPT_COST: u32 = 4;
 pub const BYTES_TO_MEBIBYTE: f64 = 1_048_576f64;

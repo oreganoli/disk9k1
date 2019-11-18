@@ -1,6 +1,5 @@
 use crate::prelude::*;
 
-pub mod instance;
 pub mod lock;
 pub mod pool;
 

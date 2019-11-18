@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use crate::prelude::*;
+
+#[derive(Debug, Serialize)]
 pub enum UserError {
     Auth(AuthError),
     Deletion(DeletionError),
@@ -8,19 +10,20 @@ pub enum UserError {
     UsernameChange(UsernameChangeError),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum AuthError {
     BadCredentials,
     Unauthenticated(String),
     Unauthorized(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum DeletionError {
     DoesNotExist,
     IsAdmin,
 }
-#[derive(Debug)]
+
+#[derive(Debug, Serialize)]
 pub enum RegistrationError {
     UsernameTaken,
     UsernameNotGiven,
@@ -30,20 +33,20 @@ pub enum RegistrationError {
     PasswordNotGiven,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum PasswordChangeError {
     FormIncomplete,
     NotMatching,
     UserNonexistent,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum EmailChangeError {
     Empty,
     UserNonexistent,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum UsernameChangeError {
     Empty,
     Taken,

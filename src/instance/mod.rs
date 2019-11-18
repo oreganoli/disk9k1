@@ -25,14 +25,24 @@ pub struct Instance {
 impl Default for Instance {
     fn default() -> Self {
         let mut ins_repo = InstanceRepo::new();
-        if ins_repo.get().unwrap().is_none() {
+        if ins_repo
+            .get()
+            .expect("Can't get the instance repo's cache.")
+            .is_none()
+        {
             eprintln!("No instance data was found, assuming first run and populating with default values.");
             ins_repo.set(InstanceData::default()).unwrap();
         }
         let mut user_repo = UserRepo::new();
-        if user_repo.read_all().unwrap().is_empty() {
+        if user_repo
+            .read_all()
+            .expect("Can't read all the users")
+            .is_empty()
+        {
             eprintln!("No accounts were found. Generating admin account from env variables...");
-            user_repo.create(NewUser::generate_admin()).unwrap();
+            user_repo
+                .create(NewUser::generate_admin())
+                .expect("Could not create an admin account");
         }
         Self {
             ins_repo: Box::new(ins_repo),
@@ -69,7 +79,7 @@ pub fn index() -> Html<&'static str> {
 }
 
 #[get("/instance")]
-pub fn instance() -> Json<InstanceData> {
-    let inst = instance_read();
+pub fn instance(app: AppState) -> Json<InstanceData> {
+    let inst = app.read();
     Json(inst.ins_repo.get().unwrap().unwrap())
 }

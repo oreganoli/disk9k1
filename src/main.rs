@@ -24,32 +24,31 @@ mod user;
 pub mod util;
 
 lazy_static! {
-    pub static ref INDEX: String =
-        std::fs::read_to_string("html/index.html")
-            .expect("There should be an index.html file in /html");
-    /// A globally accessible `Instance` behind a `Lock`
-    pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::default()));
+    pub static ref INDEX: String = std::fs::read_to_string("html/index.html")
+        .expect("There should be an index.html file in /html");
 }
 
 fn main() {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
+    let app = Lock(RwLock::new(Instance::default()));
     rocket::ignite()
+        .manage(app)
         .mount(
             "/",
             routes![
                 instance::index,
                 instance::instance,
+                user::auth::authenticate,
+                user::auth::logout,
+                user::info::get_user,
+                user::info::get_me,
                 //                instance::settings::modify_instance,
                 //                instance::settings::panel,
                 //                instance::users::users,
                 //                user::auth::authenticate,
-                //                user::auth::login,
-                //                user::auth::logout,
                 //                user::delete::del_acc_confirm,
                 //                user::delete::delete_account,
-                //                user::info::get_user,
-                //                user::info::get_me,
                 //                user::register::register,
                 //                user::settings::settings,
                 //                user::settings::change_password,

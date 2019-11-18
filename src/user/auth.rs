@@ -37,29 +37,34 @@ impl Instance {
     }
 }
 
-#[derive(FromForm)]
+#[derive(Deserialize, Serialize)]
 pub struct AuthRequest {
     pub username: String,
     pub password: String,
-    pub login_redirect: String,
 }
 
 #[post("/authenticate", data = "<auth_req>")]
-pub fn authenticate(mut cookies: Cookies, auth_req: Form<AuthRequest>) -> Result<Redirect, Error> {
-    let inst = instance_read();
+pub fn authenticate(
+    app: AppState,
+    mut cookies: Cookies,
+    auth_req: Json<AuthRequest>,
+) -> Result<Json<bool>, Error> {
+    let inst = app.read();
     let user = inst.user_repo.read_by_name(auth_req.username.clone())?;
     user.map_or_else(
-        || Error::user_auth(AuthError::BadCredentials),
+        || {
+            eprintln!("auth failed");
+            Ok(Json(false))
+        },
         |u| {
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                Ok(Redirect::to(
-                    Uri::try_from(auth_req.login_redirect.clone())
-                        .unwrap_or_else(|_| Uri::try_from("/").unwrap()),
-                ))
+                eprintln!("Auth succeeded");
+                Ok(Json(true))
             } else {
-                Error::user_auth(AuthError::BadCredentials)
+                eprintln!("Auth failed");
+                Ok(Json(false))
             }
         },
     )
