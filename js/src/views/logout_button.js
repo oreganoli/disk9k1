@@ -3,7 +3,7 @@ var CurrentUser = require("../models/current_user");
 
 var LogoutButton = {
     view: function () {
-        return m("button", {
+        return m("button.top_item", {
             onclick: function () {
                 CurrentUser.logout();
             }

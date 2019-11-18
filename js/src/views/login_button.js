@@ -2,7 +2,7 @@ var m = require("mithril");
 
 var LoginButton = {
     view: function () {
-        return m("button.login_button", {
+        return m("button.top_item", {
             onclick: function () {
                 m.route.set("/login")
             }

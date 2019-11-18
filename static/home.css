@@ -39,17 +39,20 @@ button {
     display: flex;
     flex-direction: row;
     align-content: center;
+    justify-content: space-between;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
     border-bottom: 1px solid var(--border-color);
 }
 
+.top_item {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
 .left_half, .right_half {
-    width: 50%;
     display: flex;
     flex-direction: row;
-    vertical-align: center;
-    align-content: center;
+    align-items: center;
 }
 
 .left_half {

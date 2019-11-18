@@ -8,7 +8,7 @@ var name = {
         CurrentUser.user = CurrentUser.me()
     },
     view: function () {
-        return m("b", m("a", {href: "/#!/index"}, Instance.name));
+        return m("a.top_item", {href: "/#!/index"}, Instance.name);
     }
 };
 var left_half = {
