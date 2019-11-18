@@ -5,7 +5,7 @@ use crate::prelude::*;
 mod repo;
 
 #[derive(Associations, Queryable, Identifiable)]
-#[belongs_to(Directory, foreign_key = "id")]
+#[belongs_to(Directory, foreign_key = "parent")]
 #[belongs_to(User, foreign_key = "owner")]
 #[table_name = "directories"]
 pub struct Directory {

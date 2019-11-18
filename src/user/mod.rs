@@ -19,7 +19,7 @@ pub struct UserInfo<'a> {
     pub is_admin: bool,
 }
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable, Identifiable, Clone)]
 pub struct User {
     id: i32,
     name: String,

@@ -2,11 +2,13 @@ use std::borrow::BorrowMut;
 
 use rocket::{Request, Response};
 
+pub use error::*;
 pub use instance::*;
 pub use user::*;
 
 use crate::prelude::*;
 
+pub mod error;
 pub mod instance;
 pub mod user;
 
@@ -14,6 +16,7 @@ pub mod user;
 pub enum Error {
     /// The database layer could not be accessed.
     Db,
+    Dir(DirectoryError),
     ///
     Instance(InstanceError),
     /// Errors related to users.
@@ -84,6 +87,11 @@ impl Error {
                 InstanceError::NameEmpty => "A Disk9k1 instance must have a name.",
                 InstanceError::NegativeSizeLimit => "The size limit on files cannot be negative.",
             },
+            Self::Dir(d) => match d {
+                DirectoryError::CyclicReference => "There was an attempt to create a directory inside itself.",
+                DirectoryError::Nonexistent => "No such directory exists.",
+                DirectoryError::NotSameOwner => "There was an attempt to create a directory in a directory not owned by the same user."
+            }
             Self::Other => "An unspecified error occurred.",
         }
     }
