@@ -16,7 +16,7 @@ use util::renderer::Renderer;
 
 mod directory;
 mod error;
-mod file;
+//mod file;
 mod instance;
 mod prelude;
 pub mod schema;

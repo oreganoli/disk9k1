@@ -3,7 +3,6 @@ use std::collections::BTreeMap;
 use repo::{InstanceRepo, InstanceRepository};
 use schema::instance;
 
-use crate::file::File;
 use crate::prelude::*;
 use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
@@ -18,7 +17,6 @@ pub struct Instance {
     pub ins_repo: Box<dyn InstanceRepository + Sync + Send>,
     /// The repo for user data.
     pub user_repo: Box<dyn UserRepository + Sync + Send>,
-    pub files: BTreeMap<u32, File>,
 }
 
 impl Default for Instance {
@@ -36,7 +34,6 @@ impl Default for Instance {
         Self {
             ins_repo: Box::new(ins_repo),
             user_repo: Box::new(user_repo),
-            files: BTreeMap::new(),
         }
     }
 }
