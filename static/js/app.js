@@ -1,1 +1,0 @@
-/home/jan/Dev/disk9k1/js/bin/app.js
