@@ -23,21 +23,21 @@ impl Instance {
     }
 }
 
-#[derive(FromForm)]
+#[derive(Deserialize)]
 pub struct DeleteAccountRequest {
     id: i32,
 }
 
 #[post("/delete_account", data = "<da_req>")]
 pub fn delete_account(
+    app: AppState,
     mut cookies: Cookies,
-    da_req: Form<DeleteAccountRequest>,
+    da_req: Json<DeleteAccountRequest>,
 ) -> Result<(), Error> {
-    let mut inst = instance_write();
+    let mut inst = app.write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
         None => return Error::user_auth(AuthError::Unauthenticated("me".to_owned())),
     };
-    inst.delete_user(da_req.id, &user)?;
-    unimplemented!()
+    inst.delete_user(da_req.id, &user)
 }
