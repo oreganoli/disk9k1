@@ -14,7 +14,6 @@ pub trait UserRepository {
     fn update_name(&mut self, id: i32, new_name: String) -> Result<(), Error>;
     fn update_email(&mut self, id: i32, new_email: String) -> Result<(), Error>;
     fn update_password(&mut self, id: i32, new_password: String) -> Result<(), Error>;
-    fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), Error>;
     fn delete(&mut self, id: i32) -> Result<(), Error>;
 }
 
@@ -51,7 +50,6 @@ impl UserRepository for UserRepo {
     fn create(&mut self, new_user: NewUser) -> Result<(), Error> {
         let mut user = new_user;
         user.password = bcrypt::hash(user.password, BCRYPT_COST).unwrap();
-        user.quick_token = bcrypt::hash(user.quick_token, BCRYPT_COST).unwrap();
         diesel::insert_into(users::table)
             .values(user)
             .execute(&self.pool.get())
@@ -116,20 +114,6 @@ impl UserRepository for UserRepo {
         let conn = self.pool.get();
         diesel::update(users::table.find(id))
             .set(users::password.eq(bcrypt::hash(new_password, BCRYPT_COST).unwrap()))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
-    }
-    /// Takes an unhashed token.
-    fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::update(users::table.find(id))
-            .set(users::password.eq(bcrypt::hash(new_token, BCRYPT_COST).unwrap()))
             .execute(&conn)
             .map_or_else(
                 |_| Err(Error::Db),

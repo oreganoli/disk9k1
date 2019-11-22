@@ -12,7 +12,6 @@ DATABASE_URL=postgres://me@localhost:5432/disk9k1
 ADMIN_USERNAME=whateveryouwant
 ADMIN_EMAIL=randomEmail
 ADMIN_PASSWORD=ditto
-ADMIN_TOKEN=samegoesforthis
 ROCKET_SECRET_KEY=look_it_up_in_Rocket_docs
 ```
 Run the DB migrations with `diesel migration run`.

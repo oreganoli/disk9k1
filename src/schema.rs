@@ -47,7 +47,6 @@ table! {
         name -> Text,
         email -> Text,
         password -> Text,
-        quick_token -> Text,
         joined -> Timestamp,
         is_admin -> Bool,
     }
