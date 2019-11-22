@@ -7,7 +7,7 @@ pub mod delete;
 pub mod info;
 pub mod register;
 pub mod repo;
-//pub mod settings;
+pub mod settings;
 
 /// The publicly-visible information about users.
 #[derive(Serialize)]
