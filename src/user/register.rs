@@ -1,7 +1,7 @@
 use crate::error::UserError::Registration;
 use crate::prelude::*;
 
-#[derive(FromForm)]
+#[derive(Deserialize)]
 pub struct RegistrationRequest {
     username: String,
     email: String,
@@ -21,7 +21,7 @@ fn is_valid_email(email: &str) -> bool {
 }
 
 impl Instance {
-    pub fn register_user(&mut self, req: RegistrationRequest) -> Result<String, Error> {
+    pub fn register_user(&mut self, req: RegistrationRequest) -> Result<(), Error> {
         if self
             .user_repo
             .read_by_name(req.username.clone())
@@ -42,21 +42,15 @@ impl Instance {
         } else {
             let token = generate_token(&req.username);
             self.user_repo
-                .create(NewUser::new(
-                    req.username,
-                    req.email,
-                    req.password,
-                    token.clone(),
-                    false,
-                ))
+                .create(NewUser::new(req.username, req.email, req.password, false))
                 .unwrap();
-            Ok(token)
+            Ok(())
         }
     }
 }
 
 #[post("/register", data = "<reg_req>")]
-pub fn register(reg_req: Form<RegistrationRequest>) -> Result<(), Error> {
-    let mut inst = instance_write();
-    unimplemented!()
+pub fn register(app: AppState, reg_req: Json<RegistrationRequest>) -> Result<(), Error> {
+    let mut inst = app.write();
+    inst.register_user(reg_req.into_inner())
 }

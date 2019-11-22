@@ -5,7 +5,7 @@ use crate::prelude::*;
 pub mod auth;
 //pub mod delete;
 pub mod info;
-//pub mod register;
+pub mod register;
 pub mod repo;
 //pub mod settings;
 
