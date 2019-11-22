@@ -8,12 +8,17 @@ pub use rocket::{
     http::{Cookie, Cookies, Status},
     request::{Form, FromForm},
     response::content::Html,
+    response::status,
     response::Redirect,
     State,
 };
 pub use rocket_contrib::json::Json;
 pub use serde::{Deserialize, Serialize};
 
+pub use crate::error::{
+    AppError, AuthError, DeletionError, DirectoryError, EmailChangeError, InstanceError,
+    PasswordChangeError, RegistrationError, UserError,
+};
 pub use crate::instance::{Instance, InstanceData};
 pub use crate::schema;
 pub use crate::user::{NewUser, User, UserInfo};
@@ -21,7 +26,7 @@ pub use crate::util::lock::Lock;
 pub use crate::util::pool::HandledPool;
 
 pub type AppState<'a> = State<'a, Lock<Instance>>;
-pub type AppResult<T> = Result<T, Box<dyn std::error::Error>>;
+pub type AppResult<T> = Result<T, AppError>;
 
 pub const BCRYPT_COST: u32 = 4;
 pub const BYTES_TO_MEBIBYTE: f64 = 1_048_576f64;

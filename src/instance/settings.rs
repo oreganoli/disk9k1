@@ -1,22 +1,18 @@
 use crate::prelude::*;
 
 impl Instance {
-    pub fn set_instance_data(
-        &mut self,
-        new_data: InstanceData,
-        requester: &User,
-    ) -> Result<(), Error> {
+    pub fn set_instance_data(&mut self, new_data: InstanceData, requester: &User) -> AppResult<()> {
         if new_data.name.is_empty() {
-            return Error::instance(InstanceError::NameEmpty);
+            return AppError::instance(InstanceError::NameEmpty).into();
         }
         if new_data.size_limit < 0 {
-            return Error::instance(InstanceError::NegativeSizeLimit);
+            return AppError::instance(InstanceError::NegativeSizeLimit).into();
         }
         if requester.is_admin() {
             self.ins_repo.set(new_data).unwrap();
             Ok(())
         } else {
-            Error::user_auth(AuthError::Unauthorized("/panel".to_owned()))
+            AppError::user_auth(AuthError::Unauthorized).into()
         }
     }
 }
@@ -26,11 +22,11 @@ pub fn modify_instance(
     app: AppState,
     mut cookies: Cookies,
     ins_req: Json<InstanceData>,
-) -> Result<Json<()>, Error> {
+) -> AppResult<Json<()>> {
     let mut inst = app.write();
     let user = match inst.user_from_cookies(&mut cookies) {
         Some(u) => u,
-        None => return Error::user_auth(AuthError::Unauthenticated("panel".to_owned())),
+        None => return AppError::user_auth(AuthError::Unauthenticated).into(),
     };
     inst.set_instance_data(ins_req.into_inner(), &user)
         .map(|_| Json(()))

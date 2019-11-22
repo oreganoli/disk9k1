@@ -45,7 +45,7 @@ pub fn authenticate(
     app: AppState,
     mut cookies: Cookies,
     auth_req: Json<AuthRequest>,
-) -> Result<Json<bool>, Error> {
+) -> AppResult<Json<bool>> {
     let inst = app.read();
     let user = inst.user_repo.read_by_name(auth_req.username.clone())?;
     user.map_or_else(

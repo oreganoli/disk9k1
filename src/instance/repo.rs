@@ -6,8 +6,8 @@ use super::InstanceData;
 /// The trait defining the interface for an `InstanceData` repository.
 /// This allows us to easily create mocks for testing.
 pub trait InstanceRepository {
-    fn get(&self) -> Result<Option<InstanceData>, Error>;
-    fn set(&mut self, data: InstanceData) -> Result<(), Error>;
+    fn get(&self) -> AppResult<Option<InstanceData>>;
+    fn set(&mut self, data: InstanceData) -> AppResult<()>;
 }
 
 /// Diesel-based repo for `InstanceData`
@@ -30,12 +30,12 @@ impl InstanceRepo {
     pub fn cache(&self) -> Option<InstanceData> {
         self.cache.clone()
     }
-    pub fn update_cache(&mut self) -> Result<(), Error> {
+    pub fn update_cache(&mut self) -> AppResult<()> {
         let conn = self.pool.get();
         instance::table.first(&conn).map_or_else(
             |err| match err {
                 diesel::result::Error::NotFound => Ok(()),
-                _ => Err(Error::Db),
+                _ => Err(AppError::Db).into(),
             },
             |inst: InstanceData| {
                 self.cache = Some(inst);
@@ -46,16 +46,16 @@ impl InstanceRepo {
 }
 
 impl InstanceRepository for InstanceRepo {
-    fn get(&self) -> Result<Option<InstanceData>, Error> {
+    fn get(&self) -> AppResult<Option<InstanceData>> {
         Ok(self.cache())
     }
-    fn set(&mut self, data: InstanceData) -> Result<(), Error> {
+    fn set(&mut self, data: InstanceData) -> AppResult<()> {
         let conn = self.pool.get();
         if self.get().unwrap().is_none() {
             diesel::insert_into(instance::table)
                 .values(data)
                 .execute(&conn)
-                .map_or_else(|_| Err(Error::Db), |_| self.update_cache())
+                .map_or_else(|_| Err(AppError::Db).into(), |_| self.update_cache())
         } else {
             diesel::update(instance::table)
                 .set((
@@ -64,7 +64,7 @@ impl InstanceRepository for InstanceRepo {
                     instance::size_limit.eq(data.size_limit),
                 ))
                 .execute(&conn)
-                .map_or_else(|_| Err(Error::Db), |_| self.update_cache())
+                .map_or_else(|_| Err(AppError::Db).into(), |_| self.update_cache())
         }
     }
 }

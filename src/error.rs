@@ -56,11 +56,11 @@ impl Display for AppError {
             f,
             "{}",
             match self {
-                Self::Db => "A database error occurred.",
-                Self::Dir(d) => &format!("{}", d),
-                Self::Instance(i) => &format!("{}", i),
-                Self::User(u) => &format!("{}", u),
-                Self::Other => "Another error occurred.",
+                Self::Db => "A database error occurred.".to_owned(),
+                Self::Dir(d) => format!("{}", d),
+                Self::Instance(i) => format!("{}", i),
+                Self::User(u) => format!("{}", u),
+                Self::Other => "Another error occurred.".to_owned(),
             }
         )
     }
@@ -68,6 +68,6 @@ impl Display for AppError {
 
 impl rocket::response::Responder<'_> for AppError {
     fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
-        Json(self).respond_to(request)
+        status::BadRequest(Some(Json(format!("{}", self)))).respond_to(request)
     }
 }
