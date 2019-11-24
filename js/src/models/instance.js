@@ -1,6 +1,6 @@
-var m = require("mithril");
+const m = require("mithril");
 
-var Instance = {
+const Instance = {
     name: "",
     description: "",
     size_limit: 0,

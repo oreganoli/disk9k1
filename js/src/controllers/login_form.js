@@ -1,7 +1,7 @@
-var m = require("mithril");
-var CurrentUser = require("../models/current_user");
+const m = require("mithril");
+const CurrentUser = require("../models/current_user");
 
-var LoginForm = {
+const LoginForm = {
     username: "",
     password: "",
     view: function () {

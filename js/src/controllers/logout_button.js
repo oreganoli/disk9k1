@@ -1,7 +1,7 @@
-var m = require("mithril");
-var CurrentUser = require("../models/current_user");
+const m = require("mithril");
+const CurrentUser = require("../models/current_user");
 
-var LogoutButton = {
+const LogoutButton = {
     view: function () {
         return m("button.top_item", {
             onclick: function () {

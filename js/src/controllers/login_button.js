@@ -1,6 +1,6 @@
-var m = require("mithril");
+const m = require("mithril");
 
-var LoginButton = {
+const LoginButton = {
     view: function () {
         return m("button.top_item", {
             onclick: function () {

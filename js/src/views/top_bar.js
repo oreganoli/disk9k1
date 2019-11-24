@@ -1,8 +1,8 @@
-var m = require("mithril");
-var Instance = require("../models/instance");
-var LoginIndicator = require("./login_indicator");
-var CurrentUser = require("../models/current_user");
-var name = {
+const m = require("mithril");
+const Instance = require("../models/instance");
+const LoginIndicator = require("./login_indicator");
+const CurrentUser = require("../models/current_user");
+const name = {
     oninit: function () {
         Instance.load();
         CurrentUser.user = CurrentUser.me()
@@ -11,17 +11,17 @@ var name = {
         return m("a.top_item", {href: "/#!/index"}, Instance.name);
     }
 };
-var left_half = {
+const left_half = {
     view: function () {
         return m(".left_half", m(name));
     }
 };
-var right_half = {
+const right_half = {
     view: function () {
         return m(".right_half", m(LoginIndicator));
     }
 };
-var TopBar = {
+const TopBar = {
     view: function () {
         return m(".top_bar", [m(left_half), m(right_half)]);
     }

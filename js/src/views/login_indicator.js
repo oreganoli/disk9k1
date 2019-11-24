@@ -1,8 +1,8 @@
-var m = require("mithril");
-var CurrentUser = require("../models/current_user");
-var LoginButton = require("../controllers/login_button");
-var LogoutButton = require("../controllers/logout_button");
-var LoginIndicator = {
+const m = require("mithril");
+const CurrentUser = require("../models/current_user");
+const LoginButton = require("../controllers/login_button");
+const LogoutButton = require("../controllers/logout_button");
+const LoginIndicator = {
     view: function () {
         if (CurrentUser.user != null) {
             if (CurrentUser.user.is_admin) {

@@ -1,5 +1,5 @@
-var m = require("mithril");
-var User = {
+const m = require("mithril");
+const User = {
     load: function (id) {
         m.request({
             method: "GET",

@@ -1,8 +1,7 @@
-var m = require("mithril");
-var TopBar = require("../views/top_bar");
-var ModifyInstanceForm = require("../controllers/modify_instance");
+const m = require("mithril");
+const ModifyInstanceForm = require("../controllers/modify_instance");
 
-var Panel = {
+const Panel = {
     view: function () {
         return m("main.main_container", m(ModifyInstanceForm));
     }

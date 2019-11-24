@@ -1,7 +1,6 @@
-var m = require("mithril");
-var Instance = require("../models/instance");
-var TopBar = require("./top_bar");
-var InstanceView = {
+const m = require("mithril");
+const Instance = require("../models/instance");
+const InstanceView = {
     oninit: function () {
         Instance.load();
     },

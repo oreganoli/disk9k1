@@ -1,7 +1,7 @@
-var m = require("mithril");
-var InstanceView = require("./views/instance");
-var LoginView = require("./views/login");
-var PanelView = require("./views/panel");
+const m = require("mithril");
+const InstanceView = require("./views/instance");
+const LoginView = require("./views/login");
+const PanelView = require("./views/panel");
 const TopBar = require("./views/top_bar");
 
 const Layout = {

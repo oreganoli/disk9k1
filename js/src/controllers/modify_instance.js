@@ -1,7 +1,7 @@
-var m = require("mithril");
-var Instance = require("../models/instance");
+const m = require("mithril");
+const Instance = require("../models/instance");
 
-var ModifyInstanceForm = {
+const ModifyInstanceForm = {
     data: {
         name: "",
         description: "",

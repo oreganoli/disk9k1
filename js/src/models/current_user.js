@@ -1,5 +1,6 @@
-var m = require("mithril");
-var CurrentUser = {
+const m = require("mithril");
+const CurrentUser = {
+    user: null,
     logout: function () {
         m.request(
             {method: "POST", url: "/logout"}
