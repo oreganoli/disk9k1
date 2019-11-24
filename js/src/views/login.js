@@ -1,6 +1,6 @@
 var m = require("mithril");
 var TopBar = require("./top_bar");
-var LoginForm = require("../forms/login_form");
+var LoginForm = require("../controllers/login_form");
 
 var LoginView = {
     view: function () {

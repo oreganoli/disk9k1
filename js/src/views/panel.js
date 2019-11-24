@@ -1,6 +1,6 @@
 var m = require("mithril");
 var TopBar = require("../views/top_bar");
-var ModifyInstanceForm = require("../forms/modify_instance");
+var ModifyInstanceForm = require("../controllers/modify_instance");
 
 var Panel = {
     view: function () {
