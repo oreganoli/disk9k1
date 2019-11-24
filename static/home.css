@@ -39,6 +39,7 @@ button:active {
     flex-direction: column;
     justify-content: space-between;
     align-content: center;
+    align-items: center;
 }
 
 .title, .description, .size_limit {
@@ -81,4 +82,17 @@ form {
     align-self: center;
     align-items: start;
     max-width: 50%;
+}
+
+table, tr, td, th {
+    border: 1px solid var(--border-color);
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 0.2em;
+}
+
+.hor {
+    text-align: start;
 }

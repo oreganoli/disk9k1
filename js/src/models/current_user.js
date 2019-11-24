@@ -6,7 +6,7 @@ const CurrentUser = {
             {method: "POST", url: "/logout"}
         ).then(() => {
             CurrentUser.user = null;
-        });
+        }).catch((err) => (alert(err)));
     },
     me: () => {
         return m.request({
@@ -16,7 +16,7 @@ const CurrentUser = {
             }
         ).then((me) => {
             CurrentUser.user = me;
-        });
+        }).catch((err) => (alert(err)));
     },
     authenticate: (username, password) => {
         m.request({
@@ -29,10 +29,7 @@ const CurrentUser = {
                 CurrentUser.me();
                 m.route.set("/index");
             }
-        })
-            .catch((err) => {
-                alert(err);
-            });
+        }).catch((err) => (alert(err)))
     }
 };
 module.exports = CurrentUser;

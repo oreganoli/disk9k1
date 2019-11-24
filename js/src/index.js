@@ -2,6 +2,7 @@ const m = require("mithril");
 const InstanceView = require("./views/instance");
 const LoginView = require("./views/login");
 const PanelView = require("./views/panel");
+const MeView = require("./views/me");
 const TopBar = require("./views/top_bar");
 
 const Layout = {
@@ -13,5 +14,6 @@ const Layout = {
 m.route(document.body, "/index", {
     "/index": {render: () => (m(Layout, m(InstanceView)))},
     "/login": {render: () => (m(Layout, m(LoginView)))},
-    "/panel": {render: () => (m(Layout, m(PanelView)))}
+    "/panel": {render: () => (m(Layout, m(PanelView)))},
+    "/me": {render: () => (m(Layout, m(MeView)))}
 });
