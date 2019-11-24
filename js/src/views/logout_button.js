@@ -6,6 +6,7 @@ var LogoutButton = {
         return m("button.top_item", {
             onclick: function () {
                 CurrentUser.logout();
+                m.route.set("/index");
             }
         }, "Log out");
     }
