@@ -22,15 +22,16 @@ var CurrentUser = {
             method: "POST",
             url: "/authenticate",
             withCredentials: true,
-            body: {username, password}
+            body: {username, password},
         }).then(function (result) {
             if (result) {
                 CurrentUser.me();
                 m.route.set("/index");
-            } else {
-                alert("Login failed");
             }
-        });
+        })
+            .catch((err) => {
+                alert(err);
+            });
     }
 };
 module.exports = CurrentUser;

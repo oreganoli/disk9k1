@@ -49,19 +49,14 @@ pub fn authenticate(
     let inst = app.read();
     let user = inst.user_repo.read_by_name(auth_req.username.clone())?;
     user.map_or_else(
-        || {
-            eprintln!("auth failed");
-            Ok(Json(false))
-        },
+        || AppError::user_auth(AuthError::BadCredentials),
         |u| {
             if u.verify_password(&auth_req.password) {
                 cookies.add_private(Cookie::new("username", auth_req.username.clone()));
                 cookies.add_private(Cookie::new("password", auth_req.password.clone()));
-                eprintln!("Auth succeeded");
                 Ok(Json(true))
             } else {
-                eprintln!("Auth failed");
-                Ok(Json(false))
+                AppError::user_auth(AuthError::BadCredentials)
             }
         },
     )
