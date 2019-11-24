@@ -4,7 +4,7 @@ var ModifyInstanceForm = require("../forms/modify_instance");
 
 var Panel = {
     view: function () {
-        return m("main.main_container", [m(TopBar), m(ModifyInstanceForm)]);
+        return m("main.main_container", m(ModifyInstanceForm));
     }
 };
 module.exports = Panel;
