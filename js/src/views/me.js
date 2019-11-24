@@ -2,6 +2,7 @@ const m = require("mithril");
 const CurrentUser = require("../models/current_user");
 const ChangePasswordForm = require("../controllers/change_password_form");
 const ChangeEmailForm = require("../controllers/change_email_form");
+const DelAccountForm = require("../controllers/del_account_form");
 const MeView = {
     view: () => (
         m(".user_profile", [
@@ -14,7 +15,8 @@ const MeView = {
                 m("tr", [m("th.hor", "Role"), m("td", CurrentUser.user.is_admin ? "Admin" : "User")])]
             ),
             m(ChangePasswordForm),
-            m(ChangeEmailForm)
+            m(ChangeEmailForm),
+            m(DelAccountForm)
             ])
     )
 };

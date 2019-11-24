@@ -23,7 +23,7 @@ const ChangePasswordForm = {
                     }
                 }, [
                     m("label", "New password"),
-                    m("input[type=password]", {
+                    m("input[type=password][autocomplete=off]", {
                         oninput: (e) => {
                             ChangePasswordForm.data.new = e.target.value
                         }

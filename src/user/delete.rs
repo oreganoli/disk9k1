@@ -28,7 +28,7 @@ pub struct DeleteAccountRequest {
     id: i32,
 }
 
-#[post("/delete_account", data = "<da_req>")]
+#[delete("/delete_account", data = "<da_req>")]
 pub fn delete_account(
     app: AppState,
     mut cookies: Cookies,

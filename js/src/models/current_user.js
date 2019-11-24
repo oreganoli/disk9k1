@@ -6,6 +6,7 @@ const CurrentUser = {
             {method: "POST", url: "/logout"}
         ).then(() => {
             CurrentUser.user = null;
+            m.route.set("/index");
         }).catch((err) => (alert(err)));
     },
     me: () => {
