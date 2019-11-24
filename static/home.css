@@ -42,8 +42,9 @@ button:active {
     align-items: center;
 }
 
-.title, .description, .size_limit {
+h1, .title, .description, .size_limit {
     text-align: center;
+    align-self: center;
 }
 
 .top_bar {

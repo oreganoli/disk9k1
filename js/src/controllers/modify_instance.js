@@ -25,7 +25,7 @@ const ModifyInstanceForm = {
         })
     },
     view: () => {
-        return m("form", {
+        return [m("h1", "Modify instance settings"), m("form", {
             onsubmit: (e) => {
                 e.preventDefault();
                 ModifyInstanceForm.send();
@@ -53,7 +53,7 @@ const ModifyInstanceForm = {
                 value: ModifyInstanceForm.data.size_limit
             }),
             m("button", "Save settings")
-        ]);
+        ])];
     }
 };
 module.exports = ModifyInstanceForm;
