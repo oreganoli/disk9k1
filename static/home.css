@@ -1,5 +1,7 @@
 * {
     --bg-color: white;
+    --bg-alt-color: lightgrey;
+    --active-el-color: orange;
     --border-color: black;
 }
 body {
@@ -17,6 +19,14 @@ button {
     border: 1px solid var(--border-color);
     border-radius: 0.3em;
     padding: 0.1em;
+}
+
+button:hover {
+    background-color: var(--bg-alt-color);
+}
+
+button:active {
+    background-color: var(--active-el-color);
 }
 .error_reason {
     text-align: center;

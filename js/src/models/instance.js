@@ -25,7 +25,7 @@ const Instance = {
             Instance.description = result.description;
             Instance.size_limit = result.size_limit;
             func();
-        });
+        }).catch((err) => alert(err));
     }
 };
 module.exports = Instance;

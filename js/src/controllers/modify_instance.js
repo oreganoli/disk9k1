@@ -15,13 +15,16 @@ const ModifyInstanceForm = {
             body: ModifyInstanceForm.data
         }).then(() => {
             Instance.load();
-        })
+        }).catch((err) => alert(err))
     },
     oncreate: () => {
         Instance.load_then(() => {
             document.getElementById("inst_text_input").setAttribute("value", Instance.name);
             document.getElementById("inst_desc_input").innerText = Instance.description;
             document.getElementById("inst_size_input").setAttribute("value", Instance.size_limit);
+            ModifyInstanceForm.data.name = Instance.name;
+            ModifyInstanceForm.data.description = Instance.description;
+            ModifyInstanceForm.data.size_limit = Instance.size_limit;
         })
     },
     view: () => {
@@ -46,9 +49,10 @@ const ModifyInstanceForm = {
             m("label", "Size limit (B)"),
             m("input#inst_size_input[type=number]", {
                 oninput: (e) => {
-                    ModifyInstanceForm.data.description = e.target.value;
+                    ModifyInstanceForm.data.size_limit = parseInt(e.target.value);
                 },
-            })
+            }),
+            m("button", "Save settings")
         ]);
     }
 };
