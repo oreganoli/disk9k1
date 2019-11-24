@@ -9,8 +9,9 @@ const LoginIndicator = {
                 return m(".top_item", [m("a", {href: "/#!/me"}, CurrentUser.user.name),
                     m("a.top_item", {href: "/#!/panel"}, "Global settings"),
                     m(LogoutButton)]);
+            } else {
+                return m("b.top_item", [m("a", {href: "/#!/me"}, CurrentUser.user.name), m(LogoutButton)]);
             }
-            return m("b.top_item", ["Logged in as ", m("a", {href: "/me"}, CurrentUser.user.name), m(LogoutButton)]);
         } else {
             return m(LoginButton);
         }

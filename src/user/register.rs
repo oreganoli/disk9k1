@@ -9,13 +9,6 @@ pub struct RegistrationRequest {
     password_con: String,
 }
 
-/// Generates a quick-access token for a user name.
-/// DO NOT USE THIS IN PRODUCTION!
-#[cfg(debug_assertions)] // will break if you try anyway
-pub fn generate_token(name: &str) -> String {
-    format!("{}-PLACEHOLDER", name)
-}
-
 fn is_valid_email(email: &str) -> bool {
     true //TODO: implement actual regex-based checking
 }
@@ -40,7 +33,6 @@ impl Instance {
         } else if req.password.is_empty() {
             AppError::user(Registration(RegistrationError::PasswordNotGiven))
         } else {
-            let token = generate_token(&req.username);
             self.user_repo
                 .create(NewUser::new(req.username, req.email, req.password, false))
                 .unwrap();
