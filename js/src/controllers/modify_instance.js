@@ -7,40 +7,40 @@ const ModifyInstanceForm = {
         description: "",
         size_limit: -1
     },
-    send: function () {
+    send: () => {
         m.request({
             method: "PUT",
             url: "/modify_instance",
             withCredentials: true,
             body: ModifyInstanceForm.data
-        }).then(function () {
+        }).then(() => {
             Instance.load();
         })
     },
-    view: function () {
+    view: () => {
         return m("form", {
-            onsubmit: function (e) {
+            onsubmit: (e) => {
                 e.preventDefault();
                 ModifyInstanceForm.send();
             }
         }, [
             m("label", "Instance name"),
             m("input[type=text]", {
-                oninput: function (e) {
+                oninput: (e) => {
                     ModifyInstanceForm.data.name = e.target.value;
                 },
                 value: Instance.name
             }),
             m("label", "Description"),
             m("textarea", {
-                oninput: function (e) {
+                oninput: (e) => {
                     ModifyInstanceForm.data.description = e.target.value;
                 },
                 value: Instance.description
             }),
             m("label", "Size limit (B)"),
             m("input[type=number]", {
-                oninput: function (e) {
+                oninput: (e) => {
                     ModifyInstanceForm.data.description = e.target.value;
                 },
             })

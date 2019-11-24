@@ -4,9 +4,9 @@ const CurrentUser = require("../models/current_user");
 const LoginForm = {
     username: "",
     password: "",
-    view: function () {
+    view: () => {
         return m("form.login_form", {
-                onsubmit: function (e) {
+                onsubmit: (e) => {
                     e.preventDefault();
                     CurrentUser.authenticate(LoginForm.username, LoginForm.password);
                 }
@@ -15,13 +15,13 @@ const LoginForm = {
                 m("h1.title", "Sign in"),
                 m("label", "Username"),
                 m("input[type=text]", {
-                    oninput: function (e) {
+                    oninput: (e) => {
                         LoginForm.username = e.target.value;
                     }
                 }),
                 m("label", "Password"),
                 m("input[type=password]", {
-                    oninput: function (e) {
+                    oninput: (e) => {
                         LoginForm.password = e.target.value;
                     }
                 }),

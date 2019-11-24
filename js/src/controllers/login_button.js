@@ -1,9 +1,9 @@
 const m = require("mithril");
 
 const LoginButton = {
-    view: function () {
+    view: () => {
         return m("button.top_item", {
-            onclick: function () {
+            onclick: () => {
                 m.route.set("/login")
             }
         }, "Sign in");

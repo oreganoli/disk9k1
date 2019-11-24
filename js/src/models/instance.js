@@ -4,12 +4,12 @@ const Instance = {
     name: "",
     description: "",
     size_limit: 0,
-    load: function () {
+    load: () => {
         m.request({
             method: "GET",
             url: "/instance",
             withCredentials: false
-        }).then(function (result) {
+        }).then((result) => {
             Instance.name = result.name;
             Instance.description = result.description;
             Instance.size_limit = result.size_limit;

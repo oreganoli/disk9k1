@@ -1,7 +1,7 @@
 const m = require("mithril");
 const Instance = require("../models/instance");
 const InstanceView = {
-    oninit: function () {
+    oninit: () => {
         Instance.load();
     },
     view: () => {

@@ -1,11 +1,11 @@
 const m = require("mithril");
 const User = {
-    load: function (id) {
+    load: (id) => {
         m.request({
             method: "GET",
             url: `/user/${id}`,
             withCredentials: false
-        }).then(function (result) {
+        }).then((result) => {
             return result;
         })
     }
