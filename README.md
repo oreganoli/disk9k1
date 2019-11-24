@@ -21,4 +21,12 @@ Install npm, cd into `js` and run:
 ```bash
 $ npm start
 ```
-Start the server.
+This will start a webpack watchdog that will watch for any changes and recompile the JavaScript in `js/` to `js/bin/app.js`, which the symbolic link `static/js/app.js` points to, on the fly. 
+
+Go back to the project root and start the server.
+## Either
+Alternatively, if you're on Linux and have [`just`](https://github.com/casey/just), run:
+```bash
+$ just develop
+```
+which takes care of all of the above for you - it starts the PostgreSQL SystemD service if it's not on yet, builds the server, runs the `app.js` build script with `npm` and finally starts the server.
