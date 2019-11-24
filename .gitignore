@@ -4,6 +4,4 @@
 .vscode
 .env
 node_modules
-**/app.js
-static/js/**
 js/bin/**
