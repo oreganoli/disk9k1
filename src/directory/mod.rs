@@ -2,9 +2,10 @@ use schema::directories;
 
 use crate::prelude::*;
 
-mod repo;
+pub mod read;
+pub mod repo;
 
-#[derive(Associations, Queryable, Identifiable)]
+#[derive(Associations, Queryable, Serialize, Identifiable)]
 #[belongs_to(Directory, foreign_key = "parent")]
 #[belongs_to(User, foreign_key = "owner")]
 #[table_name = "directories"]
@@ -23,4 +24,5 @@ pub struct NewDirectory {
     owner: i32,
     name: String,
     parent: Option<i32>,
+    public: bool,
 }

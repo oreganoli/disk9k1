@@ -37,6 +37,7 @@ fn main() {
         .mount(
             "/",
             routes![
+                directory::read::top_for_user,
                 instance::index,
                 instance::instance,
                 user::auth::authenticate,

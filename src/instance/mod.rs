@@ -6,6 +6,7 @@ use rocket_contrib::json::Json;
 use repo::{InstanceRepo, InstanceRepository};
 use schema::instance;
 
+use crate::directory::repo::{DirectoryRepo, DirectoryRepository};
 use crate::prelude::*;
 use crate::user::repo::{UserRepo, UserRepository};
 use crate::user::NewUser;
@@ -19,6 +20,8 @@ pub struct Instance {
     pub ins_repo: Box<dyn InstanceRepository + Sync + Send>,
     /// The repo for user data.
     pub user_repo: Box<dyn UserRepository + Sync + Send>,
+
+    pub dir_repo: Box<dyn DirectoryRepository + Sync + Send>,
 }
 
 impl Default for Instance {
@@ -43,9 +46,11 @@ impl Default for Instance {
                 .create(NewUser::generate_admin())
                 .expect("Could not create an admin account");
         }
+        let dir_repo = DirectoryRepo::new();
         Self {
             ins_repo: Box::new(ins_repo),
             user_repo: Box::new(user_repo),
+            dir_repo: Box::new(dir_repo),
         }
     }
 }
