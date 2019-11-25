@@ -40,6 +40,7 @@ impl DirectoryRepository for DirectoryRepo {
             || AppError::dir(DirectoryError::Nonexistent),
             |d| {
                 Directory::belonging_to(&d)
+                    .order(directories::name)
                     .load::<Directory>(&self.pool.get())
                     .map_err(|_| AppError::Db)
             },
@@ -50,6 +51,7 @@ impl DirectoryRepository for DirectoryRepo {
         let top_level: Option<i32> = None;
         Directory::belonging_to(user)
             .filter(directories::parent.is_null())
+            .order(directories::name)
             .load::<Directory>(&self.pool.get())
             .map_err(|_| AppError::Db)
     }

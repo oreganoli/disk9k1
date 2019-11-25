@@ -38,6 +38,7 @@ fn main() {
             "/",
             routes![
                 directory::read::top_for_user,
+                directory::read::dir_at_id,
                 instance::index,
                 instance::instance,
                 user::auth::authenticate,

@@ -16,7 +16,6 @@ table! {
         name -> Text,
         parent -> Nullable<Int4>,
         created -> Timestamp,
-        public -> Bool,
     }
 }
 
