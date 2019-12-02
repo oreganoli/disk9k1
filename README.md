@@ -21,7 +21,7 @@ Install npm, cd into `js` and run:
 ```bash
 $ npm start
 ```
-This will start a webpack watchdog that will watch for any changes and recompile the JavaScript in `js/` to `js/bin/app.js`, which the symbolic link `static/js/app.js` points to, on the fly. 
+This will start a webpack watchdog that will watch for any changes and recompile the JavaScript in `js/` to `js/bin/app.js`, which the symbolic link `static/js/app.js` points to, on the fly. If you don't see page properly (blank space) you need to copy `js/bin/app.js` to `static/js/` manually
 
 Go back to the project root and start the server.
 ## Either
