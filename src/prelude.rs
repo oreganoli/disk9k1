@@ -17,13 +17,16 @@ pub use rocket::{
 pub use rocket_contrib::json::Json;
 pub use serde::{Deserialize, Serialize};
 
+pub use crate::app::App;
+pub use crate::instance::{repo::InstanceRepo, Instance};
 pub use crate::util::lock::Lock;
 
-//pub type AppState<'a> = State<'a, Lock<Instance>>;
+pub type AppState<'a> = State<'a, Lock<App>>;
 pub type AppResult<T> = Result<T, Box<dyn Error>>;
 
 pub const BCRYPT_COST: u32 = 4;
 pub const BYTES_TO_MEBIBYTE: f64 = 1_048_576f64;
 
+pub type Conn = PooledConnection<PostgresConnectionManager<postgres::NoTls>>;
 /// Shorthand alias for a `diesel::r2d2::Pool`.
 pub type Pool = r2d2::Pool<PostgresConnectionManager<postgres::NoTls>>;

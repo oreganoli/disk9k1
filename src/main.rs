@@ -11,6 +11,8 @@ use rocket_contrib::serve;
 use prelude::*;
 use util::lock::Lock;
 
+mod app;
+mod instance;
 mod prelude;
 pub mod util;
 
@@ -24,14 +26,19 @@ fn index() -> Html<&'static str> {
     Html(&INDEX)
 }
 
-fn main() {
+fn main() -> AppResult<()> {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
+    let pool = util::pool::create_pool();
+    let app = Lock(RwLock::new(App::new(pool)?));
     rocket::ignite()
-        .mount("/", routes![index,])
+        .manage(app)
+        .mount("/", routes![index])
+        .mount("/", routes![instance::get])
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),
         )
         .launch();
+    Ok(())
 }
