@@ -12,6 +12,7 @@ use prelude::*;
 use util::lock::Lock;
 
 mod app;
+pub mod error;
 mod instance;
 mod prelude;
 pub mod util;
