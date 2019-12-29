@@ -34,7 +34,7 @@ fn main() -> AppResult<()> {
     rocket::ignite()
         .manage(app)
         .mount("/", routes![index])
-        .mount("/", routes![instance::get])
+        .mount("/", routes![instance::get, instance::put])
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),
