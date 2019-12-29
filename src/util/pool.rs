@@ -1,27 +1,14 @@
+use postgres::{config::Config, NoTls};
+use r2d2_postgres::PostgresConnectionManager;
+
 use crate::prelude::*;
 
 /// Creates a `Pool` pointing at our database.
 pub fn create_pool() -> Pool {
     let url = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set, panicking.");
-    let manager = Manager::new(url);
+    let manager = PostgresConnectionManager::new(url.parse().unwrap(), NoTls);
     Pool::builder()
-        .max_size(8)
+        .max_size(12)
         .build(manager)
         .expect("Could not create a connection manager.")
-}
-
-/// A newtype wrapper around `Pool`s for easy `.get()`ting.
-pub struct HandledPool(pub Pool);
-
-impl Default for HandledPool {
-    fn default() -> Self {
-        Self(create_pool())
-    }
-}
-impl HandledPool {
-    pub fn get(&self) -> Connection {
-        self.0
-            .get()
-            .expect("Could not obtain a connection, panicking.")
-    }
 }
