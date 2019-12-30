@@ -53,6 +53,11 @@ impl From<DirError> for ErrorWrapper {
                 status: Status::UnprocessableEntity,
                 name: "A directory cannot be its own parent.".to_owned(),
             },
+            DirError::NonexistentParent => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory must be either at the top of the filesystem or within an existent directory."
+                    .to_owned(),
+            }
         }
     }
 }

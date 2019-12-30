@@ -2,11 +2,34 @@ use crate::prelude::*;
 
 use super::ContentRepo;
 
+#[derive(Serialize)]
+pub struct DirView {
+    id: i32,
+    name: String,
+    owner: i32,
+    parent: Option<i32>,
+    children: Vec<Directory>, // TODO add child files
+}
+
+#[derive(Serialize)]
 pub struct Directory {
     id: i32,
     name: String,
     owner: i32,
     parent: Option<i32>,
+}
+
+impl Directory {
+    pub fn into_view(self, repo: &ContentRepo, conn: &mut Conn) -> AppResult<DirView> {
+        let children = repo.read_children(self.id, conn)?;
+        Ok(DirView {
+            id: self.id,
+            name: self.name,
+            owner: self.owner,
+            parent: self.parent,
+            children,
+        })
+    }
 }
 
 pub struct NewDir {
@@ -18,6 +41,7 @@ pub struct NewDir {
 pub(crate) enum DirError {
     NamingConflict,
     CyclicParenthood,
+    NonexistentParent,
 }
 
 impl ContentRepo {
@@ -30,6 +54,13 @@ impl ContentRepo {
             )?
             .first()
             .map_or(false, |row| row.get(0));
+        let parent_exists = if new.parent.is_none() {
+            true
+        } else {
+            conn.query(include_str!("sql/dirs/exists_parent.sql"), &[&new.parent])?
+                .first()
+                .map_or(false, |row| row.get(0))
+        };
         //check for ownership conflict
         let ownership_ok = if new.parent.is_none() {
             true
@@ -41,6 +72,9 @@ impl ContentRepo {
             .first()
             .map_or(false, |row| row.get(0))
         };
+        if !(parent_exists) {
+            return Err(DirError::NonexistentParent.into());
+        }
         if !(ownership_ok) {
             return Err(AuthError::NotAllowed.into());
         }
@@ -91,4 +125,20 @@ impl ContentRepo {
             .collect::<Vec<_>>();
         Ok(dirs)
     }
+}
+
+#[get("/drive")]
+pub fn get_top(app: AppState, mut cookies: Cookies) -> AppResult<Json<DirView>> {
+    let app = app.read();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let children = app.content.read_top(user.id, conn)?;
+    let view = DirView {
+        id: 0,
+        name: "/".to_owned(),
+        owner: user.id,
+        parent: None,
+        children,
+    };
+    Ok(Json(view))
 }
