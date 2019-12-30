@@ -3,6 +3,7 @@ use rocket::response::Responder;
 use rocket::{Request, Response};
 
 use crate::prelude::*;
+use crate::user::AuthError;
 use crate::user::UserError;
 
 #[derive(Debug, Serialize)]
@@ -58,6 +59,21 @@ impl From<UserError> for ErrorWrapper {
         Self {
             status,
             name: name.to_owned(),
+        }
+    }
+}
+
+impl From<AuthError> for ErrorWrapper {
+    fn from(e: AuthError) -> Self {
+        match e {
+            AuthError::InvalidCredentials => Self {
+                status: Status::Unauthorized,
+                name: "Invalid password and/or username.".to_owned(),
+            },
+            AuthError::NotAllowed => Self {
+                status: Status::Forbidden,
+                name: "You have insufficient privileges to do this or are trying to access a private file you do not own.".to_owned(),
+            }
         }
     }
 }

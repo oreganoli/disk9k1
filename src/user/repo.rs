@@ -110,4 +110,17 @@ impl UserRepo {
             .collect::<Vec<_>>();
         Ok(users)
     }
+    pub fn read_name(&self, name: &str, conn: &mut Conn) -> AppResult<Option<User>> {
+        let user = conn
+            .query(include_str!("sql/read_username.sql"), &[&name])?
+            .first()
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            });
+        Ok(user)
+    }
 }

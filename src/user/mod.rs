@@ -56,3 +56,45 @@ pub fn post(app: AppState, new: Json<NewUser>) -> AppResult<()> {
     let mut conn = app.pool.get()?;
     app.user.create(new.into_inner(), &mut conn)
 }
+
+#[post("/login", data = "<auth_req>")]
+pub fn login(app: AppState, auth_req: Json<AuthRequest>, mut cookies: Cookies) -> AppResult<()> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    let mut name_ck = Cookie::named("username");
+    let mut pass_ck = Cookie::named("password");
+    let user = app.user.read_name(&auth_req.username, &mut conn)?;
+    if user.is_none() {
+        cookies.remove_private(name_ck);
+        cookies.remove_private(pass_ck);
+        return Err(AuthError::InvalidCredentials.into());
+    }
+    if !bcrypt::verify(&auth_req.password, &user.unwrap().password)? {
+        cookies.remove_private(name_ck);
+        cookies.remove_private(pass_ck);
+        return Err(AuthError::InvalidCredentials.into());
+    }
+    let req = auth_req.into_inner();
+    name_ck.set_value(req.username);
+    pass_ck.set_value(req.password);
+    cookies.add_private(name_ck);
+    cookies.add_private(pass_ck);
+    Ok(())
+}
+
+#[post("/logout")]
+pub fn logout(mut cookies: Cookies) {
+    cookies.remove_private(Cookie::named("username"));
+    cookies.remove_private(Cookie::named("password"));
+}
+
+#[derive(Deserialize)]
+pub struct AuthRequest {
+    username: String,
+    password: String,
+}
+
+pub enum AuthError {
+    InvalidCredentials,
+    NotAllowed,
+}
