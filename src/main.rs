@@ -44,6 +44,7 @@ fn main() -> AppResult<()> {
                 user::get,
                 user::get_all,
                 user::post,
+                user::delete,
                 user::login,
                 user::logout
             ],

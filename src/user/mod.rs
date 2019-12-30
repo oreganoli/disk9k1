@@ -34,6 +34,7 @@ pub enum UserError {
     EmailTaken,
     PasswordInvalid,
     PasswordsNotMatching,
+    AdminDeletion,
 }
 
 #[get("/me")]
@@ -63,6 +64,33 @@ pub fn post(app: AppState, new: Json<NewUser>) -> AppResult<()> {
     let app = app.write();
     let mut conn = app.pool.get()?;
     app.user.create(new.into_inner(), &mut conn)
+}
+
+#[derive(Deserialize)]
+pub struct DelRequest {
+    id: i32,
+}
+
+#[delete("/users", data = "<del_req>")]
+pub fn delete(app: AppState, del_req: Json<DelRequest>, mut cookies: Cookies) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    if user.id == del_req.id {
+        if user.is_admin {
+            Err(UserError::AdminDeletion.into())
+        } else {
+            app.user.delete(del_req.id, &mut conn)?;
+            cookies.remove_private(Cookie::named("username"));
+            cookies.remove_private(Cookie::named("password"));
+            Ok(())
+        }
+    } else if user.is_admin {
+        app.user.delete(del_req.id, &mut conn)?;
+        Ok(())
+    } else {
+        Err(AuthError::NotAllowed.into())
+    }
 }
 
 #[post("/login", data = "<auth_req>")]

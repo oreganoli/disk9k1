@@ -55,6 +55,7 @@ impl From<UserError> for ErrorWrapper {
             UserError::PasswordsNotMatching => (Status::UnprocessableEntity, "The passwords provided do not match."),
             UserError::EmailTaken => (Status::Conflict, "This email address is already in use."),
             UserError::NameTaken => (Status::Conflict, "This username is already in use."),
+            UserError::AdminDeletion => (Status::Forbidden, "An administrator cannot delete their own account.")
         };
         Self {
             status,

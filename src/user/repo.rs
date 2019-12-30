@@ -145,4 +145,8 @@ impl UserRepo {
             Err(AuthError::InvalidCredentials.into())
         }
     }
+    pub fn delete(&self, id: i32, conn: &mut Conn) -> AppResult<()> {
+        conn.execute(include_str!("sql/delete.sql"), &[&id])?;
+        Ok(())
+    }
 }
