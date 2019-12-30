@@ -24,9 +24,13 @@ pub fn get(app: AppState) -> AppResult<Json<Instance>> {
 }
 
 #[put("/instance", data = "<instance>")]
-pub fn put(app: AppState, instance: Json<Instance>) -> AppResult<()> {
-    //TODO put in auth logic
+pub fn put(app: AppState, instance: Json<Instance>, mut cookies: Cookies) -> AppResult<()> {
     let app = app.write();
-    app.instance
-        .update(instance.into_inner(), &mut app.pool.get()?)
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    if !user.is_admin {
+        Err(AuthError::NotAllowed.into())
+    } else {
+        app.instance.update(instance.into_inner(), &mut conn)
+    }
 }

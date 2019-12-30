@@ -4,12 +4,12 @@ pub mod repo;
 
 #[derive(Serialize)]
 pub struct User {
-    id: i32,
-    name: String,
-    email: String,
+    pub id: i32,
+    pub name: String,
+    pub email: String,
     #[serde(skip_serializing)]
     password: String,
-    is_admin: bool,
+    pub(crate) is_admin: bool,
 }
 
 #[derive(Deserialize)]

@@ -20,7 +20,7 @@ pub use serde::{Deserialize, Serialize};
 pub use crate::app::App;
 pub use crate::error::ErrorWrapper;
 pub use crate::instance::{repo::InstanceRepo, Instance};
-pub use crate::user::{repo::UserRepo, User};
+pub use crate::user::{repo::UserRepo, AuthError, User, UserError};
 pub use crate::util::lock::Lock;
 
 pub type AppState<'a> = State<'a, Lock<App>>;
