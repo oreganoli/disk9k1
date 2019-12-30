@@ -82,8 +82,19 @@ impl UserRepo {
         )?;
         Ok(())
     }
-    pub fn read(&self, id: i32, conn: &mut Conn) -> AppResult<User> {
-        unimplemented!()
+    pub fn read(&self, id: i32, conn: &mut Conn) -> AppResult<Option<User>> {
+        let user = conn
+            .query(include_str!("sql/read_id.sql"), &[&id])?
+            .iter()
+            .next()
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            });
+        Ok(user)
     }
     pub fn read_all(&self, conn: &mut Conn) -> AppResult<Vec<User>> {
         unimplemented!()

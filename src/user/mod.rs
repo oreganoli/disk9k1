@@ -35,3 +35,9 @@ pub enum UserError {
     PasswordInvalid,
     PasswordsNotMatching,
 }
+
+#[get("/users/<id>")]
+pub fn get(app: AppState, id: i32) -> AppResult<Option<Json<User>>> {
+    let app = app.read();
+    Ok(app.user.read(id, &mut app.pool.get()?)?.map(Json))
+}
