@@ -15,6 +15,7 @@ mod app;
 pub mod error;
 mod instance;
 mod prelude;
+mod user;
 pub mod util;
 
 lazy_static! {
