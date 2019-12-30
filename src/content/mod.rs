@@ -10,6 +10,7 @@ impl ContentRepo {
     }
     pub fn init(&self, conn: &mut Conn) -> AppResult<()> {
         conn.execute(include_str!("sql/data/init.sql"), &[])?;
+        conn.execute(include_str!("sql/dirs/init.sql"), &[])?;
         Ok(())
     }
 }
