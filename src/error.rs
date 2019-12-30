@@ -2,6 +2,7 @@ use bcrypt::BcryptError;
 use rocket::response::Responder;
 use rocket::{Request, Response};
 
+use crate::content::dirs::DirError;
 use crate::prelude::*;
 use crate::user::AuthError;
 use crate::user::UserError;
@@ -36,6 +37,22 @@ impl From<BcryptError> for ErrorWrapper {
         Self {
             status: Status::InternalServerError,
             name: e.to_string(),
+        }
+    }
+}
+
+impl From<DirError> for ErrorWrapper {
+    fn from(e: DirError) -> Self {
+        match e {
+            DirError::NamingConflict => Self {
+                status: Status::Conflict,
+                name: "A directory cannot have the same name as its siblings in the tree."
+                    .to_owned(),
+            },
+            DirError::CyclicParenthood => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory cannot be its own parent.".to_owned(),
+            },
         }
     }
 }
