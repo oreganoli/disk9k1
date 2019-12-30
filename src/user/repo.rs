@@ -52,7 +52,7 @@ impl UserRepo {
         if user.password.is_empty() || user.password.chars().count() < PASSWORD_MIN_LENGTH {
             return Err(UserError::PasswordInvalid.into());
         }
-        if !&user.password.eq(&user.pass_con) {
+        if user.password != user.pass_con {
             return Err(UserError::PasswordsNotMatching.into());
         }
         if !self.name_regex.is_match(&user.name) || user.name.is_empty() {
