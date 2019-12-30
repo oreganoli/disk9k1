@@ -49,3 +49,10 @@ pub fn get_all(app: AppState) -> AppResult<Json<Vec<User>>> {
     let mut conn = app.pool.get()?;
     Ok(Json(app.user.read_all(&mut conn)?))
 }
+
+#[post("/users", data = "<new>")]
+pub fn post(app: AppState, new: Json<NewUser>) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    app.user.create(new.into_inner(), &mut conn)
+}
