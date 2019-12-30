@@ -40,6 +40,7 @@ fn main() -> AppResult<()> {
         .mount(
             "/",
             routes![
+                user::me,
                 user::get,
                 user::get_all,
                 user::post,

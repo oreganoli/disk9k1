@@ -123,4 +123,26 @@ impl UserRepo {
             });
         Ok(user)
     }
+    pub fn user_from_cookies(&self, cookies: &mut Cookies, conn: &mut Conn) -> AppResult<User> {
+        use super::AuthError;
+        let name = if let Some(nck) = cookies.get_private("username") {
+            nck.value().to_owned()
+        } else {
+            return Err(AuthError::InvalidCredentials.into());
+        };
+        let pass = if let Some(pck) = cookies.get_private("password") {
+            pck.value().to_owned()
+        } else {
+            return Err(AuthError::InvalidCredentials.into());
+        };
+        if let Some(user) = self.read_name(&name, conn)? {
+            if !bcrypt::verify(pass, &user.password)? {
+                Err(AuthError::InvalidCredentials.into())
+            } else {
+                Ok(user)
+            }
+        } else {
+            Err(AuthError::InvalidCredentials.into())
+        }
+    }
 }

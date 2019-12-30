@@ -36,6 +36,14 @@ pub enum UserError {
     PasswordsNotMatching,
 }
 
+#[get("/me")]
+pub fn me(app: AppState, mut cookies: Cookies) -> AppResult<Json<User>> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    Ok(Json(user))
+}
+
 #[get("/users/<id>")]
 pub fn get(app: AppState, id: i32) -> AppResult<Option<Json<User>>> {
     let app = app.read();
