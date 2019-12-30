@@ -39,5 +39,13 @@ pub enum UserError {
 #[get("/users/<id>")]
 pub fn get(app: AppState, id: i32) -> AppResult<Option<Json<User>>> {
     let app = app.read();
-    Ok(app.user.read(id, &mut app.pool.get()?)?.map(Json))
+    let mut conn = app.pool.get()?;
+    Ok(app.user.read(id, &mut conn)?.map(Json))
+}
+
+#[get("/users")]
+pub fn get_all(app: AppState) -> AppResult<Json<Vec<User>>> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    Ok(Json(app.user.read_all(&mut conn)?))
 }

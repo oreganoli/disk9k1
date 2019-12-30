@@ -97,6 +97,17 @@ impl UserRepo {
         Ok(user)
     }
     pub fn read_all(&self, conn: &mut Conn) -> AppResult<Vec<User>> {
-        unimplemented!()
+        let users = conn
+            .query(include_str!("sql/read.sql"), &[])?
+            .iter()
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            })
+            .collect::<Vec<_>>();
+        Ok(users)
     }
 }

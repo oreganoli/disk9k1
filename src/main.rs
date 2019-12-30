@@ -37,7 +37,7 @@ fn main() -> AppResult<()> {
         .manage(app)
         .mount("/", routes![index])
         .mount("/", routes![instance::get, instance::put])
-        .mount("/", routes![user::get])
+        .mount("/", routes![user::get, user::get_all])
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),
