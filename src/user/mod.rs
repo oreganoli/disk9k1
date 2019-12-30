@@ -71,6 +71,50 @@ pub struct DelRequest {
     id: i32,
 }
 
+#[derive(Deserialize)]
+pub struct PassRequest {
+    new: String,
+    con: String,
+}
+
+#[derive(Deserialize)]
+pub struct NameRequest {
+    new: String,
+}
+
+#[put("/change_password", data = "<pass_req>")]
+pub fn put_password(
+    app: AppState,
+    pass_req: Json<PassRequest>,
+    mut cookies: Cookies,
+) -> AppResult<()> {
+    let req = pass_req.into_inner();
+    if req.new != req.con {
+        return Err(UserError::PasswordsNotMatching.into());
+    }
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    app.user.update_password(user.id, &req.new, &mut conn)?;
+    cookies.add_private(Cookie::new("password", req.new));
+    Ok(())
+}
+
+#[put("/change_username", data = "<name_req>")]
+pub fn put_username(
+    app: AppState,
+    name_req: Json<NameRequest>,
+    mut cookies: Cookies,
+) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    let req = name_req.into_inner();
+    app.user.update_username(user.id, &req.new, &mut conn)?;
+    cookies.add_private(Cookie::new("username", req.new));
+    Ok(())
+}
+
 #[delete("/users", data = "<del_req>")]
 pub fn delete(app: AppState, del_req: Json<DelRequest>, mut cookies: Cookies) -> AppResult<()> {
     let app = app.write();
