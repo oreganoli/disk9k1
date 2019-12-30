@@ -5,6 +5,8 @@ use crate::prelude::*;
 use super::UserError;
 use super::{NewUser, User};
 
+const PASSWORD_MIN_LENGTH: usize = 16;
+
 pub struct UserRepo {
     name_regex: Regex,
     mail_regex: Regex,
@@ -47,13 +49,13 @@ impl UserRepo {
         Ok(())
     }
     pub fn create(&self, user: NewUser, conn: &mut Conn) -> AppResult<()> {
-        if user.password.is_empty() || user.password.chars().count() < 16 as usize {
+        if user.password.is_empty() || user.password.chars().count() < PASSWORD_MIN_LENGTH {
             return Err(UserError::PasswordInvalid.into());
         }
         if !&user.password.eq(&user.pass_con) {
             return Err(UserError::PasswordsNotMatching.into());
         }
-        if !self.name_regex.is_match(&user.name) {
+        if !self.name_regex.is_match(&user.name) || user.name.is_empty() {
             return Err(UserError::NameInvalid.into());
         }
         if !self.mail_regex.is_match(&user.email) {
@@ -144,6 +146,28 @@ impl UserRepo {
         } else {
             Err(AuthError::InvalidCredentials.into())
         }
+    }
+    pub fn update_username(&self, id: i32, new: &str, conn: &mut Conn) -> AppResult<()> {
+        if !self.name_regex.is_match(&new) || new.is_empty() {
+            return Err(UserError::NameInvalid.into());
+        }
+        if conn
+            .query(include_str!("sql/exists_name.sql"), &[&new])?
+            .first()
+            .map_or(false, |row| row.get(0))
+        {
+            return Err(UserError::NameTaken.into());
+        }
+        conn.execute(include_str!("sql/update_name.sql"), &[&id, &new])?;
+        Ok(())
+    }
+    pub fn update_password(&self, id: i32, new: &str, conn: &mut Conn) -> AppResult<()> {
+        if new.chars().count() < PASSWORD_MIN_LENGTH {
+            return Err(UserError::PasswordInvalid.into());
+        }
+        let hashed = bcrypt::hash(new, BCRYPT_COST)?;
+        conn.execute(include_str!("sql/update_password.sql"), &[&id, &hashed])?;
+        Ok(())
     }
     pub fn delete(&self, id: i32, conn: &mut Conn) -> AppResult<()> {
         conn.execute(include_str!("sql/delete.sql"), &[&id])?;
