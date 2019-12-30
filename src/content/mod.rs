@@ -2,6 +2,8 @@ use crate::prelude::*;
 
 pub struct ContentRepo {}
 
+pub mod dirs;
+
 impl ContentRepo {
     pub fn new(conn: &mut Conn) -> AppResult<Self> {
         let rep = Self {};
