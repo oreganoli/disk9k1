@@ -31,7 +31,7 @@ impl Directory {
         })
     }
 }
-
+#[derive(Deserialize)]
 pub struct NewDir {
     name: String,
     owner: i32,
@@ -54,23 +54,23 @@ impl ContentRepo {
             )?
             .first()
             .map_or(false, |row| row.get(0));
-        let parent_exists = if new.parent.is_none() {
-            true
-        } else {
-            conn.query(include_str!("sql/dirs/exists_parent.sql"), &[&new.parent])?
+        let parent_exists = match new.parent {
+            None => true,
+            Some(parent) => conn
+                .query(include_str!("sql/dirs/exists_parent.sql"), &[&parent])?
                 .first()
-                .map_or(false, |row| row.get(0))
+                .map_or(false, |row| row.get(0)),
         };
         //check for ownership conflict
-        let ownership_ok = if new.parent.is_none() {
-            true
-        } else {
-            conn.query(
-                include_str!("sql/dirs/owner_same.sql"),
-                &[&new.owner, &new.parent],
-            )?
-            .first()
-            .map_or(false, |row| row.get(0))
+        let ownership_ok = match new.parent {
+            None => true,
+            _ => conn
+                .query(
+                    include_str!("sql/dirs/owner_same.sql"),
+                    &[&new.owner, &new.parent],
+                )?
+                .first()
+                .map_or(false, |row| row.get(0)),
         };
         if !(parent_exists) {
             return Err(DirError::NonexistentParent.into());
@@ -157,4 +157,15 @@ pub fn get(app: AppState, mut cookies: Cookies, id: i32) -> AppResult<Option<Jso
     }
     let view = dir.into_view(&app.content, conn)?;
     Ok(Some(Json(view)))
+}
+
+#[post("/drive", data = "<new>")]
+pub fn post(app: AppState, mut cookies: Cookies, new: Json<NewDir>) -> AppResult<()> {
+    let app = app.write();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    if user.id != new.owner {
+        return Err(AuthError::NotAllowed.into());
+    }
+    app.content.create(new.into_inner(), conn)
 }

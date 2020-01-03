@@ -3,5 +3,5 @@ SELECT NOT EXISTS(
         FROM directories
         WHERE name = $1
           AND owner = $2
-          AND parent = $3
+          AND parent IS NOT DISTINCT FROM $3
     );
