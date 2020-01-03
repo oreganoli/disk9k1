@@ -184,6 +184,12 @@ impl ContentRepo {
             Ok(())
         }
     }
+    pub fn delete(&self, id: i32, conn: &mut Conn) -> AppResult<()> {
+        self.read(id, conn)?.map_or(Ok(()), |_| {
+            conn.execute(include_str!("sql/dirs/delete.sql"), &[&id])?;
+            Ok(())
+        })
+    }
 }
 
 #[get("/drive")]
