@@ -39,6 +39,7 @@ pub struct NewDir {
 }
 
 pub(crate) enum DirError {
+    NameInvalid,
     NamingConflict,
     CyclicParenthood,
     NonexistentParent,
@@ -46,6 +47,9 @@ pub(crate) enum DirError {
 
 impl ContentRepo {
     pub fn create(&self, new: NewDir, conn: &mut Conn) -> AppResult<()> {
+        if !self.folder_regex.is_match(&new.name) {
+            return Err(DirError::NameInvalid.into());
+        }
         // check for naming conflicts
         let naming_ok = conn
             .query(

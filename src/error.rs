@@ -44,6 +44,10 @@ impl From<BcryptError> for ErrorWrapper {
 impl From<DirError> for ErrorWrapper {
     fn from(e: DirError) -> Self {
         match e {
+            DirError::NameInvalid => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory's name may start with a single period and at least one other character and may not contain newlines, tabs, double quotes, or any of the following: '< > ? * | \\ / :'.".to_owned(),
+            },
             DirError::NamingConflict => Self {
                 status: Status::Conflict,
                 name: "A directory cannot have the same name as its siblings in the tree."
