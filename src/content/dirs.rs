@@ -196,3 +196,27 @@ pub fn post(app: AppState, mut cookies: Cookies, new: Json<NewDir>) -> AppResult
     }
     app.content.create(new.into_inner(), conn)
 }
+
+#[derive(Deserialize)]
+pub struct DirRename {
+    id: i32,
+    name: String,
+}
+
+#[put("/rename_dir", data = "<ren>")]
+pub fn put_name(app: AppState, mut cookies: Cookies, ren: Json<DirRename>) -> AppResult<()> {
+    let app = app.write();
+    if !app.content.folder_regex.is_match(&ren.name) {
+        return Err(DirError::NameInvalid.into());
+    }
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let dir = match app.content.read(ren.id, conn)? {
+        Some(d) => d,
+        None => return Err(DirError::Nonexistent.into()),
+    };
+    if dir.owner != user.id {
+        return Err(AuthError::NotAllowed.into());
+    }
+    app.content.update_name(ren.id, &ren.name, conn)
+}

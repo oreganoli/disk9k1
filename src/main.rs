@@ -57,7 +57,8 @@ fn main() -> AppResult<()> {
             routes![
                 content::dirs::get,
                 content::dirs::get_top,
-                content::dirs::post
+                content::dirs::post,
+                content::dirs::put_name,
             ],
         )
         .mount(
