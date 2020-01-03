@@ -52,7 +52,7 @@ fn main() -> AppResult<()> {
                 user::logout
             ],
         )
-        .mount("/", routes![content::dirs::get_top])
+        .mount("/", routes![content::dirs::get, content::dirs::get_top])
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),

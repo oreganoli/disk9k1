@@ -142,3 +142,19 @@ pub fn get_top(app: AppState, mut cookies: Cookies) -> AppResult<Json<DirView>> 
     };
     Ok(Json(view))
 }
+
+#[get("/drive/<id>")]
+pub fn get(app: AppState, mut cookies: Cookies, id: i32) -> AppResult<Option<Json<DirView>>> {
+    let app = app.read();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let dir = match app.content.read(id, conn)? {
+        None => return Ok(None),
+        Some(d) => d,
+    };
+    if user.id != dir.owner {
+        return Err(AuthError::NotAllowed.into());
+    }
+    let view = dir.into_view(&app.content, conn)?;
+    Ok(Some(Json(view)))
+}
