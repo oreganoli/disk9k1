@@ -152,25 +152,28 @@ impl ContentRepo {
             Ok(())
         }
     }
-    pub fn update_parent(&self, id: i32, new: i32, conn: &mut Conn) -> AppResult<()> {
-        if new == id {
-            return Err(DirError::CyclicParenthood.into());
-        }
+    pub fn update_parent(&self, id: i32, new: Option<i32>, conn: &mut Conn) -> AppResult<()> {
         let moved = match self.read(id, conn)? {
             None => return Err(DirError::Nonexistent.into()),
             Some(d) => d,
         };
-        let target_parent = match self.read(id, conn)? {
-            None => return Err(DirError::NonexistentParent.into()),
-            Some(d) => d,
-        };
-        if moved.owner != target_parent.owner {
-            return Err(AuthError::NotAllowed.into());
+        let target_parent: Option<Directory>;
+        if let Some(new_dir) = new {
+            if id == new_dir {
+                return Err(DirError::CyclicParenthood.into());
+            }
+            target_parent = self.read(new_dir, conn)?;
+            if target_parent.is_none() {
+                return Err(DirError::NonexistentParent.into());
+            }
+            if moved.owner != target_parent.unwrap().owner {
+                return Err(AuthError::NotAllowed.into());
+            }
         }
         let validity = conn
             .query(
                 include_str!("sql/dirs/naming_conflicts.sql"),
-                &[&moved.name, &moved.owner, &target_parent.id],
+                &[&moved.name, &moved.owner, &new],
             )?
             .first()
             .map_or(false, |row| row.get(0));
@@ -248,4 +251,25 @@ pub fn put_name(app: AppState, mut cookies: Cookies, ren: Json<DirRename>) -> Ap
         return Err(AuthError::NotAllowed.into());
     }
     app.content.update_name(ren.id, &ren.name, conn)
+}
+
+#[derive(Deserialize)]
+pub struct DirMove {
+    id: i32,
+    new: Option<i32>,
+}
+
+#[put("/move_dir", data = "<dir_move>")]
+pub fn put_parent(app: AppState, mut cookies: Cookies, dir_move: Json<DirMove>) -> AppResult<()> {
+    let app = app.write();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let moved = match app.content.read(dir_move.id, conn)? {
+        Some(d) => d,
+        None => return Err(DirError::Nonexistent.into()),
+    };
+    if user.id != moved.owner {
+        return Err(AuthError::NotAllowed.into());
+    }
+    app.content.update_parent(dir_move.id, dir_move.new, conn)
 }

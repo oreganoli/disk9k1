@@ -59,6 +59,7 @@ fn main() -> AppResult<()> {
                 content::dirs::get_top,
                 content::dirs::post,
                 content::dirs::put_name,
+                content::dirs::put_parent,
             ],
         )
         .mount(
