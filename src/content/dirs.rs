@@ -49,7 +49,7 @@ impl ContentRepo {
         // check for naming conflicts
         let naming_ok = conn
             .query(
-                include_str!("sql/dirs/creation_legal.sql"),
+                include_str!("sql/dirs/naming_conflicts.sql"),
                 &[&new.name, &new.owner, &new.parent],
             )?
             .first()
