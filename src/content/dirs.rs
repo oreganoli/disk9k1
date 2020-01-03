@@ -152,6 +152,35 @@ impl ContentRepo {
             Ok(())
         }
     }
+    pub fn update_parent(&self, id: i32, new: i32, conn: &mut Conn) -> AppResult<()> {
+        if new == id {
+            return Err(DirError::CyclicParenthood.into());
+        }
+        let moved = match self.read(id, conn)? {
+            None => return Err(DirError::Nonexistent.into()),
+            Some(d) => d,
+        };
+        let target_parent = match self.read(id, conn)? {
+            None => return Err(DirError::NonexistentParent.into()),
+            Some(d) => d,
+        };
+        if moved.owner != target_parent.owner {
+            return Err(AuthError::NotAllowed.into());
+        }
+        let validity = conn
+            .query(
+                include_str!("sql/dirs/naming_conflicts.sql"),
+                &[&moved.name, &moved.owner, &target_parent.id],
+            )?
+            .first()
+            .map_or(false, |row| row.get(0));
+        if !validity {
+            Err(DirError::NamingConflict.into())
+        } else {
+            conn.execute(include_str!("sql/dirs/update_parent.sql"), &[&id, &new])?;
+            Ok(())
+        }
+    }
 }
 
 #[get("/drive")]
