@@ -42,6 +42,7 @@ pub(crate) enum DirError {
     NameInvalid,
     NamingConflict,
     CyclicParenthood,
+    Nonexistent,
     NonexistentParent,
 }
 
@@ -128,6 +129,28 @@ impl ContentRepo {
             })
             .collect::<Vec<_>>();
         Ok(dirs)
+    }
+    pub fn update_name(&self, id: i32, name: &str, conn: &mut Conn) -> AppResult<()> {
+        if !self.folder_regex.is_match(name) {
+            return Err(DirError::NameInvalid.into());
+        }
+        let dir = match self.read(id, conn)? {
+            None => return Err(DirError::Nonexistent.into()),
+            Some(d) => d,
+        };
+        let validity = conn
+            .query(
+                include_str!("sql/dirs/naming_conflicts.sql"),
+                &[&name, &dir.owner, &dir.parent],
+            )?
+            .first()
+            .map_or(false, |row| row.get(0));
+        if !validity {
+            Err(DirError::NamingConflict.into())
+        } else {
+            conn.execute(include_str!("sql/dirs/update_name.sql"), &[&id, &name])?;
+            Ok(())
+        }
     }
 }
 

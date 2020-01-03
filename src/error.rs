@@ -53,6 +53,10 @@ impl From<DirError> for ErrorWrapper {
                 name: "A directory cannot have the same name as its siblings in the tree."
                     .to_owned(),
             },
+            DirError::Nonexistent => Self {
+                status: Status::NotFound,
+                name: "The directory in question does not exist.".to_owned(),
+            },
             DirError::CyclicParenthood => Self {
                 status: Status::UnprocessableEntity,
                 name: "A directory cannot be its own parent.".to_owned(),
