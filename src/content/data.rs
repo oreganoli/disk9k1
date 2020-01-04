@@ -38,4 +38,12 @@ impl DataRepo {
             Ok(hash)
         }
     }
+    pub fn read(&self, hash: u32, conn: &mut Conn) -> AppResult<Option<Vec<u8>>> {
+        let hash = hash as i64;
+        let data: Option<Vec<u8>> = conn
+            .query("SELECT data FROM data WHERE hash = $1", &[&hash])?
+            .first()
+            .map(|row| row.get(0));
+        Ok(data)
+    }
 }
