@@ -2,6 +2,7 @@ use bcrypt::BcryptError;
 use rocket::response::Responder;
 use rocket::{Request, Response};
 
+use crate::content::data::DataError;
 use crate::content::dirs::DirError;
 use crate::prelude::*;
 use crate::user::AuthError;
@@ -105,6 +106,20 @@ impl From<AuthError> for ErrorWrapper {
                 status: Status::Forbidden,
                 name: "You have insufficient privileges to do this or are trying to access a private file you do not own.".to_owned(),
             }
+        }
+    }
+}
+
+impl From<DataError> for ErrorWrapper {
+    fn from(e: DataError) -> Self {
+        match e {
+            DataError::TooBig { size, limit } => Self {
+                status: Status::PayloadTooLarge,
+                name: format!(
+                    "The file being uploaded is {}B long, while the maximum size is {}B.",
+                    size, limit
+                ),
+            },
         }
     }
 }

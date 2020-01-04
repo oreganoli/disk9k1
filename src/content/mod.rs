@@ -2,6 +2,7 @@ use regex::Regex;
 
 use crate::prelude::*;
 
+pub mod data;
 pub mod dirs;
 
 pub struct DirectoryRepo {
