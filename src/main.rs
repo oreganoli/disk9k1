@@ -60,6 +60,7 @@ fn main() -> AppResult<()> {
                 content::dirs::post,
                 content::dirs::put_name,
                 content::dirs::put_parent,
+                content::dirs::delete,
             ],
         )
         .mount(

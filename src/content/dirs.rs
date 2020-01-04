@@ -279,3 +279,25 @@ pub fn put_parent(app: AppState, mut cookies: Cookies, dir_move: Json<DirMove>) 
     }
     app.content.update_parent(dir_move.id, dir_move.new, conn)
 }
+
+#[derive(Deserialize)]
+pub struct RmDir {
+    id: i32,
+}
+
+#[delete("/drive", data = "<rmdir>")]
+pub fn delete(app: AppState, mut cookies: Cookies, rmdir: Json<RmDir>) -> AppResult<()> {
+    let app = app.write();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    match app.content.read(rmdir.id, conn)? {
+        None => Ok(()), // idempotent!
+        Some(dir) => {
+            if user.id != dir.owner {
+                Err(AuthError::NotAllowed.into())
+            } else {
+                app.content.delete(rmdir.id, conn)
+            }
+        }
+    }
+}
