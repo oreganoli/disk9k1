@@ -197,7 +197,7 @@ pub fn get_top(app: AppState, mut cookies: Cookies) -> AppResult<Json<DirView>> 
     let app = app.read();
     let conn = &mut app.pool.get()?;
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
-    let children = app.content.read_top(user.id, conn)?;
+    let children = app.dirs.read_top(user.id, conn)?;
     let view = DirView {
         id: 0,
         name: "/".to_owned(),
@@ -213,14 +213,14 @@ pub fn get(app: AppState, mut cookies: Cookies, id: i32) -> AppResult<Option<Jso
     let app = app.read();
     let conn = &mut app.pool.get()?;
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
-    let dir = match app.content.read(id, conn)? {
+    let dir = match app.dirs.read(id, conn)? {
         None => return Ok(None),
         Some(d) => d,
     };
     if user.id != dir.owner {
         return Err(AuthError::NotAllowed.into());
     }
-    let view = dir.into_view(&app.content, conn)?;
+    let view = dir.into_view(&app.dirs, conn)?;
     Ok(Some(Json(view)))
 }
 
@@ -232,7 +232,7 @@ pub fn post(app: AppState, mut cookies: Cookies, new: Json<NewDir>) -> AppResult
     if user.id != new.owner {
         return Err(AuthError::NotAllowed.into());
     }
-    app.content.create(new.into_inner(), conn)
+    app.dirs.create(new.into_inner(), conn)
 }
 
 #[derive(Deserialize)]
@@ -244,19 +244,19 @@ pub struct DirRename {
 #[put("/rename_dir", data = "<ren>")]
 pub fn put_name(app: AppState, mut cookies: Cookies, ren: Json<DirRename>) -> AppResult<()> {
     let app = app.write();
-    if !app.content.dir_regex.is_match(&ren.name) {
+    if !app.dirs.dir_regex.is_match(&ren.name) {
         return Err(DirError::NameInvalid.into());
     }
     let conn = &mut app.pool.get()?;
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
-    let dir = match app.content.read(ren.id, conn)? {
+    let dir = match app.dirs.read(ren.id, conn)? {
         Some(d) => d,
         None => return Err(DirError::Nonexistent.into()),
     };
     if dir.owner != user.id {
         return Err(AuthError::NotAllowed.into());
     }
-    app.content.update_name(ren.id, &ren.name, conn)
+    app.dirs.update_name(ren.id, &ren.name, conn)
 }
 
 #[derive(Deserialize)]
@@ -270,14 +270,14 @@ pub fn put_parent(app: AppState, mut cookies: Cookies, dir_move: Json<DirMove>) 
     let app = app.write();
     let conn = &mut app.pool.get()?;
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
-    let moved = match app.content.read(dir_move.id, conn)? {
+    let moved = match app.dirs.read(dir_move.id, conn)? {
         Some(d) => d,
         None => return Err(DirError::Nonexistent.into()),
     };
     if user.id != moved.owner {
         return Err(AuthError::NotAllowed.into());
     }
-    app.content.update_parent(dir_move.id, dir_move.new, conn)
+    app.dirs.update_parent(dir_move.id, dir_move.new, conn)
 }
 
 #[derive(Deserialize)]
@@ -290,13 +290,13 @@ pub fn delete(app: AppState, mut cookies: Cookies, rmdir: Json<RmDir>) -> AppRes
     let app = app.write();
     let conn = &mut app.pool.get()?;
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
-    match app.content.read(rmdir.id, conn)? {
+    match app.dirs.read(rmdir.id, conn)? {
         None => Ok(()), // idempotent!
         Some(dir) => {
             if user.id != dir.owner {
                 Err(AuthError::NotAllowed.into())
             } else {
-                app.content.delete(rmdir.id, conn)
+                app.dirs.delete(rmdir.id, conn)
             }
         }
     }

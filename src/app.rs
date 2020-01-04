@@ -1,9 +1,11 @@
 use crate::prelude::*;
 
 pub struct App {
+    pub data: DataRepo,
+    pub files: FileRepo,
     pub(crate) instance: InstanceRepo,
     pub user: UserRepo,
-    pub content: DirectoryRepo,
+    pub dirs: DirectoryRepo,
     pub(crate) pool: Pool,
 }
 
@@ -12,11 +14,15 @@ impl App {
         let conn = &mut pool.get()?;
         let instance = InstanceRepo::new(conn)?;
         let user = UserRepo::new(conn)?;
-        let content = DirectoryRepo::new(conn)?;
+        let dirs = DirectoryRepo::new(conn)?;
+        let data = DataRepo::new(conn)?;
+        let files = FileRepo::new(conn)?;
         Ok(Self {
+            data,
+            files,
             instance,
             user,
-            content,
+            dirs,
             pool,
         })
     }

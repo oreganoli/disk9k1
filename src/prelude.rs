@@ -18,7 +18,7 @@ pub use rocket_contrib::json::Json;
 pub use serde::{Deserialize, Serialize};
 
 pub use crate::app::App;
-pub use crate::content::DirectoryRepo;
+pub use crate::content::{DataRepo, DirectoryRepo, FileRepo};
 pub use crate::error::ErrorWrapper;
 pub use crate::instance::{repo::InstanceRepo, Instance};
 pub use crate::user::{repo::UserRepo, AuthError, User, UserError};
