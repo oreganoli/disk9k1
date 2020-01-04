@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use super::ContentRepo;
+use super::DirectoryRepo;
 
 #[derive(Serialize)]
 pub struct DirView {
@@ -20,7 +20,7 @@ pub struct Directory {
 }
 
 impl Directory {
-    pub fn into_view(self, repo: &ContentRepo, conn: &mut Conn) -> AppResult<DirView> {
+    pub fn into_view(self, repo: &DirectoryRepo, conn: &mut Conn) -> AppResult<DirView> {
         let children = repo.read_children(self.id, conn)?;
         Ok(DirView {
             id: self.id,
@@ -46,9 +46,9 @@ pub(crate) enum DirError {
     NonexistentParent,
 }
 
-impl ContentRepo {
+impl DirectoryRepo {
     pub fn create(&self, new: NewDir, conn: &mut Conn) -> AppResult<()> {
-        if !self.folder_regex.is_match(&new.name) {
+        if !self.dir_regex.is_match(&new.name) {
             return Err(DirError::NameInvalid.into());
         }
         // check for naming conflicts
@@ -131,7 +131,7 @@ impl ContentRepo {
         Ok(dirs)
     }
     pub fn update_name(&self, id: i32, name: &str, conn: &mut Conn) -> AppResult<()> {
-        if !self.folder_regex.is_match(name) {
+        if !self.dir_regex.is_match(name) {
             return Err(DirError::NameInvalid.into());
         }
         let dir = match self.read(id, conn)? {
@@ -244,7 +244,7 @@ pub struct DirRename {
 #[put("/rename_dir", data = "<ren>")]
 pub fn put_name(app: AppState, mut cookies: Cookies, ren: Json<DirRename>) -> AppResult<()> {
     let app = app.write();
-    if !app.content.folder_regex.is_match(&ren.name) {
+    if !app.content.dir_regex.is_match(&ren.name) {
         return Err(DirError::NameInvalid.into());
     }
     let conn = &mut app.pool.get()?;
