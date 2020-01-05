@@ -8,10 +8,15 @@ body {
     background: linear-gradient(to bottom, #a0d8ef 0%, #ddf1f9 73%, #feffff 100%);
     min-height: 100vh;
     min-width: 100vw;
-    font-family: 'Arial',sans-serif;
+    font-family: 'Arial', sans-serif;
     flex-direction: column;
     justify-content: start;
     align-content: center;
+}
+
+footer {
+    text-align: center;
+    font-size: 0.8em;
 }
 
 button {
@@ -47,7 +52,7 @@ h1, .title, .description, .size_limit {
     align-self: center;
 }
 
-.top_bar {
+nav {
     display: flex;
     flex-direction: row;
     align-content: center;
@@ -96,4 +101,8 @@ td, th {
 
 .hor {
     text-align: start;
+}
+
+.code_font {
+    font-family: monospace;
 }
