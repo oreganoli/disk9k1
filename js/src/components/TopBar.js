@@ -1,8 +1,18 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
+import {loadInstance} from "../reducers/instanceReducer";
 
 class TopBar extends React.Component {
+    componentDidMount() {
+        loadInstance().then(
+            (result) => {
+                console.log(result);
+                this.props.load(result);
+            }
+        )
+    }
+
     render() {
         return <nav>
             <div className={"left_half"}>
@@ -17,6 +27,7 @@ class TopBar extends React.Component {
 const mapStateToProps = (state) => (
     {instance: state.instance}
 );
-const mapDispatchToProps = (dispatch) => ({});
+const loadActionCreator = (instance) => ({type: "LOAD_INSTANCE", payload: instance});
+const mapDispatchToProps = (dispatch) => ({load: (instance) => dispatch(loadActionCreator(instance))});
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBar);
