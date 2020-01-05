@@ -1,26 +1,18 @@
-import {connect, Provider} from 'react-redux';
-import {createStore} from 'redux';
+const regeneratorRuntime = require('regenerator-runtime/runtime');
+import {Provider} from 'react-redux';
+import {combineReducers, createStore} from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import instance from "./reducers/instanceReducer";
+import VisibleHome from "./components/Home.jsx";
 
 const title = 'React hello world';
-const reducer = (state, action) => (state);
-const store = createStore(reducer, {text: "Hello world from React!"});
-
-class Element extends React.Component {
-    render() {
-        return <h1>{this.props.text}</h1>;
-    }
-}
-
-const mapStateToProps = (state) => ({text: state.text});
-const mapDispatchToProps = (dispatch) => ({});
-const ConnectedElement = connect(mapStateToProps, mapDispatchToProps)(Element);
-
-
+const reducer = combineReducers({instance});
+const store = createStore(reducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 ReactDOM.render(
     <Provider store={store}>
-        <ConnectedElement/>
+        <VisibleHome/>
     </Provider>,
     document.getElementById("root")
 );
