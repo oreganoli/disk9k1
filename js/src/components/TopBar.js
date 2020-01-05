@@ -24,7 +24,7 @@ class TopBar extends React.Component {
     render() {
         return <nav>
             <div className={"left_half"}>
-                <Link to="/"><strong>{this.props.instance.name}</strong></Link>
+                <Link to="/"><strong className={"top_item"}>{this.props.instance.name}</strong></Link>
             </div>
             <div className={"right_half"}>
                 <LoginIndicator/>

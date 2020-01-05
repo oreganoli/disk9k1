@@ -7,3 +7,8 @@ export async function loadMe() {
         return null;
     }
 }
+
+export async function logOut() {
+    let request = new Request("/logout", {method: "POST"});
+    await fetch(request).catch((err) => alert(err));
+}

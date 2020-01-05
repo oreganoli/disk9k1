@@ -1,5 +1,6 @@
 import React from 'react';
 import LoginButton from './LoginButton';
+import LogoutButton from "./LogoutButton";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 
@@ -8,7 +9,8 @@ class LoginIndicator extends React.Component {
         if (this.props.user == null) {
             return <LoginButton/>;
         } else {
-            return <p>{"Logged in as "}<strong><Link to={"/me"}>{this.props.user.name}</Link></strong></p>;
+            return <span className={"top_item"}>{"Logged in as "}<strong><Link to={"/me"}>{this.props.user.name}</Link></strong><LogoutButton/>
+            </span>;
         }
     }
 }
