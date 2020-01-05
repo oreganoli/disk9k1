@@ -67,6 +67,10 @@ fn main() -> AppResult<()> {
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),
         )
+        .mount(
+            "/js",
+            serve::StaticFiles::new("js/dist/", serve::Options::None),
+        )
         .launch();
     Ok(())
 }
