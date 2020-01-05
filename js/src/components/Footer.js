@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 class Footer extends React.Component {
     render() {
         return <footer>
-            <p><span className="codeFont">disk9k1</span> v{this.props.instance.data.version}</p>
+            <p><span className="codeFont">disk9k1</span> v{this.props.instance.version}</p>
         </footer>
     }
 }

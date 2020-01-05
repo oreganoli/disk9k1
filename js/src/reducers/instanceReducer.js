@@ -1,20 +1,15 @@
 export default function instance(state, action) {
     if (typeof state === 'undefined') {
         return {
-            data: {
-                name: "Placeholder, loading...",
-                description: "Placeholder, loading...",
-                version: "placeholder, loading...",
-                size_limit: 0
-            }
+            name: "Placeholder, loading...",
+            description: "Placeholder, loading...",
+            version: "placeholder, loading...",
+            size_limit: 0
         };
     }
     switch (action.type) {
         case 'LOAD_INSTANCE':
-            return {
-                ...state,
-                data: action.payload
-            };
+            return action.payload;
         default:
             return state;
     }
