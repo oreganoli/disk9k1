@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {loadInstance} from "../reducers/instanceReducer";
+import LoginIndicator from "./LoginIndicator";
 
 class TopBar extends React.Component {
     componentDidMount() {
@@ -10,7 +11,7 @@ class TopBar extends React.Component {
                 console.log(result);
                 this.props.load(result);
             }
-        )
+        );
     }
 
     render() {
@@ -19,6 +20,7 @@ class TopBar extends React.Component {
                 <Link to="/"><strong>{this.props.instance.name}</strong></Link>
             </div>
             <div className={"right_half"}>
+                <LoginIndicator/>
             </div>
         </nav>;
     }
