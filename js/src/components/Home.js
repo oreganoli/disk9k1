@@ -18,6 +18,4 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({});
 
-const VisibleHome = connect(mapStateToProps, mapDispatchToProps)(Home);
-
-export default VisibleHome;
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

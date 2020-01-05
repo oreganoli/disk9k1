@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import instance from "./reducers/instanceReducer";
 import user from "./reducers/userReducer";
-import VisibleHome from "./components/Home";
+import Home from "./components/Home";
 import TopBar from "./components/TopBar";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
@@ -21,7 +21,7 @@ ReactDOM.render(
             <TopBar/>
             <Switch>
                 <Route path="/">
-                    <VisibleHome/>
+                    <Home/>
                 </Route>
             </Switch>
             <Footer/>
