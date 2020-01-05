@@ -5,7 +5,11 @@ import {connect} from "react-redux";
 class TopBar extends React.Component {
     render() {
         return <nav>
-            <Link to="/"><strong>{this.props.instance.data.name}</strong></Link>
+            <div className={"left_half"}>
+                <Link to="/"><strong>{this.props.instance.data.name}</strong></Link>
+            </div>
+            <div className={"right_half"}>
+            </div>
         </nav>;
     }
 }

@@ -13,10 +13,12 @@ class Home extends React.Component {
     }
 
     render() {
-        return <div>
+        let mebibytes = this.props.instance.data.size_limit / 1048576;
+        mebibytes -= mebibytes % 0.01;
+        return <div className={"central"}>
             <h1>{this.props.instance.data.name}</h1>
             <p>{this.props.instance.data.description}</p>
-            <p>{`The size limit is ${this.props.instance.data.size_limit / 1048576} MiB.`}</p>
+            <p>{`The size limit is ${mebibytes} MiB.`}</p>
         </div>;
     }
 }

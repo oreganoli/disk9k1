@@ -4,11 +4,13 @@
     --active-el-color: orange;
     --border-color: black;
 }
-body {
+
+main {
     background: linear-gradient(to bottom, #a0d8ef 0%, #ddf1f9 73%, #feffff 100%);
     min-height: 100vh;
     min-width: 100vw;
     font-family: 'Arial', sans-serif;
+    display: flex;
     flex-direction: column;
     justify-content: start;
     align-content: center;
@@ -47,7 +49,7 @@ button:active {
     align-items: center;
 }
 
-h1, .title, .description, .size_limit {
+h1, .title, .central {
     text-align: center;
     align-self: center;
 }
