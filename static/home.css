@@ -5,6 +5,10 @@
     --border-color: black;
 }
 
+a {
+    text-decoration-line: none;
+}
+
 main {
     background: linear-gradient(to bottom, #a0d8ef 0%, #ddf1f9 73%, #feffff 100%);
     min-height: 100vh;
