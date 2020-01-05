@@ -1,9 +1,7 @@
 build:
     sudo systemctl start postgresql.service
-    diesel migration run
     cargo build
 develop:
-    cd js && npm start &
+    cd js && npm run build &
     cd ..
     cargo run
-    killall -9 npm
