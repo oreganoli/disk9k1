@@ -9,6 +9,7 @@ import user from "./reducers/userReducer";
 import Home from "./components/Home";
 import TopBar from "./components/TopBar";
 import {LoginForm} from "./components/LoginForm";
+import {DirView} from "./components/DirView";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
 import ErrorWindow from "./components/ErrorWindow";
@@ -30,6 +31,8 @@ ReactDOM.render(
                 <Route path="/me">
                     <Me/>
                 </Route>
+                <Route path="/drive/:id" component={DirView}/>
+                <Route path="/drive" component={DirView}/>
                 <Route path="/">
                     <Home/>
                 </Route>
