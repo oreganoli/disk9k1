@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Redirect} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {loadMe, putUsername} from "../models/user";
+import {loadMe, putPassword, putUsername} from "../models/user";
 
 export const Me = () => {
     const user = useSelector(state => state.user);
@@ -24,6 +24,7 @@ export const Me = () => {
                     putUsername({username: username})
                         .then((result) => {
                             if (result) {
+                                console.log("Username change succeeded!");
                                 loadMe().then((result) => {
                                     dispatch({type: "SET_USER", payload: result});
                                 });
@@ -39,7 +40,18 @@ export const Me = () => {
                 <input type={"password"} value={passCon} onChange={(e) => {
                     setPassCon(e.target.value);
                 }}/>
-                <button>Change your password</button>
+                <button onClick={() => {
+                    putPassword({password: password, passCon: passCon})
+                        .then((result) => {
+                            if (result) {
+                                console.log("Password change succeeded!");
+                                loadMe().then((result) => {
+                                    dispatch({type: "SET_USER", payload: result});
+                                })
+                            }
+                        })
+                }}>Change your password
+                </button>
             </form>
             <button className={"centeredButton"}><strong>Delete your account</strong></button>
         </div>;
