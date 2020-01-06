@@ -68,10 +68,20 @@ nav {
     border-bottom: 1px solid var(--border-color);
 }
 
+.modal_overlay {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 20);
+    opacity: 20%;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+}
+
 .top_item {
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
+
 .left_half, .right_half {
     display: flex;
     flex-direction: row;
