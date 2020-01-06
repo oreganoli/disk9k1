@@ -4,11 +4,11 @@ import {useParams} from "react-router";
 import {loadDir} from "../models/dir";
 import {Link} from "react-router-dom";
 
-const deleteItem = (id, type) => {
-    console.log(`Deleting a ${type} with id ${id}`);
-};
+const deleteItem = (id, type) => (
+    {type: "SET_DEL_ITEM", payload: {type: type, id: id}}
+);
 
-const contents = (props) => {
+const contents = (props, dispatch) => {
     let upLink;
     if (props.parent == null && props.id !== 0) {
         upLink = <tr>
@@ -29,7 +29,7 @@ const contents = (props) => {
             </td>
             <td>
                 <button onClick={() => {
-                    deleteItem(each.id, "directory");
+                    dispatch(deleteItem(each.id, "directory"));
                 }}><strong>🗑️ Delete</strong></button>
             </td>
         </tr>
@@ -45,12 +45,16 @@ const contents = (props) => {
 export const DirView = () => {
     let {id} = useParams();
     let dispatch = useDispatch();
+    let reload = useSelector(state => state.reloadDir);
     useEffect(() => {
         if (typeof id === "undefined") {
             id = null;
         }
-        loadDir(id, dispatch).then((result) => (console.log(result ? "Loading dir succeeded." : "Loading dir failed.")))
-    }, [id]);
+        loadDir(id, dispatch).then((result) => {
+            dispatch({type: "SET_RELOAD_DIR", payload: false});
+            console.log(result ? "Loading dir succeeded." : "Loading dir failed.");
+        })
+    }, [id, reload]);
     let dir = useSelector(state => state.dir);
     if (dir == null) {
         return null;
@@ -61,7 +65,7 @@ export const DirView = () => {
                 <button style={{margin: "auto 1em"}}>Create directory</button>
                 <button style={{margin: "auto 1em"}}>Upload file</button>
             </div>
-            {contents({id: dir.id, name: dir.name, children: dir.children})}
+            {contents({id: dir.id, name: dir.name, children: dir.children}, dispatch)}
         </div>;
     }
 };
