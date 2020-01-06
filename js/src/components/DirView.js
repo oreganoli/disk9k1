@@ -19,7 +19,9 @@ const contents = (props) => {
     }
     let kids = props.children.map((each) => (
         <tr>
-            <td><Link to={`/drive/${each.id}`}>{`📁 ${each.name}/`}</Link></td>
+            <td className={"item_row"}><Link to={`/drive/${each.id}`}>{`📁 ${each.name}/`}</Link></td>
+            <td><button>✍️ Rename</button></td>
+            <td><button><strong>🗑️ Delete</strong></button></td>
         </tr>
     ));
     return <table>

@@ -133,13 +133,16 @@ form {
 }
 
 table {
-    min-width: 50vw;
+    margin: auto;
+}
+
+td.item_row {
+    min-width: 20vw;
 }
 
 table, tr, td, th {
     border: 1px solid var(--border-color);
     border-collapse: collapse;
-    margin: auto;
 }
 
 td, th {
