@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {Redirect} from "react-router";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {loadMe, putUsername} from "../models/user";
 
 export const Me = () => {
     const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
     if (user == null) {
         console.log("No user found, redirecting...");
     }
@@ -18,7 +20,17 @@ export const Me = () => {
                 <input type={"text"} value={username} onChange={(e) => {
                     setUsername(e.target.value);
                 }}/>
-                <button>Change your username</button>
+                <button onClick={() => {
+                    putUsername({username: username})
+                        .then((result) => {
+                            if (result) {
+                                loadMe().then((result) => {
+                                    dispatch({type: "SET_USER", payload: result});
+                                });
+                            }
+                        });
+                }}>Change your username
+                </button>
                 <label>Password</label>
                 <input type={"password"} value={password} onChange={(e) => {
                     setPassword(e.target.value);
