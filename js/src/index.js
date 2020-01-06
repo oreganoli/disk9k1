@@ -12,6 +12,7 @@ import {LoginForm} from "./components/LoginForm";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
 import ErrorWindow from "./components/ErrorWindow";
+import {Me} from "./components/Me";
 
 const regeneratorRuntime = require('regenerator-runtime/runtime');
 const title = 'React hello world';
@@ -25,6 +26,9 @@ ReactDOM.render(
             <Switch>
                 <Route path="/login">
                     <LoginForm/>
+                </Route>
+                <Route path="/me">
+                    <Me/>
                 </Route>
                 <Route path="/">
                     <Home/>

@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginButton from './LoginButton';
-import LogoutButton from "./LogoutButton";
+import {LogoutButton} from "./LogoutButton";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 

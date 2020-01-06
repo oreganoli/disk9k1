@@ -1,20 +1,16 @@
-import React from 'react';
-import {connect} from 'react-redux';
+import React, {useState} from 'react';
+import {useDispatch} from 'react-redux'
 import {logOut} from "../models/user";
+import {Redirect} from "react-router";
 
-class LogoutButton extends React.Component {
-    render() {
-        return <button className={"top_item"} onClick={() => {
-            logOut().then(this.props.dispatchLogout);
-        }
-        }>Log out</button>
+export const LogoutButton = () => {
+    const dispatch = useDispatch();
+    const [toHome, setToHome] = useState(false);
+    if (toHome) {
+        return <Redirect to={"/"}/>;
+    } else {
+        return <button onClick={() => {
+            logOut().then(dispatch({type: "LOGOUT"}))
+        }}>Log out</button>
     }
-}
-
-const mapStateToProps = () => ({});
-const logoutAction = {type: "LOGOUT"};
-const mapDispatchToProps = (dispatch) => ({
-    dispatchLogout: () => dispatch(logoutAction)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(LogoutButton);
+};
