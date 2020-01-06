@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Redirect} from "react-router";
+import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {loadMe, signIn} from "../models/user";
 
@@ -37,6 +38,7 @@ export const LoginForm = () => {
                 }}/>
                 <button className={"centeredButton"} onClick={submit}>Sign in</button>
             </form>
+            <p style={{textAlign: "center"}}>Don't have an account? <Link to={"/register"}><strong>Register.</strong></Link></p>
         </div>;
     }
 };

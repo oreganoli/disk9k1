@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import DelModal from "./components/DelModal";
 import ErrorModal from "./components/ErrorModal";
 import {Me} from "./components/Me";
+import Register from "./components/Register";
 import root from "./reducers/rootReducer";
 
 const regeneratorRuntime = require('regenerator-runtime/runtime');
@@ -33,6 +34,7 @@ ReactDOM.render(
                 </Route>
                 <Route path="/drive/:id" component={DirView}/>
                 <Route path="/drive" component={DirView}/>
+                <Route path="/register" component={Register}/>
                 <Route path="/">
                     <Home/>
                 </Route>
