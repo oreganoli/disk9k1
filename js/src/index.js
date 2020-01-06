@@ -1,4 +1,4 @@
-const regeneratorRuntime = require('regenerator-runtime/runtime');
+import RenameModal from "./components/RenameModal";
 import {HashRouter as Router} from "react-router-dom";
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
@@ -14,6 +14,8 @@ import DelModal from "./components/DelModal";
 import ErrorModal from "./components/ErrorModal";
 import {Me} from "./components/Me";
 import root from "./reducers/rootReducer";
+
+const regeneratorRuntime = require('regenerator-runtime/runtime');
 
 const title = 'React hello world';
 export const store = createStore(root,
@@ -38,6 +40,7 @@ ReactDOM.render(
             <Footer/>
             <ErrorModal/>
             <DelModal/>
+            <RenameModal/>
         </Router>
     </Provider>,
     document.getElementById("root")

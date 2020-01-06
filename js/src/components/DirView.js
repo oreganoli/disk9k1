@@ -8,6 +8,10 @@ const deleteItem = (id, type) => (
     {type: "SET_DEL_ITEM", payload: {type: type, id: id}}
 );
 
+const renameItem = (id, type) => (
+    {type: "SET_RN_ITEM", payload: {type: type, id: id}}
+);
+
 const contents = (props, dispatch) => {
     let upLink;
     console.log(`Current contents props.parent is {${props.parent}}`);
@@ -26,7 +30,10 @@ const contents = (props, dispatch) => {
         <tr>
             <td className={"item_row"}><Link to={`/drive/${each.id}`}>{`📁 ${each.name}/`}</Link></td>
             <td>
-                <button>✍️ Rename</button>
+                <button onClick={() => {
+                    dispatch(renameItem(each.id, "directory"));
+                }}>✍️ Rename
+                </button>
             </td>
             <td>
                 <button onClick={() => {

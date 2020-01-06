@@ -34,3 +34,20 @@ export const delDir = async (id, dispatch) => {
         return false;
     }
 };
+
+export const renameDir = async ({id, name}, dispatch) => {
+    let request = new Request("/rename_dir", {
+        method: "PUT",
+        body: JSON.stringify({id: id, name: name})
+    });
+    let response = await fetch(request).catch((err) => alert(err));
+    if (response.status === 200) {
+        console.log("Dir deletion successful");
+        return true;
+    } else {
+        let err = await response.json();
+        console.log(err);
+        dispatch({type: "SET_ERROR", payload: err});
+        return false;
+    }
+}
