@@ -12,6 +12,16 @@ const renameItem = (id, type) => (
     {type: "SET_RN_ITEM", payload: {type: type, id: id}}
 );
 
+const createDir = (this_dir_id, user_id) => {
+    let id;
+    if (this_dir_id === 0) {
+        id = null;
+    } else {
+        id = this_dir_id
+    }
+    return {type: "SET_CREATE_DIR", payload: {name: "", owner: user_id, parent: id}};
+};
+
 const contents = (props, dispatch) => {
     let upLink;
     console.log(`Current contents props.parent is {${props.parent}}`);
@@ -75,7 +85,10 @@ export const DirView = () => {
         return <div>
             <h1>{dir.name}</h1>
             <div className={"centeredDiv"}>
-                <button style={{margin: "auto 1em"}}>📁➕ Create directory</button>
+                <button style={{margin: "auto 1em"}} onClick={() => {
+                    dispatch(createDir(dir.id, user.id));
+                }}>📁➕ Create directory
+                </button>
                 <button style={{margin: "auto 1em"}}>📄➕ Upload file</button>
             </div>
             {contents(dir, dispatch)}
