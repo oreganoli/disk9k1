@@ -1,5 +1,20 @@
 const regeneratorRuntime = require('regenerator-runtime/runtime');
 
+export const createDir = async ({name, owner, parent}, dispatch) => {
+    let request = new Request("/drive", {
+        method: "POST",
+        body: JSON.stringify({name: name, owner: owner, parent: parent})
+    });
+    let response = await fetch(request).catch((err) => alert(err));
+    if (response.status === 200) {
+        return true;
+    } else {
+        let err = await response.json();
+        dispatch({type: "SET_ERROR", payload: err});
+        return false;
+    }
+};
+
 export const loadDir = async (id, dispatch) => {
     let request = new Request(`/drive${id == null ? "" : `/${id}`}`, {
         method: "GET"
