@@ -1,8 +1,10 @@
+const regeneratorRuntime = require('regenerator-runtime/runtime');
 import {HashRouter as Router} from "react-router-dom";
 import {Provider} from 'react-redux';
 import {combineReducers, createStore} from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import dir from "./reducers/dirReducer";
 import error from "./reducers/errorReducer";
 import instance from "./reducers/instanceReducer";
 import user from "./reducers/userReducer";
@@ -15,9 +17,8 @@ import Footer from "./components/Footer";
 import ErrorWindow from "./components/ErrorWindow";
 import {Me} from "./components/Me";
 
-const regeneratorRuntime = require('regenerator-runtime/runtime');
 const title = 'React hello world';
-const reducer = combineReducers({error, instance, user});
+const reducer = combineReducers({dir, error, instance, user});
 export const store = createStore(reducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 ReactDOM.render(
