@@ -10,6 +10,7 @@ const deleteItem = (id, type) => (
 
 const contents = (props, dispatch) => {
     let upLink;
+    console.log(`Current contents props.parent is {${props.parent}}`);
     if (props.parent == null && props.id !== 0) {
         upLink = <tr>
             <td><Link to={`/drive`}><strong>⬆ ../</strong></Link></td>
@@ -59,13 +60,14 @@ export const DirView = () => {
     if (dir == null) {
         return null;
     } else {
+        console.log(`Current dir is ${dir.id}`);
         return <div>
             <h1>{dir.name}</h1>
             <div className={"centeredDiv"}>
                 <button style={{margin: "auto 1em"}}>Create directory</button>
                 <button style={{margin: "auto 1em"}}>Upload file</button>
             </div>
-            {contents({id: dir.id, name: dir.name, children: dir.children}, dispatch)}
+            {contents(dir, dispatch)}
         </div>;
     }
 };
