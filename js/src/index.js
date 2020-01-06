@@ -1,7 +1,7 @@
 const regeneratorRuntime = require('regenerator-runtime/runtime');
 import {HashRouter as Router} from "react-router-dom";
 import {Provider} from 'react-redux';
-import {combineReducers, createStore} from 'redux';
+import {createStore} from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Home from "./components/Home";
@@ -10,7 +10,7 @@ import {LoginForm} from "./components/LoginForm";
 import {DirView} from "./components/DirView";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
-import ErrorWindow from "./components/ErrorWindow";
+import ErrorModal from "./components/ErrorModal";
 import {Me} from "./components/Me";
 import root from "./reducers/rootReducer";
 
@@ -35,7 +35,7 @@ ReactDOM.render(
                 </Route>
             </Switch>
             <Footer/>
-            <ErrorWindow/>
+            <ErrorModal/>
         </Router>
     </Provider>,
     document.getElementById("root")
