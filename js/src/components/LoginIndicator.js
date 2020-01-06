@@ -9,7 +9,9 @@ class LoginIndicator extends React.Component {
         if (this.props.user == null) {
             return <LoginButton/>;
         } else {
-            return <span className={"top_item"}>{"Logged in as "}<strong><Link to={"/me"}>{this.props.user.name}</Link></strong><LogoutButton/>
+            return <span className={"top_item"}>{"Logged in as "}<strong><Link
+                to={"/me"}>{this.props.user.name.concat(this.props.user.is_admin ? " 👑" : "")}
+            </Link></strong><LogoutButton/>
             </span>;
         }
     }
