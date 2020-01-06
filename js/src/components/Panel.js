@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Redirect} from "react-router";
+import {putInstance} from "../models/instance";
+import {loadInstance} from "../reducers/instanceReducer";
 
 const Panel = () => {
     let dispatch = useDispatch();
@@ -15,12 +17,25 @@ const Panel = () => {
             <h1>Global Disk9k1 settings</h1>
             <form>
                 <label>Instance name</label>
-                <input type={"text"} value={data.name}/>
+                <input type={"text"} value={data.name} onChange={(e) => {
+                    setData({...data, name: e.target.value})
+                }}/>
                 <label>Instance description</label>
-                <textarea cols={80} rows={3} value={data.description}/>
+                <textarea onChange={(e) => {
+                    setData({...data, description: e.target.value})
+                }} cols={80} rows={3} value={data.description}/>
                 <label>Size limit for files (in bytes)</label>
-                <input type={"number"} min={0} step={1} value={data.size_limit}/>
-                <button>Save</button>
+                <input onChange={(e) => {
+                    setData({...data, size_limit: e.target.value})
+                }} type={"number"} min={0} step={1} value={data.size_limit}/>
+                <button onClick={() => {
+                    putInstance(data, dispatch).then(
+                        (result) => {
+                            if (result) {
+                                loadInstance().then((inst) => {dispatch({type: "LOAD_INSTANCE", payload: inst})});
+                            }
+                        });
+                }}>Save</button>
             </form>
         </div>
     }

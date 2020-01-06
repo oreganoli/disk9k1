@@ -8,7 +8,7 @@ export const putInstance = async ({name, description, size_limit}, dispatch) => 
         return true;
     } else {
         let err = await response.json();
-        dispatch({type: "SET_ERR", payload: err});
+        dispatch({type: "SET_ERROR", payload: err});
         return false;
     }
 };
