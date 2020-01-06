@@ -4,10 +4,6 @@ import {Provider} from 'react-redux';
 import {combineReducers, createStore} from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import dir from "./reducers/dirReducer";
-import error from "./reducers/errorReducer";
-import instance from "./reducers/instanceReducer";
-import user from "./reducers/userReducer";
 import Home from "./components/Home";
 import TopBar from "./components/TopBar";
 import {LoginForm} from "./components/LoginForm";
@@ -16,10 +12,10 @@ import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
 import ErrorWindow from "./components/ErrorWindow";
 import {Me} from "./components/Me";
+import root from "./reducers/rootReducer";
 
 const title = 'React hello world';
-const reducer = combineReducers({dir, error, instance, user});
-export const store = createStore(reducer,
+export const store = createStore(root,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 ReactDOM.render(
     <Provider store={store}>
