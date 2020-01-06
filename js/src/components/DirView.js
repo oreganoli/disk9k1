@@ -4,6 +4,10 @@ import {useParams} from "react-router";
 import {loadDir} from "../models/dir";
 import {Link} from "react-router-dom";
 
+const deleteItem = (id, type) => {
+    console.log(`Deleting a ${type} with id ${id}`);
+};
+
 const contents = (props) => {
     let upLink;
     if (props.parent == null && props.id !== 0) {
@@ -24,7 +28,9 @@ const contents = (props) => {
                 <button>✍️ Rename</button>
             </td>
             <td>
-                <button><strong>🗑️ Delete</strong></button>
+                <button onClick={() => {
+                    deleteItem(each.id, "directory");
+                }}><strong>🗑️ Delete</strong></button>
             </td>
         </tr>
     ));
