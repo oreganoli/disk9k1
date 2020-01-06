@@ -1,5 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
+import {createDir} from "../models/dir";
+
+const accept = ({name, owner, parent}, dispatch) => {
+    createDir({name, owner, parent}, dispatch).then((result) => {
+            dispatch({type: "SET_RELOAD_DIR", payload: true});
+            reject(dispatch);
+            return result;
+        }
+    )
+};
 
 const reject = (dispatch) => {
     dispatch({type: "SET_CREATE_DIR", payload: null});
@@ -7,6 +17,7 @@ const reject = (dispatch) => {
 
 const CrDirModal = () => {
     let dispatch = useDispatch();
+    let [dirName, setDirName] = useState("");
     let crDir = useSelector(state => state.crDir);
     if (crDir == null) {
         return null;
@@ -17,10 +28,12 @@ const CrDirModal = () => {
                 <h1>Create directory</h1>
                 <form>
                     <label>Name</label>
-                    <input type={"text"}/>
+                    <input value={dirName} onChange={(e) => {
+                        setDirName(e.target.value);
+                    }} type={"text"}/>
                 </form>
                 <button onClick={() => {
-                    reject(dispatch);
+                    accept({name: dirName, owner: crDir.owner, parent: crDir.parent}, dispatch);
                 }}>Create
                 </button>
                 <button onClick={() => {
