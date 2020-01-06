@@ -61,3 +61,17 @@ export async function putUsername({username}) {
     }
 }
 
+export async function register({name, email, password, pass_con}) {
+    let request = new Request("/users", {
+        method: "POST",
+        body: JSON.stringify({name: name, email: email, password: password, pass_con: pass_con})
+    });
+    let response = await fetch(request).catch((err) => alert(err));
+    if (response.status === 200) {
+        return true;
+    } else {
+        store.dispatch({type: "SET_ERROR", payload: await response.json()});
+        return false;
+    }
+}
+
