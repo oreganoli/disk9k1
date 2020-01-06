@@ -75,8 +75,8 @@ export const DirView = () => {
         return <div>
             <h1>{dir.name}</h1>
             <div className={"centeredDiv"}>
-                <button style={{margin: "auto 1em"}}>Create directory</button>
-                <button style={{margin: "auto 1em"}}>Upload file</button>
+                <button style={{margin: "auto 1em"}}>📁➕ Create directory</button>
+                <button style={{margin: "auto 1em"}}>📄➕ Upload file</button>
             </div>
             {contents(dir, dispatch)}
         </div>;
