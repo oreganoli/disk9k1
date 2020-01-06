@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router";
+import {Redirect, useParams} from "react-router";
 import {loadDir} from "../models/dir";
 import {Link} from "react-router-dom";
 
@@ -64,6 +64,10 @@ export const DirView = () => {
         })
     }, [id, reload]);
     let dir = useSelector(state => state.dir);
+    let user = useSelector(state => state.user);
+    if (user == null) {
+        return <Redirect to={"/"}/>;
+    }
     if (dir == null) {
         return null;
     } else {
