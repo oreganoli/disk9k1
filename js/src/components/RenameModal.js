@@ -35,11 +35,11 @@ const RenameModal = () => {
                 }}/>
                 <button onClick={() => {
                     accept({type: ren.type, name: name, id: ren.id}, dispatch);
-                }}>Yes
+                }}>Rename
                 </button>
                 <button onClick={() => {
                     reject(dispatch);
-                }}>No
+                }}>Cancel
                 </button>
             </div>
         </div>

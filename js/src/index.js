@@ -10,6 +10,7 @@ import {LoginForm} from "./components/LoginForm";
 import {DirView} from "./components/DirView";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
+import CrDirModal from "./components/CrDirModal";
 import DelModal from "./components/DelModal";
 import ErrorModal from "./components/ErrorModal";
 import {Me} from "./components/Me";
@@ -43,6 +44,7 @@ ReactDOM.render(
             <ErrorModal/>
             <DelModal/>
             <RenameModal/>
+            <CrDirModal/>
         </Router>
     </Provider>,
     document.getElementById("root")

@@ -19,7 +19,7 @@ const createDir = (this_dir_id, user_id) => {
     } else {
         id = this_dir_id
     }
-    return {type: "SET_CREATE_DIR", payload: {name: "", owner: user_id, parent: id}};
+    return {type: "SET_CREATE_DIR", payload: {owner: user_id, parent: id}};
 };
 
 const contents = (props, dispatch) => {
