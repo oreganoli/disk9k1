@@ -14,6 +14,7 @@ import CrDirModal from "./components/CrDirModal";
 import DelModal from "./components/DelModal";
 import ErrorModal from "./components/ErrorModal";
 import {Me} from "./components/Me";
+import Panel from "./components/Panel";
 import Register from "./components/Register";
 import root from "./reducers/rootReducer";
 
@@ -36,6 +37,7 @@ ReactDOM.render(
                 <Route path="/drive/:id" component={DirView}/>
                 <Route path="/drive" component={DirView}/>
                 <Route path="/register" component={Register}/>
+                <Route path="/panel" component={Panel}/>
                 <Route path="/">
                     <Home/>
                 </Route>
