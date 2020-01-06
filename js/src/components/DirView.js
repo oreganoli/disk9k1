@@ -20,13 +20,19 @@ const contents = (props) => {
     let kids = props.children.map((each) => (
         <tr>
             <td className={"item_row"}><Link to={`/drive/${each.id}`}>{`📁 ${each.name}/`}</Link></td>
-            <td><button>✍️ Rename</button></td>
-            <td><button><strong>🗑️ Delete</strong></button></td>
+            <td>
+                <button>✍️ Rename</button>
+            </td>
+            <td>
+                <button><strong>🗑️ Delete</strong></button>
+            </td>
         </tr>
     ));
     return <table>
+        <tbody>
         {upLink}
         {kids}
+        </tbody>
     </table>;
 };
 
@@ -45,6 +51,10 @@ export const DirView = () => {
     } else {
         return <div>
             <h1>{dir.name}</h1>
+            <div className={"centeredDiv"}>
+                <button style={{margin: "auto 1em"}}>Create directory</button>
+                <button style={{margin: "auto 1em"}}>Upload file</button>
+            </div>
             {contents({id: dir.id, name: dir.name, children: dir.children})}
         </div>;
     }
