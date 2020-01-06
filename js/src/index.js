@@ -8,6 +8,7 @@ import instance from "./reducers/instanceReducer";
 import user from "./reducers/userReducer";
 import Home from "./components/Home";
 import TopBar from "./components/TopBar";
+import {LoginForm} from "./components/LoginForm";
 import {Route, Switch} from "react-router";
 import Footer from "./components/Footer";
 import ErrorWindow from "./components/ErrorWindow";
@@ -15,13 +16,16 @@ import ErrorWindow from "./components/ErrorWindow";
 const regeneratorRuntime = require('regenerator-runtime/runtime');
 const title = 'React hello world';
 const reducer = combineReducers({error, instance, user});
-const store = createStore(reducer,
+export const store = createStore(reducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 ReactDOM.render(
     <Provider store={store}>
         <Router>
             <TopBar/>
             <Switch>
+                <Route path="/login">
+                    <LoginForm/>
+                </Route>
                 <Route path="/">
                     <Home/>
                 </Route>

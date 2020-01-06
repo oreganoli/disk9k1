@@ -129,8 +129,7 @@ form {
     display: flex;
     flex-direction: column;
     align-self: center;
-    align-items: start;
-    max-width: 50%;
+    align-items: center;
 }
 
 table, tr, td, th {

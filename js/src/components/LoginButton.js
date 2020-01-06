@@ -1,25 +1,12 @@
 import React from 'react';
-import {Redirect} from "react-router";
+import {useHistory} from "react-router";
 
-class LoginButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            toLogin: false
-        };
-    }
 
-    render() {
-        if (!this.state.toLogin) {
-            return <button onClick={() => {
-                this.setState(() => ({toLogin: true}))
-            }}>Sign in</button>;
-        } else {
-            return <div>
-                <button>Sign in</button>
-                <Redirect to={"/login"}/></div>;
-        }
-    }
+function LoginButton() {
+    const hist = useHistory();
+    return <button onClick={() => {
+        hist.push("/login");
+    }}>Sign in</button>;
 }
 
 export default LoginButton;
