@@ -1,9 +1,30 @@
-import React from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
+import {useHistory} from "react-router";
+import {useDispatch, useSelector} from "react-redux";
+import {loadMe, signIn} from "../models/user";
 
 export const LoginForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const history = useHistory();
+    const userSelector = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const submit = () => {
+        let data = {
+            username: username,
+            password: password
+        };
+        signIn(data).then((result) => {
+            if (result) {
+                loadMe().then((me) => {
+                    dispatch({type: "SET_USER", payload: me})
+                }).catch((err) => alert(err));
+            }
+        })
+    };
+    if (userSelector != null) {
+        history.push("/");
+    }
     return <div>
         <h1>Sign in</h1>
         <form>
@@ -15,7 +36,7 @@ export const LoginForm = () => {
             <input type={"password"} value={password} required={true} onChange={(e) => {
                 setPassword(e.target.value);
             }}/>
-            <button className={"centeredButton"}>Sign in</button>
+            <button className={"centeredButton"} onClick={submit}>Sign in</button>
         </form>
     </div>;
 };

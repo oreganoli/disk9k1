@@ -16,7 +16,10 @@ export async function logOut() {
 }
 
 export async function signIn({username, password}) {
-    let request = new Request("/authenticate", {method: "POST", body: JSON.stringify({username: username, password: password})});
+    let request = new Request("/login", {
+        method: "POST",
+        body: JSON.stringify({username: username, password: password})
+    });
     let response = await fetch(request).catch((err) => alert(err));
     if (response.status === 200) {
         return true;
