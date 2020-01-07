@@ -19,9 +19,9 @@ Run Disk9k1 with `cargo run`. Disk9k1 will run the necessary database setup on i
 ## Frontend
 Install npm, cd into `js` and run:
 ```bash
-$ npm build
+$ npm run build
 ```
-This will start a webpack watchdog that will watch for any changes and recompile the JavaScript in `js/src` to `js/dist/bundle.js`, which the server will serve under `/js/`.
+This will start a `webpack` watchdog that will watch for any changes and recompile the JavaScript in `js/src` to `js/dist/bundle.js`, which the server will serve under `/js/`.
 
 Go back to the project root and start the server.
 ## Either
