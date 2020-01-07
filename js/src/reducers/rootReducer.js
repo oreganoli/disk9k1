@@ -7,6 +7,7 @@ import rename from "./renameReducer";
 import reloadDir from "./reloadDir"
 import user from "./userReducer";
 import {combineReducers} from "redux";
+import upload from "./uploadReducer";
 
-const root = combineReducers({crDir, del, dir, error, instance, reloadDir, rename, user});
+const root = combineReducers({crDir, del, dir, error, instance, reloadDir, rename, user, upload});
 export default root;
