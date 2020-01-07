@@ -19,16 +19,39 @@ pub enum FileError {
     ImproperForm,
 }
 
+#[derive(Serialize)]
+pub struct File {
+    id: i32,
+    filename: String,
+    hash: u32,
+    owner: i32,
+    public: bool,
+    directory: Option<i32>,
+}
+
+pub struct InsFile {
+    filename: String,
+    hash: u32,
+    owner: i32,
+    public: bool,
+    directory: Option<i32>,
+}
+
 #[post("/upload", data = "<data>")]
 pub fn upload(
     app: AppState,
     mut cookies: Cookies,
     content_type: &ContentType,
     data: Data,
-) -> AppResult<()> {
+) -> AppResult<Json<Option<i32>>> {
     let app = app.write();
     let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
     let size = app.instance.read(conn)?.size_limit;
-    let file = crate::content::file::multi::from_form(content_type.clone(), data, size)?;
-    Ok(())
+    let new_file = crate::content::file::multi::from_form(content_type.clone(), data, size)?;
+    let hash = app.data.create(&new_file.data, conn)?;
+    let id = conn.query("INSERT INTO files (filename, hash, owner, public, directory) VALUES ($1, $2, $3, $4, $5) RETURNING id;",
+                        &[&new_file.filename, &hash, &user.id, &new_file.public, &new_file.directory])?
+        .first().and_then(|row| row.get(0));
+    Ok(Json(id))
 }

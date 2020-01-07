@@ -9,6 +9,7 @@ pub(crate) enum DataError {
 
 impl DataRepo {
     pub fn create(&self, data: &[u8], conn: &mut Conn) -> AppResult<i64> {
+        eprintln!("CREATing data of length {}", data.len());
         let limit = conn
             .query("SELECT size_limit FROM instance;", &[])?
             .first()

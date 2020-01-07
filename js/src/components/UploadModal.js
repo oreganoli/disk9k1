@@ -26,7 +26,17 @@ const uploadModal = () => {
                         method: "POST",
                         body: data
                     });
-                    fetch(request).then(response => console.log(response.status));
+                    fetch(request).then((response) => {
+                        if (response.status === 200) {
+                            dispatch({type: "SET_RELOAD_DIR", payload: true});
+                            reject();
+                        } else {
+                            response.json().then((json) => {
+                                dispatch({type: "SET_ERROR", payload: json});
+                                reject();
+                            });
+                        }
+                    });
                 }}>
                     <label>Filename</label>
                     <input type={"text"} name={"filename"} value={filename} onChange={(e) => {

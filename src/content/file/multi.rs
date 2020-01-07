@@ -87,6 +87,6 @@ pub fn from_form(content_type: ContentType, data: Data, size: usize) -> AppResul
         filename,
         public,
         directory,
-        data: Vec::new(),
+        data,
     })
 }
