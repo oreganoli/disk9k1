@@ -23,7 +23,7 @@ pub fn from_form(content_type: ContentType, data: Data, size: usize) -> AppResul
         .push(MultipartFormDataField::text("directory"));
     options
         .allowed_fields
-        .push(MultipartFormDataField::raw("data"));
+        .push(MultipartFormDataField::raw("data").size_limit(size as u64));
     let form = match MultipartFormData::parse(&content_type.clone(), data, options) {
         Ok(m) => m,
         Err(e) => {
