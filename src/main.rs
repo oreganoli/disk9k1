@@ -63,7 +63,10 @@ fn main() -> AppResult<()> {
                 content::dirs::delete,
             ],
         )
-        .mount("/", routes![content::file::upload])
+        .mount(
+            "/",
+            routes![content::file::upload, content::file::get_named],
+        )
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),

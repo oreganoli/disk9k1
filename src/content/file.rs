@@ -1,4 +1,8 @@
+use std::io::Cursor;
+use std::str::FromStr;
+
 use rocket::http::ContentType;
+use rocket::response::{Content, Stream};
 use rocket::Data;
 
 use crate::prelude::*;
@@ -17,6 +21,23 @@ pub enum FileError {
     NoFileName,
     TooBig,
     ImproperForm,
+}
+
+fn read_file(id: i32, conn: &mut Conn) -> AppResult<Option<File>> {
+    Ok(conn
+        .query(
+            "SELECT id, filename, hash, owner, public, directory FROM files WHERE id = $1",
+            &[&id],
+        )?
+        .first()
+        .map(|row| File {
+            id: row.get(0),
+            filename: row.get(1),
+            hash: row.get(2),
+            owner: row.get(3),
+            public: row.get(4),
+            directory: row.get(5),
+        }))
 }
 
 #[derive(Serialize)]
@@ -46,4 +67,45 @@ pub fn upload(
                         &[&new_file.filename, &hash, &user.id, &new_file.public, &new_file.directory])?
         .first().and_then(|row| row.get(0));
     Ok(Json(id))
+}
+
+type FileGet = Option<Content<Stream<Cursor<Vec<u8>>>>>;
+
+fn get_content(hash: i64, conn: &mut Conn) -> AppResult<Option<(Vec<u8>, String)>> {
+    Ok(conn
+        .query("SELECT data, mimetype FROM data WHERE hash = $1;", &[&hash])?
+        .first()
+        .map(|row| (row.get(0), row.get(1))))
+}
+
+#[get("/file/<id>/<_name>")]
+pub fn get_named(
+    app: AppState,
+    mut cookies: Cookies,
+    id: i32,
+    _name: String,
+) -> AppResult<FileGet> {
+    let app = app.read();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn).ok();
+    let file = match read_file(id, conn)? {
+        Some(f) => f,
+        None => return Ok(None),
+    };
+    if user.is_none() {
+        if !file.public {
+            return Err(AuthError::NotAllowed.into());
+        }
+    } else {
+        if user.unwrap().id != file.owner {
+            return Err(AuthError::NotAllowed.into());
+        }
+    }
+    let content = get_content(file.hash, conn)?;
+    Ok(content.map(|(data, mime)| {
+        Content(
+            ContentType::from_str(&mime).unwrap_or(ContentType::Binary),
+            Stream::from(Cursor::new(data)),
+        )
+    }))
 }
