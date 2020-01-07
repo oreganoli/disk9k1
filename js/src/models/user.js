@@ -75,3 +75,16 @@ export async function register({name, email, password, pass_con}) {
     }
 }
 
+export const deleteUser = async (id) => {
+    let request = new Request("/users", {
+        method: "DELETE", body: JSON.stringify({id: id})
+    });
+    let response = await fetch(request).catch((err) => alert(err));
+    if (response.status === 200) {
+        store.dispatch({type: "LOGOUT", payload: null});
+        return true;
+    } else {
+        store.dispatch({type: "SET_ERROR", payload: await response.json()});
+        return false;
+    }
+};

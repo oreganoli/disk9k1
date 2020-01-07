@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Redirect} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {loadMe, putPassword, putUsername} from "../models/user";
+import {deleteUser, loadMe, putPassword, putUsername} from "../models/user";
 
 export const Me = () => {
     const user = useSelector(state => state.user);
@@ -53,7 +53,11 @@ export const Me = () => {
                 }}>Change your password
                 </button>
             </form>
-            <button className={"centeredButton"}><strong>Delete your account</strong></button>
+            <button onClick={() => {
+                if (confirm("Are you SURE you want to delete your account? This will delete all your content forever.")) {
+                    deleteUser(user.id).then((result) => console.log(result ? "User deletion successful." : "User deletion failed."));
+                }
+            }} className={"centeredButton"}><strong>Delete your account</strong></button>
         </div>;
     } else {
         return <Redirect to={"/"}/>;
