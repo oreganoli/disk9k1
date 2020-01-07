@@ -2,6 +2,7 @@ use std::io::Cursor;
 use std::str::FromStr;
 
 use rocket::http::ContentType;
+use rocket::response::Redirect;
 use rocket::response::{Content, Stream};
 use rocket::Data;
 
@@ -108,4 +109,12 @@ pub fn get_named(
             Stream::from(Cursor::new(data)),
         )
     }))
+}
+
+#[get("/file/<id>")]
+pub fn get(app: AppState, id: i32) -> AppResult<Option<Redirect>> {
+    let app = app.read();
+    let conn = &mut app.pool.get()?;
+    Ok(read_file(id, conn)?
+        .map(|file| Redirect::to(format!("/file/{}/{}", file.id, file.filename))))
 }

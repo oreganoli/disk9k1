@@ -65,7 +65,11 @@ fn main() -> AppResult<()> {
         )
         .mount(
             "/",
-            routes![content::file::upload, content::file::get_named],
+            routes![
+                content::file::upload,
+                content::file::get,
+                content::file::get_named
+            ],
         )
         .mount(
             "/static",
