@@ -1,3 +1,4 @@
+use crate::content::file::File;
 use crate::prelude::*;
 
 use super::DirectoryRepo;
@@ -8,7 +9,8 @@ pub struct DirView {
     name: String,
     owner: i32,
     parent: Option<i32>,
-    children: Vec<Directory>, // TODO add child files
+    children: Vec<Directory>,
+    files: Vec<File>, // TODO add child files
 }
 
 #[derive(Serialize)]
@@ -19,15 +21,34 @@ pub struct Directory {
     parent: Option<i32>,
 }
 
+fn get_files(owner: i32, id: Option<i32>, conn: &mut Conn) -> AppResult<Vec<File>> {
+    let files = conn.query(
+        "SELECT id, filename, hash, owner, public, directory FROM files WHERE owner = $1 AND directory IS NOT DISTINCT FROM $2;",
+        &[&owner, &id],
+    )?.iter().map(|row| {
+        File {
+            id: row.get(0),
+            filename: row.get(1),
+            hash: row.get(2),
+            owner: row.get(3),
+            public: row.get(4),
+            directory: row.get(5),
+        }
+    }).collect::<Vec<_>>();
+    Ok(files)
+}
+
 impl Directory {
     pub fn into_view(self, repo: &DirectoryRepo, conn: &mut Conn) -> AppResult<DirView> {
         let children = repo.read_children(self.id, conn)?;
+        let files = get_files(self.owner, Some(self.id), conn)?;
         Ok(DirView {
             id: self.id,
             name: self.name,
             owner: self.owner,
             parent: self.parent,
             children,
+            files,
         })
     }
 }
@@ -204,6 +225,7 @@ pub fn get_top(app: AppState, mut cookies: Cookies) -> AppResult<Json<DirView>> 
         owner: user.id,
         parent: None,
         children,
+        files: get_files(user.id, None, conn)?,
     };
     Ok(Json(view))
 }

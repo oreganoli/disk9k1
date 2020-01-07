@@ -21,20 +21,12 @@ pub enum FileError {
 
 #[derive(Serialize)]
 pub struct File {
-    id: i32,
-    filename: String,
-    hash: u32,
-    owner: i32,
-    public: bool,
-    directory: Option<i32>,
-}
-
-pub struct InsFile {
-    filename: String,
-    hash: u32,
-    owner: i32,
-    public: bool,
-    directory: Option<i32>,
+    pub id: i32,
+    pub filename: String,
+    pub hash: i64,
+    pub owner: i32,
+    pub public: bool,
+    pub directory: Option<i32>,
 }
 
 #[post("/upload", data = "<data>")]
