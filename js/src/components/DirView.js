@@ -52,10 +52,22 @@ const contents = (props, dispatch) => {
             </td>
         </tr>
     ));
+    let files = props.files.map((each) => (
+        <tr>
+            <td className={"item_row"}><a href={`/file/${each.id}`}>{`📄 ${each.filename}`}</a></td>
+            <td>
+                <button>✍️ Rename</button>
+            </td>
+            <td>
+                <button><strong>🗑️ Delete</strong></button>
+            </td>
+        </tr>
+    ));
     return <table>
         <tbody>
         {upLink}
         {kids}
+        {files}
         </tbody>
     </table>;
 };
