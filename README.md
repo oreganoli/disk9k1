@@ -12,7 +12,7 @@ Create an ".env" file and populate it with environment variables:
 DATABASE_URL=postgres://me@localhost:5432/disk9k1
 ADMIN_USERNAME=whateveryouwant
 ADMIN_EMAIL=randomEmail
-ADMIN_PASSWORD=ditto
+ADMIN_PASSWORD=atLeastSixteenCharsLong
 ROCKET_SECRET_KEY=look_it_up_in_Rocket_docs
 ```
 Run Disk9k1 with `cargo run`. Disk9k1 will run the necessary database setup on its own.
