@@ -68,7 +68,8 @@ fn main() -> AppResult<()> {
             routes![
                 content::file::upload,
                 content::file::get,
-                content::file::get_named
+                content::file::get_named,
+                content::file::del,
             ],
         )
         .mount(

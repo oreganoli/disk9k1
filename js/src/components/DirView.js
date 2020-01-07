@@ -56,10 +56,9 @@ const contents = (props, dispatch) => {
         <tr>
             <td className={"item_row"}><a href={`/file/${each.id}`}>{`📄 ${each.filename}`}</a></td>
             <td>
-                <button>✍️ Rename</button>
-            </td>
-            <td>
-                <button><strong>🗑️ Delete</strong></button>
+                <button onClick={() => {
+                    dispatch(deleteItem(each.id, "file"))
+                }}><strong>🗑️ Delete</strong></button>
             </td>
         </tr>
     ));

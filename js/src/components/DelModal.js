@@ -10,6 +10,19 @@ const accept = (action, dispatch) => {
                 return result;
             }
         )
+    } else if (action.type === "file") {
+        let request = new Request(`/file/${action.id}`, {
+            method: "DELETE"
+        });
+        fetch(request).then((response) => {
+            if (response.status === 200) {
+                dispatch({type: "SET_RELOAD_DIR", payload: true});
+                reject(dispatch);
+            } else {
+                response.json().then(json => dispatch({type: "SET_ERROR", payload: json}));
+                reject(dispatch);
+            }
+        });
     } else {
         return false;
     }

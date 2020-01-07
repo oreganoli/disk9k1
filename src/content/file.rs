@@ -118,3 +118,20 @@ pub fn get(app: AppState, id: i32) -> AppResult<Option<Redirect>> {
     Ok(read_file(id, conn)?
         .map(|file| Redirect::to(format!("/file/{}/{}", file.id, file.filename))))
 }
+
+#[delete("/file/<id>")]
+pub fn del(app: AppState, mut cookies: Cookies, id: i32) -> AppResult<()> {
+    let app = app.write();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let file = match read_file(id, conn)? {
+        None => return Ok(()),
+        Some(f) => f,
+    };
+    if user.id != file.owner {
+        Err(AuthError::NotAllowed.into())
+    } else {
+        conn.execute("DELETE FROM files WHERE id = $1", &[&id])?;
+        Ok(())
+    }
+}
