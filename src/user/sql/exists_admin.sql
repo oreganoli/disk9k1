@@ -1,0 +1,1 @@
+SELECT EXISTS(SELECT id FROM users where is_admin);

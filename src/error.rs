@@ -1,132 +1,151 @@
-use std::borrow::BorrowMut;
-
+use bcrypt::BcryptError;
+use rocket::response::Responder;
 use rocket::{Request, Response};
 
-pub use error::*;
-pub use instance::*;
-pub use user::*;
-
+use crate::content::data::DataError;
+use crate::content::dirs::DirError;
+use crate::content::file::FileError;
 use crate::prelude::*;
+use crate::user::AuthError;
+use crate::user::UserError;
 
-pub mod error;
-pub mod instance;
-pub mod user;
-
-#[derive(Debug)]
-pub enum Error {
-    /// The database layer could not be accessed.
-    Db,
-    Dir(DirectoryError),
-    ///
-    Instance(InstanceError),
-    /// Errors related to users.
-    User(UserError),
-    /// An unspecified error.
-    Other,
+#[derive(Debug, Serialize)]
+pub struct ErrorWrapper {
+    #[serde(skip)]
+    pub status: Status,
+    pub name: String,
 }
 
-impl Error {
-    pub fn user<T>(ue: UserError) -> Result<T, Self> {
-        Err(Self::User(ue))
-    }
-    pub fn user_auth<T>(ae: AuthError) -> Result<T, Self> {
-        Err(Self::User(UserError::Auth(ae)))
-    }
-    pub fn user_del<T>(de: DeletionError) -> Result<T, Self> {
-        Err(Self::User(UserError::Deletion(de)))
-    }
-    pub fn user_change_pass<T>(pe: PasswordChangeError) -> Result<T, Self> {
-        Err(Self::User(UserError::PasswordChange(pe)))
-    }
-    pub fn user_change_email<T>(mc: EmailChangeError) -> Result<T, Self> {
-        Err(Self::User(UserError::EmailChange(mc)))
-    }
-    pub fn user_change_name<T>(uc: UsernameChangeError) -> Result<T, Self> {
-        Err(Self::User(UserError::UsernameChange(uc)))
-    }
-    pub fn instance<T>(ie: InstanceError) -> Result<T, Self> {
-        Err(Self::Instance(ie))
-    }
-    pub fn reason(&self) -> &str {
-        match &self {
-            Self::Db => "The database layer could not be accessed or was accessed improperly.",
-            Self::User(a) => match a {
-                UserError::Auth(auth) => match auth {
-                    AuthError::BadCredentials => "Invalid username and/or password.",
-                    AuthError::Unauthenticated(_) => "You are not logged in.",
-                    AuthError::Unauthorized(_) => "You have insufficient privileges to do this.",
-                },
-                UserError::Deletion(del) => match del {
-                    DeletionError::DoesNotExist => "You are trying to delete a nonexistent user.",
-                    DeletionError::IsAdmin => "The admin account cannot be removed.",
-                },
-                UserError::Registration(reg) => match reg {
-                    RegistrationError::UsernameTaken => "This username is taken.",
-                    RegistrationError::UsernameNotGiven => "No username was provided",
-                    RegistrationError::PasswordNotConfirmed => "The passwords do not match.",
-                    RegistrationError::PasswordNotGiven => "No password was provided.",
-                    RegistrationError::InvalidEmail => "The email address provided is not valid.",
-                    RegistrationError::EmailNotGiven => "No email address was provided.",
-                },
-                UserError::PasswordChange(pas) => match pas {
-                    PasswordChangeError::FormIncomplete => "No password was provided.",
-                    PasswordChangeError::NotMatching => "The passwords provided do not match.",
-                    PasswordChangeError::UserNonexistent => "This user does not exist.",
-                },
-                UserError::EmailChange(emc) => match emc {
-                    EmailChangeError::Empty => "No email address was provided.",
-                    EmailChangeError::UserNonexistent => "This user does not exist.",
-                },
-                UserError::UsernameChange(uc) => match uc {
-                    UsernameChangeError::Empty => "No new username was provided.",
-                    UsernameChangeError::Taken => "That username is already taken.",
-                    UsernameChangeError::UserNonexistent => "This user does not exist.",
-                },
-            },
-            Self::Instance(a) => match a {
-                InstanceError::NameEmpty => "A Disk9k1 instance must have a name.",
-                InstanceError::NegativeSizeLimit => "The size limit on files cannot be negative.",
-            },
-            Self::Dir(d) => match d {
-                DirectoryError::CyclicReference => "There was an attempt to create a directory inside itself.",
-                DirectoryError::Nonexistent => "No such directory exists.",
-                DirectoryError::NotSameOwner => "There was an attempt to create a directory in a directory not owned by the same user."
-            }
-            Self::Other => "An unspecified error occurred.",
+impl<'a> From<r2d2::Error> for ErrorWrapper {
+    fn from(e: r2d2::Error) -> Self {
+        Self {
+            status: Status::InternalServerError,
+            name: e.to_string(),
         }
     }
 }
 
-impl rocket::response::Responder<'_> for Error {
-    fn respond_to<'r>(self, request: &Request<'r>) -> Result<Response<'static>, Status> {
-        let reason = self.reason().to_owned();
-        let mut ctx = Context::new();
-        let instance: RwLockReadGuard<'static, Instance> = instance_read();
-        ctx.insert("reason", &reason);
-        let user = instance.user_from_cookies(request.cookies().borrow_mut());
-        let info = match user.as_ref() {
-            Some(u) => Some(u.to_info()),
-            None => None,
+impl<'a> From<postgres::Error> for ErrorWrapper {
+    fn from(e: postgres::Error) -> Self {
+        Self {
+            status: Status::InternalServerError,
+            name: e.to_string(),
+        }
+    }
+}
+
+impl From<BcryptError> for ErrorWrapper {
+    fn from(e: BcryptError) -> Self {
+        Self {
+            status: Status::InternalServerError,
+            name: e.to_string(),
+        }
+    }
+}
+
+impl From<DirError> for ErrorWrapper {
+    fn from(e: DirError) -> Self {
+        match e {
+            DirError::NameInvalid => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory's name may start with a single period and at least one other character and may not contain newlines, tabs, double quotes, or any of the following: '< > ? * | \\ / :'.".to_owned(),
+            },
+            DirError::NamingConflict => Self {
+                status: Status::Conflict,
+                name: "A directory cannot have the same name as its siblings in the tree."
+                    .to_owned(),
+            },
+            DirError::Nonexistent => Self {
+                status: Status::NotFound,
+                name: "The directory in question does not exist.".to_owned(),
+            },
+            DirError::CyclicParenthood => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory cannot be its own parent.".to_owned(),
+            },
+            DirError::NonexistentParent => Self {
+                status: Status::UnprocessableEntity,
+                name: "A directory must be either at the top of the filesystem or within an existent directory."
+                    .to_owned(),
+            }
+        }
+    }
+}
+
+impl From<UserError> for ErrorWrapper {
+    fn from(e: UserError) -> Self {
+        let (status, name) = match e {
+            UserError::EmailInvalid => (
+                Status::UnprocessableEntity,
+                "The email address provided is invalid.",
+            ),
+            UserError::NameInvalid => (
+                Status::UnprocessableEntity,
+                "The name provided is invalid.",
+            ),
+            UserError::PasswordInvalid => (Status::UnprocessableEntity, "Your password must be at least 16 characters long. Length is what matters most - make up a phrase or sentence you will find easy to remember and spell. Remember that you can use spaces and any valid Unicode characters."),
+            UserError::PasswordsNotMatching => (Status::UnprocessableEntity, "The passwords provided do not match."),
+            UserError::EmailTaken => (Status::Conflict, "This email address is already in use."),
+            UserError::NameTaken => (Status::Conflict, "This username is already in use."),
+            UserError::AdminDeletion => (Status::Forbidden, "An administrator cannot delete their own account.")
         };
-        ctx.insert("user", &info);
-        match self {
-            Self::User(UserError::Auth(a)) => match a {
-                AuthError::Unauthorized(redir) | AuthError::Unauthenticated(redir) => {
-                    ctx.insert("login_redirect", &redir);
-                    render("PAGE_login.html", &ctx).respond_to(request)
-                }
-                AuthError::BadCredentials => render("PAGE_login.html", &ctx).respond_to(request),
-            },
-            Self::User(UserError::Registration(_)) => {
-                render("PAGE_registration_error.html", &ctx).respond_to(request)
-            }
-            Self::User(UserError::PasswordChange(_))
-            | Self::User(UserError::EmailChange(_))
-            | Self::User(UserError::UsernameChange(_)) => {
-                render("PAGE_settings.html", &ctx).respond_to(request)
-            }
-            Self::Instance(_) => render("PAGE_panel.html", &ctx).respond_to(request),
-            _ => reason.respond_to(request),
+        Self {
+            status,
+            name: name.to_owned(),
         }
+    }
+}
+
+impl From<AuthError> for ErrorWrapper {
+    fn from(e: AuthError) -> Self {
+        match e {
+            AuthError::InvalidCredentials => Self {
+                status: Status::Unauthorized,
+                name: "Invalid password and/or username.".to_owned(),
+            },
+            AuthError::NotAllowed => Self {
+                status: Status::Forbidden,
+                name: "You have insufficient privileges to do this or are trying to access a private file you do not own.".to_owned(),
+            }
+        }
+    }
+}
+
+impl From<FileError> for ErrorWrapper {
+    fn from(e: FileError) -> Self {
+        let (status, name) = match e {
+            FileError::TooBig => (Status::PayloadTooLarge, "The file is too big."),
+            FileError::NamingConflict => (
+                Status::Conflict,
+                "Files cannot have the same name as others in the same directory.",
+            ),
+            FileError::NoFileName => (Status::BadRequest, "Files must have a filename."),
+            FileError::ImproperForm => (Status::BadRequest, "Your request was malformed."),
+        };
+        Self {
+            status,
+            name: name.to_owned(),
+        }
+    }
+}
+
+impl From<DataError> for ErrorWrapper {
+    fn from(e: DataError) -> Self {
+        match e {
+            DataError::TooBig { size, limit } => Self {
+                status: Status::PayloadTooLarge,
+                name: format!(
+                    "The file being uploaded is {}B long, while the maximum size is {}B.",
+                    size, limit
+                ),
+            },
+        }
+    }
+}
+
+impl<'r> Responder<'r> for ErrorWrapper {
+    fn respond_to(self, request: &Request<'_>) -> rocket::response::Result<'r> {
+        use rocket::response::status::Custom;
+        Custom(self.status, Json(self)).respond_to(request)
     }
 }

@@ -1,154 +1,176 @@
-use schema::users;
+use regex::Regex;
 
 use crate::prelude::*;
-use crate::user::NewUser;
 
-use super::User;
+use super::UserError;
+use super::{NewUser, User};
 
-/// The interface for `User` repositories.
-pub trait UserRepository {
-    fn create(&mut self, new_user: NewUser) -> Result<(), Error>;
-    fn read_all(&self) -> Result<Vec<User>, Error>;
-    fn read_by_id(&self, id: i32) -> Result<Option<User>, Error>;
-    fn read_by_name(&self, name: String) -> Result<Option<User>, Error>;
-    fn update_name(&mut self, id: i32, new_name: String) -> Result<(), Error>;
-    fn update_email(&mut self, id: i32, new_email: String) -> Result<(), Error>;
-    fn update_password(&mut self, id: i32, new_password: String) -> Result<(), Error>;
-    fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), Error>;
-    fn delete(&mut self, id: i32) -> Result<(), Error>;
-}
+const PASSWORD_MIN_LENGTH: usize = 16;
 
-/// The concrete Diesel repo.
 pub struct UserRepo {
-    pool: HandledPool,
-    /// A cache of values.
-    cache: Option<Vec<User>>,
+    name_regex: Regex,
+    mail_regex: Regex,
 }
 
 impl UserRepo {
-    pub fn new() -> Self {
-        let mut repo = Self {
-            pool: HandledPool::default(),
-            cache: None,
+    pub fn new(conn: &mut Conn) -> AppResult<Self> {
+        let rep = Self {
+            name_regex: Regex::new(r"^[^<>`~!\\@#}/$%:;)(^{&*=|'+\s]+$").unwrap(),
+            mail_regex: Regex::new(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$").unwrap(),
         };
-        repo.update_cache().unwrap();
-        repo
+        rep.init(conn)?;
+        Ok(rep)
     }
-    fn update_cache(&mut self) -> Result<(), Error> {
-        let conn = self.pool.get();
-        users::table.load(&conn).map_or_else(
-            |_| Err(Error::Db),
-            |u| {
-                self.cache = Some(u);
-                Ok(())
-            },
-        )
+    fn init(&self, conn: &mut Conn) -> AppResult<()> {
+        conn.execute(include_str!("sql/init.sql"), &[])?;
+        self.populate(conn)?;
+        Ok(())
     }
-}
+    fn populate(&self, conn: &mut Conn) -> AppResult<()> {
+        use std::env::var;
+        if !conn
+            .query(include_str!("sql/exists_admin.sql"), &[])?
+            .first()
+            .map_or(false, |row| row.get(0))
+        {
+            eprintln!("No admin account exists, creating a new one with default environment variable data...");
+            let name = var("ADMIN_USERNAME").expect("ADMIN_USERNAME must be set, panicking.");
+            let passwd = var("ADMIN_PASSWORD").expect("ADMIN_PASSWORD must be set, panicking.");
+            let email = var("ADMIN_EMAIL").expect("ADMIN_EMAIL must be set, panicking.");
+            let new = NewUser {
+                name,
+                email,
+                password: passwd.clone(),
+                pass_con: passwd,
+                is_admin: true,
+            };
+            self.create(new, conn)?;
+        }
+        Ok(())
+    }
+    pub fn create(&self, user: NewUser, conn: &mut Conn) -> AppResult<()> {
+        if user.password.is_empty() || user.password.chars().count() < PASSWORD_MIN_LENGTH {
+            return Err(UserError::PasswordInvalid.into());
+        }
+        if user.password != user.pass_con {
+            return Err(UserError::PasswordsNotMatching.into());
+        }
+        if !self.name_regex.is_match(&user.name) || user.name.is_empty() {
+            return Err(UserError::NameInvalid.into());
+        }
+        if !self.mail_regex.is_match(&user.email) {
+            return Err(UserError::EmailInvalid.into());
+        }
+        if conn
+            .query(include_str!("sql/exists_name.sql"), &[&user.name])?
+            .first()
+            .map_or(false, |row| row.get(0))
+        {
+            return Err(UserError::NameTaken.into());
+        }
+        if conn
+            .query(include_str!("sql/exists_email.sql"), &[&user.email])?
+            .first()
+            .map_or(false, |row| row.get(0))
+        {
+            return Err(UserError::EmailTaken.into());
+        }
 
-impl UserRepository for UserRepo {
-    /// Takes a user with an unhashed password and token.
-    fn create(&mut self, new_user: NewUser) -> Result<(), Error> {
-        let mut user = new_user;
-        user.password = bcrypt::hash(user.password, BCRYPT_COST).unwrap();
-        user.quick_token = bcrypt::hash(user.quick_token, BCRYPT_COST).unwrap();
-        diesel::insert_into(users::table)
-            .values(user)
-            .execute(&self.pool.get())
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
-    }
-    fn read_all(&self) -> Result<Vec<User>, Error> {
-        Ok(self.cache.clone().unwrap())
-    }
+        let hashed = bcrypt::hash(user.password, BCRYPT_COST)?;
 
-    fn read_by_id(&self, id: i32) -> Result<Option<User>, Error> {
-        self.cache
-            .as_ref()
-            .expect("User cache should not be empty.")
+        conn.execute(
+            include_str!("sql/create.sql"),
+            &[&user.name, &user.email, &hashed, &user.is_admin],
+        )?;
+        Ok(())
+    }
+    pub fn read(&self, id: i32, conn: &mut Conn) -> AppResult<Option<User>> {
+        let user = conn
+            .query(include_str!("sql/read_id.sql"), &[&id])?
             .iter()
-            .find(|x| x.id == id)
-            .map_or_else(|| Ok(None), |u| Ok(Some(u.clone())))
+            .next()
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            });
+        Ok(user)
     }
-
-    fn read_by_name(&self, name: String) -> Result<Option<User>, Error> {
-        self.cache
-            .as_ref()
-            .expect("User cache should not be empty.")
+    pub fn read_all(&self, conn: &mut Conn) -> AppResult<Vec<User>> {
+        let users = conn
+            .query(include_str!("sql/read.sql"), &[])?
             .iter()
-            .find(|x| x.name == name)
-            .map_or_else(|| Ok(None), |u| Ok(Some(u.clone())))
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            })
+            .collect::<Vec<_>>();
+        Ok(users)
     }
-
-    fn update_name(&mut self, id: i32, new_name: String) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::update(users::table.find(id))
-            .set(users::name.eq(new_name))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
+    pub fn read_name(&self, name: &str, conn: &mut Conn) -> AppResult<Option<User>> {
+        let user = conn
+            .query(include_str!("sql/read_username.sql"), &[&name])?
+            .first()
+            .map(|row| User {
+                id: row.get(0),
+                name: row.get(1),
+                email: row.get(2),
+                password: row.get(3),
+                is_admin: row.get(4),
+            });
+        Ok(user)
     }
-    fn update_email(&mut self, id: i32, new_email: String) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::update(users::table.find(id))
-            .set(users::email.eq(new_email))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
+    pub fn user_from_cookies(&self, cookies: &mut Cookies, conn: &mut Conn) -> AppResult<User> {
+        use super::AuthError;
+        let name = if let Some(nck) = cookies.get_private("username") {
+            nck.value().to_owned()
+        } else {
+            return Err(AuthError::InvalidCredentials.into());
+        };
+        let pass = if let Some(pck) = cookies.get_private("password") {
+            pck.value().to_owned()
+        } else {
+            return Err(AuthError::InvalidCredentials.into());
+        };
+        if let Some(user) = self.read_name(&name, conn)? {
+            if !bcrypt::verify(pass, &user.password)? {
+                Err(AuthError::InvalidCredentials.into())
+            } else {
+                Ok(user)
+            }
+        } else {
+            Err(AuthError::InvalidCredentials.into())
+        }
     }
-    /// Takes an unhashed `password`.
-    fn update_password(&mut self, id: i32, new_password: String) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::update(users::table.find(id))
-            .set(users::password.eq(bcrypt::hash(new_password, BCRYPT_COST).unwrap()))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
+    pub fn update_username(&self, id: i32, new: &str, conn: &mut Conn) -> AppResult<()> {
+        if !self.name_regex.is_match(&new) || new.is_empty() {
+            return Err(UserError::NameInvalid.into());
+        }
+        if conn
+            .query(include_str!("sql/exists_name.sql"), &[&new])?
+            .first()
+            .map_or(false, |row| row.get(0))
+        {
+            return Err(UserError::NameTaken.into());
+        }
+        conn.execute(include_str!("sql/update_name.sql"), &[&id, &new])?;
+        Ok(())
     }
-    /// Takes an unhashed token.
-    fn update_quick_token(&mut self, id: i32, new_token: String) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::update(users::table.find(id))
-            .set(users::password.eq(bcrypt::hash(new_token, BCRYPT_COST).unwrap()))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
+    pub fn update_password(&self, id: i32, new: &str, conn: &mut Conn) -> AppResult<()> {
+        if new.chars().count() < PASSWORD_MIN_LENGTH {
+            return Err(UserError::PasswordInvalid.into());
+        }
+        let hashed = bcrypt::hash(new, BCRYPT_COST)?;
+        conn.execute(include_str!("sql/update_password.sql"), &[&id, &hashed])?;
+        Ok(())
     }
-    fn delete(&mut self, id: i32) -> Result<(), Error> {
-        let conn = self.pool.get();
-        diesel::delete(users::table.find(id))
-            .execute(&conn)
-            .map_or_else(
-                |_| Err(Error::Db),
-                |_| {
-                    self.update_cache().unwrap();
-                    Ok(())
-                },
-            )
+    pub fn delete(&self, id: i32, conn: &mut Conn) -> AppResult<()> {
+        conn.execute(include_str!("sql/delete.sql"), &[&id])?;
+        Ok(())
     }
 }

@@ -1,8 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![feature(result_map_or_else)]
 #[macro_use]
-extern crate diesel;
-#[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate rocket;
@@ -12,57 +10,76 @@ use rocket_contrib::serve;
 
 use prelude::*;
 use util::lock::Lock;
-use util::renderer::Renderer;
 
-mod directory;
-mod error;
-//mod file;
+mod app;
+mod content;
+pub mod error;
 mod instance;
 mod prelude;
-pub mod schema;
-//mod upload;
 mod user;
 pub mod util;
 
 lazy_static! {
-    /// A globally accessible `Instance` behind a `Lock`
-    pub static ref INSTANCE: Lock<Instance> = Lock(RwLock::new(Instance::default()));
-    /// The global template renderer.
-    pub static ref TERA: Lock<Renderer> = Lock(RwLock::new(Renderer::default()));
+    pub static ref INDEX: String = std::fs::read_to_string("html/index.html")
+        .expect("There should be an index.html file in /html");
 }
 
-fn main() {
+#[get("/")]
+fn index() -> Html<&'static str> {
+    Html(&INDEX)
+}
+
+fn main() -> AppResult<()> {
     #[cfg(debug_assertions)] // Only load env vars from .env in dev builds
     dotenv::dotenv().ok();
+    let pool = util::pool::create_pool();
+    let app = Lock(RwLock::new(App::new(pool)?));
     rocket::ignite()
+        .manage(app)
+        .mount("/", routes![index])
+        .mount("/", routes![instance::get, instance::put])
         .mount(
             "/",
             routes![
-                instance::index,
-                instance::settings::modify_instance,
-                instance::settings::panel,
-                instance::users::users,
-                user::auth::authenticate,
-                user::auth::login,
-                user::auth::logout,
-                user::delete::del_acc_confirm,
-                user::delete::delete_account,
-                user::info::get_user,
-                user::info::get_me,
-                user::register::register,
-                user::settings::settings,
-                user::settings::change_password,
-                user::settings::change_email,
-                user::settings::change_username,
-                //                file::file_info,
-                //                file::get_file,
-                //                file::get_file_named,
-                //                upload::upload
+                user::me,
+                user::get,
+                user::get_all,
+                user::post,
+                user::put_password,
+                user::put_username,
+                user::delete,
+                user::login,
+                user::logout
+            ],
+        )
+        .mount(
+            "/",
+            routes![
+                content::dirs::get,
+                content::dirs::get_top,
+                content::dirs::post,
+                content::dirs::put_name,
+                content::dirs::put_parent,
+                content::dirs::delete,
+            ],
+        )
+        .mount(
+            "/",
+            routes![
+                content::file::upload,
+                content::file::get,
+                content::file::get_named,
+                content::file::del,
             ],
         )
         .mount(
             "/static",
             serve::StaticFiles::new("static/", serve::Options::None),
         )
+        .mount(
+            "/js",
+            serve::StaticFiles::new("js/dist/", serve::Options::None),
+        )
         .launch();
+    Ok(())
 }

@@ -1,102 +1,180 @@
-use schema::users;
-
 use crate::prelude::*;
 
-pub mod auth;
-pub mod delete;
-pub mod info;
-pub mod register;
 pub mod repo;
-pub mod settings;
 
-/// The publicly-visible information about users.
 #[derive(Serialize)]
-pub struct UserInfo<'a> {
-    pub id: i32,
-    pub name: &'a str,
-    pub email: &'a str,
-    pub joined: NaiveDateTime,
-    pub is_admin: bool,
-}
-
-#[derive(Queryable, Identifiable, Clone)]
 pub struct User {
-    id: i32,
-    name: String,
-    email: String,
-    /// Self-explanatory. Hashed.
+    pub id: i32,
+    pub name: String,
+    pub email: String,
+    #[serde(skip_serializing)]
     password: String,
-    /// The quick-upload token, hashed.
-    quick_token: String,
-    joined: NaiveDateTime,
-    is_admin: bool,
+    pub(crate) is_admin: bool,
 }
 
-impl User {
-    pub fn id(&self) -> i32 {
-        self.id
-    }
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-    pub fn email(&self) -> &str {
-        &self.email
-    }
-    pub fn joined(&self) -> NaiveDateTime {
-        self.joined
-    }
-    pub fn is_admin(&self) -> bool {
-        self.is_admin
-    }
-    pub fn to_info(&self) -> UserInfo {
-        UserInfo {
-            id: self.id,
-            name: &self.name,
-            email: &self.email,
-            joined: self.joined,
-            is_admin: self.is_admin,
-        }
-    }
-}
-
-#[derive(Insertable)]
-#[table_name = "users"]
-/// An `Insertable` struct that lacks the `id` and `joined` fields of an actual `User`, which are assigned by the DB.
+#[derive(Deserialize)]
 pub struct NewUser {
     name: String,
     email: String,
     password: String,
-    quick_token: String,
+    pass_con: String,
+    #[serde(skip_deserializing)]
+    #[serde(default = "default_privilege")]
     is_admin: bool,
 }
 
-impl NewUser {
-    pub fn new(
-        name: String,
-        email: String,
-        password: String,
-        quick_token: String,
-        is_admin: bool,
-    ) -> Self {
-        Self {
-            name,
-            email,
-            password,
-            quick_token,
-            is_admin,
-        }
+fn default_privilege() -> bool {
+    false
+}
+
+pub enum UserError {
+    NameInvalid,
+    NameTaken,
+    EmailInvalid,
+    EmailTaken,
+    PasswordInvalid,
+    PasswordsNotMatching,
+    AdminDeletion,
+}
+
+#[get("/me")]
+pub fn me(app: AppState, mut cookies: Cookies) -> AppResult<Json<User>> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    Ok(Json(user))
+}
+
+#[get("/users/<id>")]
+pub fn get(app: AppState, id: i32) -> AppResult<Option<Json<User>>> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    Ok(app.user.read(id, &mut conn)?.map(Json))
+}
+
+#[get("/users")]
+pub fn get_all(app: AppState) -> AppResult<Json<Vec<User>>> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    Ok(Json(app.user.read_all(&mut conn)?))
+}
+
+#[post("/users", data = "<new>")]
+pub fn post(app: AppState, new: Json<NewUser>) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    app.user.create(new.into_inner(), &mut conn)
+}
+
+#[derive(Deserialize)]
+pub struct DelRequest {
+    id: i32,
+}
+
+#[derive(Deserialize)]
+pub struct PassRequest {
+    new: String,
+    con: String,
+}
+
+#[derive(Deserialize)]
+pub struct NameRequest {
+    new: String,
+}
+
+#[put("/change_password", data = "<pass_req>")]
+pub fn put_password(
+    app: AppState,
+    pass_req: Json<PassRequest>,
+    mut cookies: Cookies,
+) -> AppResult<()> {
+    let req = pass_req.into_inner();
+    if req.new != req.con {
+        return Err(UserError::PasswordsNotMatching.into());
     }
-    pub fn generate_admin() -> Self {
-        use std::env::var;
-        Self {
-            name: var("ADMIN_USERNAME")
-                .expect("The environment variable ADMIN_USERNAME must be set."),
-            email: var("ADMIN_EMAIL").expect("The environment variable ADMIN_EMAIL must be set."),
-            password: var("ADMIN_PASSWORD")
-                .expect("The environment variable ADMIN_PASSWORD must be set."),
-            quick_token: var("ADMIN_TOKEN")
-                .expect("The environment variable ADMIN_TOKEN must be set."),
-            is_admin: true,
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    app.user.update_password(user.id, &req.new, &mut conn)?;
+    cookies.add_private(Cookie::new("password", req.new));
+    Ok(())
+}
+
+#[put("/change_username", data = "<name_req>")]
+pub fn put_username(
+    app: AppState,
+    name_req: Json<NameRequest>,
+    mut cookies: Cookies,
+) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    let req = name_req.into_inner();
+    app.user.update_username(user.id, &req.new, &mut conn)?;
+    cookies.add_private(Cookie::new("username", req.new));
+    Ok(())
+}
+
+#[delete("/users", data = "<del_req>")]
+pub fn delete(app: AppState, del_req: Json<DelRequest>, mut cookies: Cookies) -> AppResult<()> {
+    let app = app.write();
+    let mut conn = app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, &mut conn)?;
+    if user.id == del_req.id {
+        if user.is_admin {
+            Err(UserError::AdminDeletion.into())
+        } else {
+            app.user.delete(del_req.id, &mut conn)?;
+            cookies.remove_private(Cookie::named("username"));
+            cookies.remove_private(Cookie::named("password"));
+            Ok(())
         }
+    } else if user.is_admin {
+        app.user.delete(del_req.id, &mut conn)?;
+        Ok(())
+    } else {
+        Err(AuthError::NotAllowed.into())
     }
+}
+
+#[post("/login", data = "<auth_req>")]
+pub fn login(app: AppState, auth_req: Json<AuthRequest>, mut cookies: Cookies) -> AppResult<()> {
+    let app = app.read();
+    let mut conn = app.pool.get()?;
+    let mut name_ck = Cookie::named("username");
+    let mut pass_ck = Cookie::named("password");
+    let user = app.user.read_name(&auth_req.username, &mut conn)?;
+    if user.is_none() {
+        cookies.remove_private(name_ck);
+        cookies.remove_private(pass_ck);
+        return Err(AuthError::InvalidCredentials.into());
+    }
+    if !bcrypt::verify(&auth_req.password, &user.unwrap().password)? {
+        cookies.remove_private(name_ck);
+        cookies.remove_private(pass_ck);
+        return Err(AuthError::InvalidCredentials.into());
+    }
+    let req = auth_req.into_inner();
+    name_ck.set_value(req.username);
+    pass_ck.set_value(req.password);
+    cookies.add_private(name_ck);
+    cookies.add_private(pass_ck);
+    Ok(())
+}
+
+#[post("/logout")]
+pub fn logout(mut cookies: Cookies) {
+    cookies.remove_private(Cookie::named("username"));
+    cookies.remove_private(Cookie::named("password"));
+}
+
+#[derive(Deserialize)]
+pub struct AuthRequest {
+    username: String,
+    password: String,
+}
+
+pub enum AuthError {
+    InvalidCredentials,
+    NotAllowed,
 }
