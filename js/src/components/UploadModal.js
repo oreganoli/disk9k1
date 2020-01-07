@@ -7,6 +7,7 @@ const uploadModal = () => {
         dispatch({type: "SET_UPLOAD", payload: false});
     };
     let [filename, setFilename] = useState("");
+    let [pub, setPub] = useState(false);
     let upload = useSelector(state => state.upload);
     let dir = useSelector(state => state.dir);
     let dir_id = (dir == null ? null : dir.id);
@@ -32,7 +33,8 @@ const uploadModal = () => {
                         setFilename(e.target.value);
                     }}/>
                     <label>Public</label>
-                    <input type={"checkbox"} name={"public"}/>
+                    <input type={"hidden"} name={"public"} value={pub}/>
+                    <input type={"checkbox"} value={pub} onChange={(e) => {setPub(e.target.checked);}}/>
                     <input type={"hidden"} name={"directory"} value={dir_id}/>
                     <label>File:</label>
                     <input type={"file"} name={"data"} onChange={(e) => {
