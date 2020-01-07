@@ -17,6 +17,7 @@ import {Me} from "./components/Me";
 import Panel from "./components/Panel";
 import Register from "./components/Register";
 import root from "./reducers/rootReducer";
+import UploadModal from "./components/UploadModal";
 
 const regeneratorRuntime = require('regenerator-runtime/runtime');
 
@@ -47,6 +48,7 @@ ReactDOM.render(
             <DelModal/>
             <RenameModal/>
             <CrDirModal/>
+            <UploadModal/>
         </Router>
     </Provider>,
     document.getElementById("root")

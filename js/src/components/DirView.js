@@ -89,7 +89,10 @@ export const DirView = () => {
                     dispatch(createDir(dir.id, user.id));
                 }}>📁➕ Create directory
                 </button>
-                <button style={{margin: "auto 1em"}}>📄➕ Upload file</button>
+                <button style={{margin: "auto 1em"}} onClick={() => {
+                    dispatch({type: "SET_UPLOAD", payload: true});
+                }}>📄➕ Upload file
+                </button>
             </div>
             {contents(dir, dispatch)}
         </div>;
