@@ -4,6 +4,7 @@ use rocket::{Request, Response};
 
 use crate::content::data::DataError;
 use crate::content::dirs::DirError;
+use crate::content::file::FileError;
 use crate::prelude::*;
 use crate::user::AuthError;
 use crate::user::UserError;
@@ -106,6 +107,24 @@ impl From<AuthError> for ErrorWrapper {
                 status: Status::Forbidden,
                 name: "You have insufficient privileges to do this or are trying to access a private file you do not own.".to_owned(),
             }
+        }
+    }
+}
+
+impl From<FileError> for ErrorWrapper {
+    fn from(e: FileError) -> Self {
+        let (status, name) = match e {
+            FileError::TooBig => (Status::PayloadTooLarge, "The file is too big."),
+            FileError::NamingConflict => (
+                Status::Conflict,
+                "Files cannot have the same name as others in the same directory.",
+            ),
+            FileError::NoFileName => (Status::BadRequest, "Files must have a filename."),
+            FileError::ImproperForm => (Status::BadRequest, "Your request was malformed."),
+        };
+        Self {
+            status,
+            name: name.to_owned(),
         }
     }
 }

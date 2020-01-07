@@ -4,6 +4,7 @@ use crate::prelude::*;
 
 pub mod data;
 pub mod dirs;
+pub mod file;
 
 pub struct DirectoryRepo {
     dir_regex: Regex,
