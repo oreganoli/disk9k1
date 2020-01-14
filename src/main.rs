@@ -1,5 +1,4 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-#![feature(result_map_or_else)]
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
