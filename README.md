@@ -1,30 +1,32 @@
 # Disk9k1
 
-A pomf.se and Google Drive clone.
+A simple web service for uploading and retrieving files with minimal setup and tedium. Inspired by [pomf.se and its clones](https://github.com/tsudoko/long-live-pomf/blob/master/long-live-pomf.md), but with accounts, directories and filenames - a poor man's Google Drive.
 
-# How to develop
-## Server
+# Screenshots
+![Landing page](screenshots/directory.png)
+![Registration](screenshots/registration_form.png)
+![Uploading](screenshots/upload.png)
+![Directory view](screenshots/directory.png)
+![Error handling](screenshots/error.png)
+
+# Launching
 Install a nightly Rust toolchain with `rustup`.
-
-Install and start a PostgreSQL server and create the base `disk9k1`.
-Create an ".env" file and populate it with environment variables:
+Install and start a PostgreSQL server and create a database.
+Run `npm run build` in the `js` directory.
+Set the following environment variables:
 ```bash
-DATABASE_URL=postgres://me@localhost:5432/disk9k1
-ADMIN_USERNAME=whateveryouwant
-ADMIN_EMAIL=randomEmail
-ADMIN_PASSWORD=atLeastSixteenCharsLong
-ROCKET_SECRET_KEY=look_it_up_in_Rocket_docs
+DATABASE_URL=postgres://you@server:port/base
+ADMIN_USERNAME=initial_username_for_the_admin_account
+ADMIN_EMAIL=youremail@yourprovider.com
+ADMIN_PASSWORD=at_least_sixteen_characters_long
+ROCKET_SECRET_KEY=[cryptographic key as a 256-bit base64 encoded string]
 ```
-Run Disk9k1 with `cargo run`. Disk9k1 will run the necessary database setup on its own.
-## Frontend
-Install npm, cd into `js` and run:
-```bash
-$ npm run build
-```
-This will start a `webpack` watchdog that will watch for any changes and recompile the JavaScript in `js/src` to `js/dist/bundle.js`, which the server will serve under `/js/`.
-
+Run the server with `cargo run`.
+# Development
+Optionally create an .env file and fill it with the environment variables listed above.
+Run `cargo build` to build the server and `cargo run` to run it, then in `js/` run `npm run watch` to have Webpack watch the JS code and rebundle it when it changes.
 Go back to the project root and start the server.
-## Either
+
 Alternatively, if you're on Linux and have [`just`](https://github.com/casey/just), run:
 ```bash
 $ just develop
