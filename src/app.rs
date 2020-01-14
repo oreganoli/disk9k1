@@ -17,6 +17,10 @@ impl App {
         let dirs = DirectoryRepo::new(conn)?;
         let data = DataRepo::new(conn)?;
         let files = FileRepo::new(conn)?;
+        conn.execute("DROP FUNCTION IF EXISTS prune;", &[])?;
+        conn.execute(include_str!("content/sql/prune.sql"), &[])?;
+        conn.execute("DROP TRIGGER IF EXISTS prune_trigger ON files;", &[])?;
+        conn.execute(include_str!("content/sql/prune_trigger.sql"), &[])?;
         Ok(Self {
             data,
             files,

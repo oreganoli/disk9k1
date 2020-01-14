@@ -33,7 +33,7 @@ const contents = (props, dispatch) => {
         upLink = null;
     } else {
         upLink = <tr>
-            <td><Link to={`/drive/${props.parent}`}><i>📁 ../</i></Link></td>
+            <td><Link to={`/drive/${props.parent}`}><strong>⬆ ../</strong></Link></td>
         </tr>;
     }
     let kids = props.children.map((each) => (
@@ -44,8 +44,6 @@ const contents = (props, dispatch) => {
                     dispatch(renameItem(each.id, "directory"));
                 }}>✍️ Rename
                 </button>
-            </td>
-            <td>
                 <button onClick={() => {
                     dispatch(deleteItem(each.id, "directory"));
                 }}><strong>🗑️ Delete</strong></button>
@@ -57,12 +55,20 @@ const contents = (props, dispatch) => {
             <td className={"item_row"}><a href={`/file/${each.id}`}>{`📄 ${each.filename}`}</a></td>
             <td>
                 <button onClick={() => {
+                    dispatch(renameItem(each.id, "file"));
+                }}>✍️ Rename
+                </button>
+                <button onClick={() => {
                     dispatch(deleteItem(each.id, "file"))
                 }}><strong>🗑️ Delete</strong></button>
             </td>
         </tr>
     ));
     return <table>
+        <thead>
+        <th>Name</th>
+        <th>Actions</th>
+        </thead>
         <tbody>
         {upLink}
         {kids}
