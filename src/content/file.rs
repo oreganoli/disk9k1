@@ -104,13 +104,17 @@ pub fn get_named(
         Some(f) => f,
         None => return Ok(None),
     };
-    if user.is_none() {
-        if !file.public {
-            return Err(AuthError::NotAllowed.into());
+
+    match user {
+        None => {
+            if !file.public {
+                return Err(AuthError::NotAllowed.into());
+            }
         }
-    } else {
-        if user.unwrap().id != file.owner {
-            return Err(AuthError::NotAllowed.into());
+        Some(u) => {
+            if !file.public && u.id != file.owner {
+                return Err(AuthError::NotAllowed.into());
+            }
         }
     }
     let content = get_content(file.hash, conn)?;

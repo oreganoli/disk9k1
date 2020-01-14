@@ -39,16 +39,11 @@ impl DirectoryRepo {
     }
 }
 
-pub struct FileRepo {
-    filename_regex: Regex,
-}
+pub struct FileRepo {}
 
 impl FileRepo {
     pub fn new(conn: &mut Conn) -> AppResult<Self> {
-        let rep = Self {
-            filename_regex: Regex::new(r#"(?m)(^\.?[^.\r\n\t\\/:"|?*<>]+[^\r\n\t\\/:"|?*<>]*$)"#)
-                .unwrap(),
-        };
+        let rep = Self {};
         rep.init(conn)?;
         Ok(rep)
     }

@@ -126,7 +126,6 @@ impl UserRepo {
         Ok(user)
     }
     pub fn user_from_cookies(&self, cookies: &mut Cookies, conn: &mut Conn) -> AppResult<User> {
-        use super::AuthError;
         let name = if let Some(nck) = cookies.get_private("username") {
             nck.value().to_owned()
         } else {

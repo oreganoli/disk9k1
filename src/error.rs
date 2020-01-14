@@ -1,6 +1,6 @@
 use bcrypt::BcryptError;
 use rocket::response::Responder;
-use rocket::{Request, Response};
+use rocket::Request;
 
 use crate::content::data::DataError;
 use crate::content::dirs::DirError;

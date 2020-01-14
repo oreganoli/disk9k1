@@ -1,4 +1,4 @@
-use postgres::{config::Config, NoTls};
+use postgres::NoTls;
 use r2d2_postgres::PostgresConnectionManager;
 
 use crate::prelude::*;

@@ -1,9 +1,7 @@
-use rocket::data::{FromDataSimple, Outcome};
-use rocket::http::{ContentType, MediaType};
-use rocket::{Data, Outcome::*, Request};
+use rocket::http::ContentType;
+use rocket::Data;
 use rocket_multipart_form_data::{
-    mime, FileField, MultipartFormData, MultipartFormDataError, MultipartFormDataField,
-    MultipartFormDataOptions, RawField, SingleFileField, SingleTextField, TextField,
+    MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
 };
 
 use crate::prelude::*;
@@ -24,7 +22,7 @@ pub fn from_form(content_type: ContentType, data: Data, size: usize) -> AppResul
     options
         .allowed_fields
         .push(MultipartFormDataField::raw("data").size_limit(size as u64));
-    let form = match MultipartFormData::parse(&content_type.clone(), data, options) {
+    let form = match MultipartFormData::parse(&content_type, data, options) {
         Ok(m) => m,
         Err(e) => {
             dbg!(e);
