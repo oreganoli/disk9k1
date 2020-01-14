@@ -65,4 +65,4 @@ export const renameDir = async ({id, name}, dispatch) => {
         dispatch({type: "SET_ERROR", payload: err});
         return false;
     }
-}
+};

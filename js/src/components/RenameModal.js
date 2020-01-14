@@ -1,18 +1,22 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {renameDir} from "../models/dir";
+import {renameFile} from "../models/file";
 
 const accept = (action, dispatch) => {
     if (action.type === "directory") {
         renameDir(action, dispatch).then((result) => {
-                dispatch({type: "SET_RELOAD_DIR", payload: true});
-                reject(dispatch);
-                return result;
+                dispatch({type: "SET_RELOAD_DIR", payload: result});
             }
         )
+    } else if (action.type === "file") {
+        renameFile(action, dispatch).then((result) => {
+            dispatch({type: "SET_RELOAD_DIR", payload: result});
+        })
     } else {
         return false;
     }
+    reject(dispatch);
 };
 
 const reject = (dispatch) => {
