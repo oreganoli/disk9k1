@@ -150,3 +150,47 @@ pub fn del(app: AppState, mut cookies: Cookies, id: i32) -> AppResult<()> {
         Ok(())
     }
 }
+
+#[derive(Deserialize)]
+pub struct FileRename {
+    name: String,
+}
+
+#[put("/rename_file/<id>", data = "<ren>")]
+pub fn rename_file(
+    app: AppState,
+    mut cookies: Cookies,
+    id: i32,
+    ren: Json<FileRename>,
+) -> AppResult<()> {
+    let app = app.write();
+    let conn = &mut app.pool.get()?;
+    let user = app.user.user_from_cookies(&mut cookies, conn)?;
+    let owner_same: bool = conn
+        .query_one(
+            "SELECT (SELECT owner FROM files where id = $1) = $2;",
+            &[&id, &user.id],
+        )?
+        .get(0);
+    if !owner_same {
+        return Err(AuthError::NotAllowed.into());
+    }
+    let parent_dir: Option<i32> = conn
+        .query_one("SELECT directory FROM files WHERE id = $1", &[&id])?
+        .get(0);
+    let name_valid: bool = conn
+        .query_one(
+            include_str!("sql/file/naming_conflicts.sql"),
+            &[&ren.name, &user.id, &parent_dir],
+        )?
+        .get(0);
+    if name_valid {
+        conn.execute(
+            "UPDATE files SET filename = $2 WHERE id = $1",
+            &[&id, &ren.name],
+        )?;
+        Ok(())
+    } else {
+        Err(FileError::NamingConflict.into())
+    }
+}

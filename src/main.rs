@@ -70,6 +70,7 @@ fn main() -> AppResult<()> {
                 content::file::get,
                 content::file::get_named,
                 content::file::del,
+                content::file::rename_file
             ],
         )
         .mount(
