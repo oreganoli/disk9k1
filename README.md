@@ -3,7 +3,7 @@
 A simple web service for uploading and retrieving files with minimal setup and tedium. Inspired by [pomf.se and its clones](https://github.com/tsudoko/long-live-pomf/blob/master/long-live-pomf.md), but with accounts, directories and filenames - a poor man's Google Drive.
 Powered by [Rocket](https://rocket.rs), [React](https://reactjs.org/) and [Redux](https://redux.js.org).
 # Screenshots
-![Landing page](screenshots/directory.png)
+![Landing page](screenshots/landing.png)
 ![Registration](screenshots/registration_form.png)
 ![Uploading](screenshots/upload.png)
 ![Directory view](screenshots/directory.png)
