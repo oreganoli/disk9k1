@@ -63,6 +63,16 @@ pub fn upload(
     let user = app.user.user_from_cookies(&mut cookies, conn)?;
     let size = app.instance.read(conn)?.size_limit;
     let new_file = crate::content::file::multi::from_form(content_type.clone(), data, size)?;
+    let name_valid = conn
+        .query(
+            include_str!("sql/file/naming_conflicts.sql"),
+            &[&new_file.filename, &user.id, &new_file.directory],
+        )?
+        .first()
+        .map_or(false, |row| row.get(0));
+    if !name_valid {
+        return Err(FileError::NamingConflict.into());
+    }
     let hash = app.data.create(&new_file.data, conn)?;
     let id = conn.query("INSERT INTO files (filename, hash, owner, public, directory) VALUES ($1, $2, $3, $4, $5) RETURNING id;",
                         &[&new_file.filename, &hash, &user.id, &new_file.public, &new_file.directory])?
