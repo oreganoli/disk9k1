@@ -70,6 +70,7 @@ pub fn upload(
         )?
         .first()
         .map_or(false, |row| row.get(0));
+
     if !name_valid {
         return Err(FileError::NamingConflict.into());
     }
