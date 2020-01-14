@@ -2,8 +2,6 @@ pub use std::default::Default;
 pub use std::fmt::Display;
 pub use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
-pub use chrono::NaiveDateTime;
-pub use failure::{Error, Fail};
 use r2d2_postgres::r2d2::PooledConnection;
 use r2d2_postgres::PostgresConnectionManager;
 pub use rocket::{
